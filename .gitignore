@@ -1,0 +1,40 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+dist/
+build/
+.venv/
+venv/
+
+# Environment
+.env
+
+# IDE
+.vscode/
+.idea/
+*.swp
+
+# Docker volumes
+pgdata/
+mlflow_data/
+mlflow_artifacts/
+ollama_data/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# MLflow local
+mlruns/
+
+# Model artifacts
+*.pt
+*.pth
+*.onnx
+*.bin
+
+# Data (too large for git)
+data/raw/
+data/cache/
+!data/seed/

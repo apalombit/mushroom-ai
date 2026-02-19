@@ -1,0 +1,114 @@
+"""
+Provider-agnostic LLM client using LiteLLM + Instructor.
+
+Usage:
+    from llm.client import structured_completion, completion
+
+    # Structured output (preferred — validated Pydantic model)
+    result = structured_completion("...", response_model=MySchema, system="...")
+
+    # Plain text
+    text = completion("...")
+
+Provider switching: change LLM_PROVIDER and LLM_MODEL in .env — no code changes.
+"""
+
+import logging
+from functools import lru_cache
+
+import instructor
+import litellm
+from litellm import completion as _litellm_completion
+
+from config import settings
+
+logger = logging.getLogger(__name__)
+
+litellm.suppress_debug_info = True
+
+if settings.llm_base_url:
+    litellm.api_base = settings.llm_base_url
+
+
+def _get_model_string() -> str:
+    """Build LiteLLM model string from provider + model name."""
+    provider = settings.llm_provider.lower()
+    model = settings.llm_model
+
+    if provider == "ollama":
+        return f"ollama_chat/{model}"
+    elif provider == "anthropic":
+        return f"anthropic/{model}"
+    elif provider == "openai":
+        return model
+    else:
+        return f"{provider}/{model}"
+
+
+@lru_cache(maxsize=1)
+def get_instructor_client() -> instructor.Instructor:
+    """Get Instructor-patched client for structured LLM outputs."""
+    client = instructor.from_litellm(_litellm_completion)
+    logger.info(
+        "Instructor client initialized: provider=%s model=%s",
+        settings.llm_provider,
+        settings.llm_model,
+    )
+    return client
+
+
+def completion(
+    prompt: str,
+    system: str | None = None,
+    temperature: float | None = None,
+    max_tokens: int = 2048,
+    **kwargs,
+) -> str:
+    """Simple text completion (unstructured)."""
+    messages = []
+    if system:
+        messages.append({"role": "system", "content": system})
+    messages.append({"role": "user", "content": prompt})
+
+    model = _get_model_string()
+    temp = temperature if temperature is not None else settings.llm_temperature
+
+    response = _litellm_completion(
+        model=model,
+        messages=messages,
+        temperature=temp,
+        max_tokens=max_tokens,
+        **kwargs,
+    )
+    return response.choices[0].message.content
+
+
+def structured_completion(
+    prompt: str,
+    response_model: type,
+    system: str | None = None,
+    temperature: float = 0.1,
+    max_retries: int = 2,
+    **kwargs,
+):
+    """
+    Structured completion — returns a validated Pydantic model.
+
+    Instructor handles JSON schema injection, parsing, and retry on validation failure.
+    """
+    messages = []
+    if system:
+        messages.append({"role": "system", "content": system})
+    messages.append({"role": "user", "content": prompt})
+
+    client = get_instructor_client()
+    model = _get_model_string()
+
+    return client.chat.completions.create(
+        model=model,
+        response_model=response_model,
+        messages=messages,
+        temperature=temperature,
+        max_retries=max_retries,
+        **kwargs,
+    )

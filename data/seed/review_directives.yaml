@@ -1,0 +1,20 @@
+# Human review directives for the reconciliation LLM.
+#
+# When the reconciliation pipeline flags a species as needs_review=True,
+# a human reviews the conflict and adds a directive here.
+# On subsequent re-runs, the reconciliation LLM reads these directives
+# and applies them instead of re-flagging.
+#
+# Format:
+#   - species: "Scientific name"
+#     field: "dotted.field.path"          # e.g. "cap.colors" or "edibility"
+#     directive: "Use value X because..."  # Human reasoning
+#     resolved_value: "the correct value"
+#
+# Example:
+#   - species: "Amanita muscaria"
+#     field: "cap.colors"
+#     directive: "Wikipedia says 'red to orange', MushroomExpert says 'bright red with yellow variants'. Merge to cover full range."
+#     resolved_value: ["red", "orange-red", "yellow-orange"]
+
+directives: []

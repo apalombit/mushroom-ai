@@ -1,0 +1,16 @@
+[project]
+name = "mushroom-ai"
+version = "0.1.0"
+description = "Mushroom lookalikes finder — feature-based similarity with LLM explanations"
+requires-python = ">=3.11"
+
+[tool.ruff]
+target-version = "py311"
+line-length = 99
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "W", "UP"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+asyncio_mode = "auto"

@@ -1,0 +1,59 @@
+services:
+  postgres:
+    image: pgvector/pgvector:pg16
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: mushroom_ai
+      POSTGRES_USER: mushroom
+      POSTGRES_PASSWORD: mushroom_dev
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U mushroom -d mushroom_ai"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  mlflow:
+    build: ./infra/mlflow
+    ports:
+      - "5000:5000"
+    volumes:
+      - mlflow_data:/mlflow/data
+      - mlflow_artifacts:/mlflow/artifacts
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:5000/api/2.0/mlflow/experiments/search?max_results=1')"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 15s
+
+  # ---------------------------------------------------------------------------
+  # Ollama — local LLM inference
+  # ---------------------------------------------------------------------------
+  # Option A: Run in Docker (CPU-only, simpler)
+  # Option B: Run on host for GPU access (recommended if you have a GPU)
+  #           Install: https://ollama.com/download → ollama serve
+  #           Then set LLM_BASE_URL=http://host.docker.internal:11434 in .env
+  # ---------------------------------------------------------------------------
+  ollama:
+    image: ollama/ollama:latest
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama_data:/root/.ollama
+    # GPU passthrough (uncomment if nvidia-container-toolkit installed):
+    # deploy:
+    #   resources:
+    #     reservations:
+    #       devices:
+    #         - driver: nvidia
+    #           count: all
+    #           capabilities: [gpu]
+
+volumes:
+  pgdata:
+  mlflow_data:
+  mlflow_artifacts:
+  ollama_data:

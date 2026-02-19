@@ -1,0 +1,116 @@
+# Seed species list for initial ingestion.
+#
+# Focus: species commonly found in Northern Italy / Mediterranean Europe,
+# plus globally important species with known dangerous lookalike relationships.
+#
+# Format: scientific_name, common_name (English), edibility
+# This list will be read by the ingestion pipeline to know which species to fetch.
+#
+# Expand this list as needed. The ingestion pipeline handles new additions incrementally.
+
+species:
+  # --- Amanita (critical: contains both choice edibles and deadly species) ---
+  - scientific_name: "Amanita caesarea"
+    common_name: "Caesar's mushroom"
+    edibility: "edible"
+  - scientific_name: "Amanita phalloides"
+    common_name: "Death cap"
+    edibility: "deadly"
+  - scientific_name: "Amanita muscaria"
+    common_name: "Fly agaric"
+    edibility: "toxic"
+  - scientific_name: "Amanita pantherina"
+    common_name: "Panther cap"
+    edibility: "toxic"
+  - scientific_name: "Amanita rubescens"
+    common_name: "Blusher"
+    edibility: "conditionally edible"
+  - scientific_name: "Amanita verna"
+    common_name: "Fool's mushroom"
+    edibility: "deadly"
+  - scientific_name: "Amanita virosa"
+    common_name: "Destroying angel"
+    edibility: "deadly"
+
+  # --- Boletus / Porcini group ---
+  - scientific_name: "Boletus edulis"
+    common_name: "Porcini / King bolete"
+    edibility: "edible"
+  - scientific_name: "Tylopilus felleus"
+    common_name: "Bitter bolete"
+    edibility: "inedible"
+  - scientific_name: "Boletus satanas"
+    common_name: "Satan's bolete"
+    edibility: "toxic"
+
+  # --- Agaricus (field mushrooms) ---
+  - scientific_name: "Agaricus campestris"
+    common_name: "Field mushroom"
+    edibility: "edible"
+  - scientific_name: "Agaricus xanthodermus"
+    common_name: "Yellow-staining mushroom"
+    edibility: "toxic"
+  - scientific_name: "Agaricus arvensis"
+    common_name: "Horse mushroom"
+    edibility: "edible"
+
+  # --- Chanterelles ---
+  - scientific_name: "Cantharellus cibarius"
+    common_name: "Chanterelle"
+    edibility: "edible"
+  - scientific_name: "Omphalotus olearius"
+    common_name: "Jack-o'-lantern mushroom"
+    edibility: "toxic"
+  - scientific_name: "Hygrophoropsis aurantiaca"
+    common_name: "False chanterelle"
+    edibility: "inedible"
+
+  # --- Macrolepiota (parasol mushrooms) ---
+  - scientific_name: "Macrolepiota procera"
+    common_name: "Parasol mushroom"
+    edibility: "edible"
+  - scientific_name: "Chlorophyllum molybdites"
+    common_name: "Green-spored parasol"
+    edibility: "toxic"
+  - scientific_name: "Chlorophyllum rhacodes"
+    common_name: "Shaggy parasol"
+    edibility: "conditionally edible"
+
+  # --- Russula ---
+  - scientific_name: "Russula virescens"
+    common_name: "Green-cracking russula"
+    edibility: "edible"
+  - scientific_name: "Russula emetica"
+    common_name: "The sickener"
+    edibility: "toxic"
+
+  # --- Other important species ---
+  - scientific_name: "Armillaria mellea"
+    common_name: "Honey fungus"
+    edibility: "conditionally edible"
+  - scientific_name: "Galerina marginata"
+    common_name: "Funeral bell"
+    edibility: "deadly"
+  - scientific_name: "Kuehneromyces mutabilis"
+    common_name: "Sheathed woodtuft"
+    edibility: "edible"
+  - scientific_name: "Morchella esculenta"
+    common_name: "Morel"
+    edibility: "edible"
+  - scientific_name: "Gyromitra esculenta"
+    common_name: "False morel"
+    edibility: "toxic"
+  - scientific_name: "Coprinus comatus"
+    common_name: "Shaggy ink cap"
+    edibility: "edible"
+  - scientific_name: "Coprinopsis atramentaria"
+    common_name: "Common ink cap"
+    edibility: "conditionally edible"
+  - scientific_name: "Lactarius deliciosus"
+    common_name: "Saffron milk cap"
+    edibility: "edible"
+  - scientific_name: "Lactarius torminosus"
+    common_name: "Woolly milkcap"
+    edibility: "toxic"
+
+# Add more species as needed — the ingestion pipeline handles new additions.
