@@ -47,14 +47,34 @@ def _get_model_string() -> str:
 
 @lru_cache(maxsize=1)
 def get_instructor_client() -> instructor.Instructor:
-    """Get Instructor-patched client for structured LLM outputs."""
-    client = instructor.from_litellm(_litellm_completion)
+    """
+    Get Instructor-patched client for structured LLM outputs.
+
+    Uses JSON mode for Ollama (local models don't reliably follow tool-call format).
+    Uses TOOLS mode for cloud providers (Anthropic, OpenAI) which support it natively.
+    """
+    provider = settings.llm_provider.lower()
+    mode = instructor.Mode.JSON if provider == "ollama" else instructor.Mode.TOOLS
+    client = instructor.from_litellm(_litellm_completion, mode=mode)
     logger.info(
-        "Instructor client initialized: provider=%s model=%s",
+        "Instructor client initialized: provider=%s model=%s mode=%s",
         settings.llm_provider,
         settings.llm_model,
+        mode,
     )
     return client
+
+
+def _api_key_kwargs() -> dict:
+    """Return api_key kwarg for the configured provider (if set)."""
+    provider = settings.llm_provider.lower()
+    if provider == "ollama" and settings.ollama_api_key:
+        return {"api_key": settings.ollama_api_key}
+    if provider == "anthropic" and settings.anthropic_api_key:
+        return {"api_key": settings.anthropic_api_key}
+    if provider == "openai" and settings.openai_api_key:
+        return {"api_key": settings.openai_api_key}
+    return {}
 
 
 def completion(
@@ -78,6 +98,7 @@ def completion(
         messages=messages,
         temperature=temp,
         max_tokens=max_tokens,
+        **_api_key_kwargs(),
         **kwargs,
     )
     return response.choices[0].message.content
@@ -110,5 +131,6 @@ def structured_completion(
         messages=messages,
         temperature=temperature,
         max_retries=max_retries,
+        **_api_key_kwargs(),
         **kwargs,
     )

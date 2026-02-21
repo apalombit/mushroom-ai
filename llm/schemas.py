@@ -10,10 +10,7 @@ These are LLM output contracts (Instructor validates against them).
 API response schemas live in api/schemas.py.
 """
 
-from typing import Literal
-
-from pydantic import BaseModel, Field
-
+from pydantic import BaseModel, Field, model_validator
 
 # ---------------------------------------------------------------------------
 # 1. Feature extraction schemas (ingestion time)
@@ -93,6 +90,17 @@ class ExtractedEcologicalFeatures(BaseModel):
     growth_pattern: str | None = Field(None, description="solitary, clustered, fairy ring, trooping")
     growth_position: str | None = Field(None, description="ground level, on fallen wood, on living trees, on stumps")
 
+    @model_validator(mode="before")
+    @classmethod
+    def coerce_null_lists(cls, data: dict) -> dict:
+        """Coerce null list fields to [] — some models return null instead of []."""
+        if isinstance(data, dict):
+            for field in ("habitat_types", "associated_trees", "fruiting_seasons",
+                          "geographic_regions"):
+                if data.get(field) is None:
+                    data[field] = []
+        return data
+
 
 class ExtractedSpeciesFeatures(BaseModel):
     """
@@ -134,6 +142,16 @@ class ExtractedSpeciesFeatures(BaseModel):
         description="Anything ambiguous or uncertain in the source text",
     )
 
+    @model_validator(mode="before")
+    @classmethod
+    def coerce_null_lists(cls, data: dict) -> dict:
+        """Coerce null list fields to [] — some models return null instead of []."""
+        if isinstance(data, dict):
+            for field in ("common_names", "known_toxins", "known_lookalikes"):
+                if data.get(field) is None:
+                    data[field] = []
+        return data
+
 
 # ---------------------------------------------------------------------------
 # 2. Reconciliation schemas (merging multiple sources)
@@ -160,6 +178,13 @@ class ReconciliationResult(BaseModel):
         default_factory=list,
         description="List of fields where sources disagreed and reconciliation was uncertain",
     )
+
+    @model_validator(mode="before")
+    @classmethod
+    def coerce_null_lists(cls, data: dict) -> dict:
+        if isinstance(data, dict) and data.get("conflicts") is None:
+            data["conflicts"] = []
+        return data
     needs_review: bool = Field(
         description="True if any conflicts require human review",
     )

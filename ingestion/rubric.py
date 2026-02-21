@@ -26,6 +26,7 @@ MORPHOLOGICAL_FIELDS = [
     "flesh.color", "flesh.bruising_color", "flesh.odor",
     "spore_print_color",
     "overall_size_class",
+    "known_lookalikes",
 ]
 
 ECOLOGICAL_FIELDS = [
@@ -40,13 +41,26 @@ TAXONOMIC_FIELDS = [
 ]
 
 
+def _get_nested(d: dict, path: str):
+    """Walk a dot-separated path into a nested dict. Returns None if any key is missing."""
+    keys = path.split(".")
+    current = d
+    for key in keys:
+        if not isinstance(current, dict):
+            return None
+        current = current.get(key)
+        if current is None:
+            return None
+    return current
+
+
 def features_to_text(features: dict, field_list: list[str]) -> str:
     """
     Convert a subset of species features into a natural language description
     suitable for embedding.
 
-    This is the bridge between structured data and vector embeddings.
-    The text should read like a concise field guide entry for that feature group.
+    Walks each dot-path field into the nested features dict, skips None/empty
+    values, and joins non-null values into concise field-guide prose.
 
     Args:
         features: The full features_json dict from a ReconciledSpecies row.
@@ -54,10 +68,22 @@ def features_to_text(features: dict, field_list: list[str]) -> str:
 
     Returns:
         A natural language string describing those features.
-
-    TODO:
-        - [ ] Implement field extraction from nested dict
-        - [ ] Generate readable text (not just "key: value" dumps)
-        - [ ] Handle missing fields gracefully (skip, don't say "None")
     """
-    raise NotImplementedError("Implement feature-to-text conversion")
+    parts = []
+    for field_path in field_list:
+        value = _get_nested(features, field_path)
+        if value is None or value == "" or value == []:
+            continue
+
+        label = field_path.split(".")[-1].replace("_", " ")
+
+        if isinstance(value, list):
+            text = ", ".join(str(v) for v in value if v is not None)
+            if text:
+                parts.append(f"{label}: {text}")
+        elif isinstance(value, bool):
+            parts.append(f"{label}: {'yes' if value else 'no'}")
+        else:
+            parts.append(f"{label}: {value}")
+
+    return ". ".join(parts) + ("." if parts else "")

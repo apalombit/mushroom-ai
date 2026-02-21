@@ -16,6 +16,7 @@ class Settings(BaseSettings):
     # API keys — only needed for cloud providers
     anthropic_api_key: str = ""
     openai_api_key: str = ""
+    ollama_api_key: str = ""
 
     # PostgreSQL
     postgres_host: str = "localhost"
