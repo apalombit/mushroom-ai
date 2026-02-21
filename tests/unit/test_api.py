@@ -171,6 +171,40 @@ def test_find_lookalikes_success(client):
     assert data["species_count_in_db"] == 10
 
 
+# ---------------------------------------------------------------------------
+# Associations endpoint
+# ---------------------------------------------------------------------------
+
+def test_list_associations_empty(client):
+    session = _mock_session()
+    session.query.return_value.all.return_value = []
+    with patch("api.routes.get_session", return_value=session):
+        resp = client.get("/api/v1/associations")
+    assert resp.status_code == 200
+    assert resp.json() == []
+
+
+def test_list_associations_returns_pairs(client):
+    from db.models import GroundTruthPair
+    mock_pair = MagicMock(spec=GroundTruthPair)
+    mock_pair.species_a = "Amanita caesarea"
+    mock_pair.species_b = "Amanita muscaria"
+    mock_pair.danger_note = "A is edible, B is toxic"
+    mock_pair.source = "literature"
+
+    session = _mock_session()
+    session.query.return_value.all.return_value = [mock_pair]
+    with patch("api.routes.get_session", return_value=session):
+        resp = client.get("/api/v1/associations")
+
+    assert resp.status_code == 200
+    data = resp.json()
+    assert len(data) == 1
+    assert data[0]["species_a"] == "Amanita caesarea"
+    assert data[0]["species_b"] == "Amanita muscaria"
+    assert data[0]["danger_note"] == "A is edible, B is toxic"
+
+
 def test_find_lookalikes_explanation_failure_is_non_fatal(client):
     """A failed LLM explanation should not break the lookalike response."""
     mock_query_species = MagicMock()

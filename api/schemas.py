@@ -77,3 +77,12 @@ class SpeciesProfile(BaseModel):
     source_count: int = 0
     needs_review: bool = False
     reconciliation_confidence: float | None = None
+
+
+class AssociationPair(BaseModel):
+    """A known dangerous lookalike pair from the ground truth dataset."""
+
+    species_a: str
+    species_b: str
+    danger_note: str | None = None
+    source: str | None = None

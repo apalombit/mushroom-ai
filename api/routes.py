@@ -6,6 +6,7 @@ import time
 from fastapi import APIRouter, HTTPException
 
 from api.schemas import (
+    AssociationPair,
     FeatureComparison,
     LookalikeCandidate,
     LookalikeRequest,
@@ -13,7 +14,7 @@ from api.schemas import (
     SpeciesProfile,
 )
 from db.connection import get_session
-from db.models import ReconciledSpecies
+from db.models import GroundTruthPair, ReconciledSpecies
 from similarity.explain import generate_explanation
 from similarity.search import build_comparison_table, search_lookalikes
 from similarity.weights import SimilarityWeights
@@ -149,6 +150,25 @@ def _species_profile(row: ReconciledSpecies) -> SpeciesProfile:
         needs_review=row.needs_review or False,
         reconciliation_confidence=row.reconciliation_confidence,
     )
+
+
+@router.get("/associations", response_model=list[AssociationPair])
+async def list_associations():
+    """List all known dangerous lookalike pairs from the ground truth dataset."""
+    session = get_session()
+    try:
+        rows = session.query(GroundTruthPair).all()
+        return [
+            AssociationPair(
+                species_a=r.species_a,
+                species_b=r.species_b,
+                danger_note=r.danger_note or None,
+                source=r.source,
+            )
+            for r in rows
+        ]
+    finally:
+        session.close()
 
 
 def _log_query_metrics(

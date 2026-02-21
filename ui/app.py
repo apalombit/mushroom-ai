@@ -22,12 +22,17 @@ st.set_page_config(page_title="🍄 Mushroom Lookalikes Finder", layout="wide")
 st.title("🍄 Mushroom Lookalikes Finder")
 st.markdown("Find species that look similar — and learn how to tell them apart.")
 
+# --- Session state init ---
+if "species_input" not in st.session_state:
+    st.session_state.species_input = ""
+
 # --- Input ---
 col_input, col_context = st.columns([2, 1])
 with col_input:
     species_name = st.text_input(
         "Mushroom name (scientific or common)",
         placeholder="e.g. Amanita caesarea",
+        key="species_input",
     )
 with col_context:
     region = st.text_input("Region (optional)", placeholder="e.g. Northern Italy")
@@ -39,8 +44,11 @@ examples = ["Amanita caesarea", "Agaricus campestris", "Boletus edulis", "Cantha
 example_cols = st.columns(len(examples))
 for i, ex in enumerate(examples):
     with example_cols[i]:
-        if st.button(ex, key=f"ex_{i}"):
-            species_name = ex
+        st.button(
+            ex,
+            key=f"ex_{i}",
+            on_click=lambda name=ex: st.session_state.update({"species_input": name}),
+        )
 
 # --- Weight sliders ---
 with st.expander("⚙️ Similarity weights (advanced)"):
@@ -79,7 +87,8 @@ if st.button("Find Lookalikes", type="primary", disabled=not species_name):
         try:
             resp = requests.post(f"{API_BASE}/api/v1/lookalikes", json=payload, timeout=60)
             if resp.status_code == 404:
-                st.error(f"Species not found: **{species_name}**. Is it in the database?")
+                detail = resp.json().get("detail", "Species not found")
+                st.error(f"❌ {detail}")
                 st.stop()
             resp.raise_for_status()
             data = resp.json()
@@ -142,6 +151,41 @@ if st.button("Find Lookalikes", type="primary", disabled=not species_name):
                         "Similar": "✓" if fc["is_similar"] else "✗",
                     })
                 st.dataframe(rows, use_container_width=True)
+
+# --- Species index expander ---
+with st.expander("📋 Species currently indexed in the database"):
+    try:
+        r = requests.get(f"{API_BASE}/api/v1/species?limit=200", timeout=10)
+        if r.ok:
+            rows = [
+                {
+                    "Scientific name": s["scientific_name"],
+                    "Common name(s)": ", ".join(s["common_names"] or []) or "—",
+                    "Edibility": edibility_badge(s.get("edibility")),
+                    "Genus": s.get("genus") or "—",
+                }
+                for s in r.json()
+            ]
+            st.dataframe(rows, use_container_width=True, hide_index=True)
+    except Exception:
+        st.warning("Could not load species list — is the API running?")
+
+# --- Known associations expander ---
+with st.expander("🔗 Known dangerous confusions (ground truth pairs)"):
+    try:
+        r = requests.get(f"{API_BASE}/api/v1/associations", timeout=10)
+        if r.ok:
+            rows = [
+                {
+                    "Species A": p["species_a"],
+                    "Species B": p["species_b"],
+                    "Why it matters": p.get("danger_note") or "—",
+                }
+                for p in r.json()
+            ]
+            st.dataframe(rows, use_container_width=True, hide_index=True)
+    except Exception:
+        st.warning("Could not load associations — is the API running?")
 
 # --- Footer ---
 st.divider()
