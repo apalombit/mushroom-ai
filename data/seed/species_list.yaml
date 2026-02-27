@@ -40,6 +40,7 @@ species:
     common_name: "Bitter bolete"
     edibility: "inedible"
   - scientific_name: "Boletus satanas"
+    aliases: ["Rubroboletus satanas"]
     common_name: "Satan's bolete"
     edibility: "toxic"
 
@@ -116,6 +117,7 @@ species:
     common_name: "Oyster Mushroom"
     edibility: "Edible"
   - scientific_name: "Lentinula edodes"
+    aliases: ["Lentinus edodes"]
     common_name: "Shiitake"
     edibility: "Edible"
   - scientific_name: "Agaricus bisporus"
@@ -142,7 +144,7 @@ species:
   - scientific_name: "Russula cyanoxantha"
     common_name: "Charcoal Burner"
     edibility: "Edible"
-  - scientific_name: "Cortinarius Caperatus"
+  - scientific_name: "Cortinarius caperatus"
     common_name: "Gypsy Mushroom / Wrinkled Cort"
     edibility: "Edible (choice; one of the few safe Cortinarius species)"
   - scientific_name: "Amanita citrina"
@@ -152,6 +154,7 @@ species:
     common_name: "Western Destroying Angel / Spring Destroying Angel"
     edibility: "Deadly toxic (contains amatoxins)"
   - scientific_name: "Macrolepiota rhacodes"
+    aliases: ["Chlorophyllum rhacodes", "Lepiota rhacodes"]
     common_name: "Shaggy Parasol"
     edibility: "Edible with caution (can cause gastrointestinal upset in sensitive individuals; must be well cooked)"
   - scientific_name: "Lepiota"
@@ -190,13 +193,13 @@ species:
   - scientific_name: "Laccaria amethystina"
     common_name: "Amethyst Deceiver"
     edibility: "Edible (must be thoroughly cooked; can bioaccumulate arsenic in contaminated soils)"
-  - scientific_name: "Cortinarius Violaceus"
+  - scientific_name: "Cortinarius violaceus"
     common_name: "Violet Webcap / Violet Cort"
     edibility: "Not recommended (sometimes listed as edible but not choice; risk of confusion with toxic Cortinarius species)"
-  - scientific_name: "Cortinarius Seriocybe"
+  - scientific_name: "Cortinarius seriocybe"
     common_name: "Seriocybe Webcap (subgenus / species group)"
     edibility: "Not recommended (a subgenus grouping including species of uncertain or questionable edibility; avoid)"
-  - scientific_name: "Russula Vesca"
+  - scientific_name: "Russula vesca"
     common_name: "Bare-toothed Russula / The Flirt"
     edibility: "Edible (mild flavour; one of the better edible Russula species)"
 

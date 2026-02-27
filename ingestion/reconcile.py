@@ -12,6 +12,7 @@ Key behaviors:
     - Stores reconciliation confidence and conflict notes
 """
 
+import json as _json
 import logging
 from datetime import datetime
 
@@ -22,6 +23,37 @@ from llm.client import structured_completion
 from llm.schemas import ReconciliationResult
 
 logger = logging.getLogger(__name__)
+
+# Edibility priority for deterministic fallback (lower index = more conservative).
+# Used as a safety net if the LLM somehow returns null for edibility_status.
+_EDIBILITY_PRIORITY = {
+    "deadly": 0,
+    "toxic": 1,
+    "inedible": 2,
+    "conditionally edible": 3,
+    "edible": 4,
+    "choice": 5,
+}
+
+
+def _fallback_edibility(observations: list[SourceObservation], llm_value: str | None) -> str | None:
+    """
+    If the LLM returned null for edibility_status, deterministically pick the
+    most conservative (safety-first) value from the source observations.
+    """
+    if llm_value is not None:
+        return llm_value
+    values = [
+        (obs.features_json or {}).get("edibility_status")
+        for obs in observations
+        if (obs.features_json or {}).get("edibility_status")
+    ]
+    if not values:
+        return None
+    return min(
+        values,
+        key=lambda v: _EDIBILITY_PRIORITY.get((v or "").lower(), 99),
+    )
 
 SYSTEM_PROMPT = """\
 You are a mycologist reconciling multiple source descriptions of the same mushroom species.
@@ -76,9 +108,11 @@ def reconcile_species(session: Session, scientific_name: str) -> ReconciledSpeci
         needs_review = False
         review_notes = None
     else:
-        # Multi-source: LLM reconciliation
+        # Multi-source: LLM reconciliation. Full features_json for every source —
+        # gemma3:27b has a 128K context window so ~5K tokens of source data is trivial.
         sources_text = "\n\n".join(
-            f"Source {i + 1} ({obs.source_name}):\n{obs.features_json}"
+            f"Source {i + 1} ({obs.source_name}):\n"
+            + _json.dumps(obs.features_json, ensure_ascii=False, separators=(",", ":"))
             for i, obs in enumerate(observations)
         )
         prompt = (
@@ -90,8 +124,14 @@ def reconcile_species(session: Session, scientific_name: str) -> ReconciledSpeci
             response_model=ReconciliationResult,
             system=SYSTEM_PROMPT,
             temperature=0.1,
+            max_tokens=4096,
         )
         features = result.reconciled_features.model_dump()
+        # Deterministic fallback for safety-critical edibility field.
+        if features.get("edibility_status") is None:
+            features["edibility_status"] = _fallback_edibility(
+                observations, features.get("edibility_status")
+            )
         confidence = result.confidence
         conflicts = result.conflicts
         needs_review = result.needs_review
@@ -104,7 +144,7 @@ def reconcile_species(session: Session, scientific_name: str) -> ReconciledSpeci
         existing.common_names = features.get("common_names", [])
         existing.family = features.get("family")
         existing.genus = features.get("genus")
-        existing.edibility = features.get("edibility")
+        existing.edibility = features.get("edibility_status")
         existing.known_toxins = features.get("known_toxins", [])
         existing.known_lookalikes = features.get("known_lookalikes", [])
         existing.reconciliation_confidence = confidence
@@ -120,7 +160,7 @@ def reconcile_species(session: Session, scientific_name: str) -> ReconciledSpeci
             family=features.get("family"),
             genus=features.get("genus"),
             features_json=features,
-            edibility=features.get("edibility"),
+            edibility=features.get("edibility_status"),
             known_toxins=features.get("known_toxins", []),
             known_lookalikes=features.get("known_lookalikes", []),
             reconciliation_confidence=confidence,

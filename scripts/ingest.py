@@ -24,7 +24,9 @@ from db.models import ReconciledSpecies, SourceObservation
 from ingestion.embed import embed_all
 from ingestion.extract import extract_features_from_text, save_extraction
 from ingestion.reconcile import reconcile_species
-from ingestion.sources.wikipedia import fetch_species_page
+from ingestion.sources import firstnature, funghiitaliani, mushroomexpert, ultimatemushroom, wikipedia
+
+FETCH_SOURCES = [wikipedia, firstnature, mushroomexpert, ultimatemushroom, funghiitaliani]
 
 logger = logging.getLogger(__name__)
 
@@ -52,65 +54,92 @@ def _log_mlflow(run_name: str, metrics: dict, params: dict | None = None) -> Non
 
 
 def run_fetch(species_list: list[dict]) -> None:
-    """Stage 2: Fetch source text for each species from Wikipedia."""
-    logger.info("Fetching %d species from Wikipedia...", len(species_list))
+    """Stage 2: Fetch source text for each species from all sources."""
+    total_requests = len(species_list) * len(FETCH_SOURCES)
+    logger.info(
+        "Fetching %d species × %d sources = %d requests...",
+        len(species_list), len(FETCH_SOURCES), total_requests,
+    )
     start = time.monotonic()
     ok, failed = 0, []
 
     for entry in species_list:
         name = entry["scientific_name"]
-        result = fetch_species_page(name)
-        if result:
-            ok += 1
-            logger.debug("Fetched: %s", name)
-        else:
-            failed.append(name)
-            logger.warning("Not found: %s", name)
+        aliases = entry.get("aliases", [])
+        for source in FETCH_SOURCES:
+            result = source.fetch_species_page(name, aliases=aliases)
+            if result:
+                ok += 1
+                logger.debug("Fetched [%s]: %s", source.SOURCE_NAME, name)
+            else:
+                failed.append(f"{source.SOURCE_NAME}/{name}")
+                logger.debug("Not found [%s]: %s", source.SOURCE_NAME, name)
 
     duration = time.monotonic() - start
-    total = len(species_list)
-    print(f"Fetched {ok}/{total} species in {duration:.1f}s.")
+    print(f"Fetched {ok}/{total_requests} pages in {duration:.1f}s.")
     if failed:
-        print(f"Not found: {', '.join(failed)}")
+        print(f"Misses ({len(failed)}): {', '.join(failed[:10])}"
+              + (f" ... +{len(failed) - 10} more" if len(failed) > 10 else ""))
 
     _log_mlflow(
         "fetch",
-        {"species_fetched": ok, "species_failed": len(failed), "duration_s": duration,
-         "success_rate": ok / total if total else 0.0},
+        {"pages_fetched": ok, "pages_missed": len(failed), "duration_s": duration,
+         "success_rate": ok / total_requests if total_requests else 0.0},
     )
 
 
 def run_extract(species_list: list[dict]) -> None:
-    """Stage 3: Extract structured features from fetched text → Layer 1."""
-    logger.info("Extracting features for %d species...", len(species_list))
+    """Stage 3: Extract structured features from all sources → Layer 1 (incremental)."""
+    logger.info("Extracting features for %d species × %d sources...",
+                len(species_list), len(FETCH_SOURCES))
     start = time.monotonic()
-    ok, failed = 0, []
+    ok, skipped_existing, failed = 0, 0, []
+
+    # Pre-load set of (scientific_name, source_name) already in Layer 1
+    session = get_session()
+    try:
+        already_done = {
+            (row[0], row[1])
+            for row in session.query(
+                SourceObservation.scientific_name, SourceObservation.source_name
+            ).all()
+        }
+    finally:
+        session.close()
 
     for entry in species_list:
         name = entry["scientific_name"]
-        page = fetch_species_page(name)
-        if page is None:
-            print(f"  SKIP {name}: no cached page — run --fetch-only first.")
-            failed.append(name)
-            continue
-        try:
-            features = extract_features_from_text(name, page["text"])
-            save_extraction(features, page["url"], page["text"])
-            ok += 1
-            logger.info("Extracted: %s", name)
-        except Exception as e:
-            logger.error("Failed to extract %s: %s", name, e)
-            failed.append(name)
+        aliases = entry.get("aliases", [])
+        for source in FETCH_SOURCES:
+            if (name, source.SOURCE_NAME) in already_done:
+                skipped_existing += 1
+                logger.debug("Already extracted (skip): %s [%s]", name, source.SOURCE_NAME)
+                continue
+
+            page = source.fetch_species_page(name, aliases=aliases)
+            if page is None:
+                logger.debug("No cached page [%s]: %s — run --fetch-only first.", source.SOURCE_NAME, name)
+                continue
+            try:
+                features = extract_features_from_text(name, page["text"], source_name=source.SOURCE_NAME)
+                save_extraction(features, page["url"], page["text"], source.SOURCE_NAME)
+                ok += 1
+                logger.info("Extracted [%s]: %s", source.SOURCE_NAME, name)
+            except Exception as e:
+                logger.error("Failed to extract [%s] %s: %s", source.SOURCE_NAME, name, e)
+                failed.append(f"{source.SOURCE_NAME}/{name}")
 
     duration = time.monotonic() - start
-    total = len(species_list)
-    print(f"Extracted {ok}/{total} species in {duration:.1f}s.")
+    total = len(species_list) * len(FETCH_SOURCES)
+    print(f"Extracted {ok}/{total} (species×source) in {duration:.1f}s "
+          f"({skipped_existing} already done, skipped).")
     if failed:
-        print(f"Failed/skipped: {', '.join(failed)}")
+        print(f"Failed: {', '.join(failed[:10])}"
+              + (f" ... +{len(failed) - 10} more" if len(failed) > 10 else ""))
 
     _log_mlflow(
         "extract",
-        {"species_extracted": ok, "species_failed": len(failed), "duration_s": duration,
+        {"extractions_done": ok, "extractions_failed": len(failed), "duration_s": duration,
          "success_rate": ok / total if total else 0.0},
     )
 

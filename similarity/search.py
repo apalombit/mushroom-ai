@@ -220,5 +220,5 @@ def _values_similar(a: str | None, b: str | None) -> bool:
         return False
     a_words = set(a.lower().split())
     b_words = set(b.lower().split())
-    meaningful = {w for w in a_words & b_words if len(w) > 2}
+    meaningful = {w for w in a_words & b_words if len(w) > 1}
     return len(meaningful) > 0

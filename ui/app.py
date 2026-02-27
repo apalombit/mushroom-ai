@@ -3,13 +3,6 @@ Streamlit dashboard for Mushroom Lookalikes Finder.
 
 Run:
     streamlit run ui/app.py --server.port 8501
-
-Layout:
-    - Species name input + optional context (region, season)
-    - Example species buttons for quick exploration
-    - Weight sliders for tuning morphological/ecological/taxonomic balance
-    - Results: safety warning (red), LLM summary, ranked lookalike list
-    - Expandable feature comparison table per lookalike
 """
 
 import requests
@@ -58,7 +51,8 @@ with st.expander("⚙️ Similarity weights (advanced)"):
 
 _EDIBILITY_ICON = {
     "edible": "🟢",
-    "conditionally_edible": "🟡",
+    "choice": "⭐",
+    "conditionally edible": "🟡",
     "inedible": "🟠",
     "toxic": "🔴",
     "deadly": "⛔",
@@ -70,6 +64,215 @@ def edibility_badge(edibility: str | None) -> str:
         return "❓ unknown"
     icon = _EDIBILITY_ICON.get(edibility, "❓")
     return f"{icon} {edibility}"
+
+
+def _show_section(title: str, data: dict, fields: dict[str, str]) -> None:
+    """Render a named sub-section (cap, gills, stem …) if it has any non-empty values."""
+    if not data:
+        return
+    items = []
+    for key, label in fields.items():
+        val = data.get(key)
+        if val is None or val == [] or val == "":
+            continue
+        if isinstance(val, list):
+            val = ", ".join(str(v) for v in val if v)
+        if isinstance(val, bool):
+            val = "yes" if val else "no"
+        items.append(f"**{label}:** {val}")
+    if items:
+        st.markdown(f"*{title}*")
+        for item in items:
+            st.markdown(f"&nbsp;&nbsp;&nbsp;— {item}")
+
+
+def _show_list(label: str, values: list | None) -> None:
+    if values:
+        st.markdown(f"**{label}:** {', '.join(str(v) for v in values if v)}")
+
+
+def _render_species_features(s: dict) -> None:
+    """Render structured features for one species in two columns."""
+    features = s.get("features") or {}
+    if not features:
+        st.info("No structured features available for this species.")
+        return
+
+    # Metadata strip
+    meta = []
+    for label, key in [("Order", "order"), ("Family", "family"), ("Genus", "genus")]:
+        val = s.get(key) or features.get(key)
+        if val:
+            meta.append(f"{label}: **{val}**")
+    if s.get("source_count"):
+        meta.append(f"Sources: {s['source_count']}")
+    conf = s.get("reconciliation_confidence")
+    if conf is not None:
+        meta.append(f"Confidence: {conf:.0%}")
+    synonyms = features.get("synonyms") or []
+    if synonyms:
+        meta.append(f"Synonyms: {', '.join(synonyms)}")
+    if meta:
+        st.caption(" · ".join(meta))
+
+    col_morph, col_eco = st.columns(2)
+
+    with col_morph:
+        st.markdown("**🔬 Morphological**")
+
+        _show_section("Cap", features.get("cap") or {}, {
+            "shape": "Shape",
+            "colors": "Colors",
+            "color_faded": "Color (faded)",
+            "hygrophanous": "Hygrophanous",
+            "color_pattern": "Pattern",
+            "surface_texture": "Surface",
+            "scales_or_warts": "Scales / warts",
+            "margin_type": "Margin",
+            "margin_lined_at_maturity": "Margin lined at maturity",
+            "central_depression": "Central depression",
+            "diameter_min_cm": "Diam. min (cm)",
+            "diameter_max_cm": "Diam. max (cm)",
+        })
+
+        hymenium_type = (features.get("hymenium") or {}).get("type")
+        if hymenium_type:
+            st.markdown(f"*Hymenium type:* **{hymenium_type}**")
+
+        if hymenium_type == "gills" or (features.get("gills") or {}).get("attachment"):
+            _show_section("Gills", features.get("gills") or {}, {
+                "attachment": "Attachment",
+                "spacing": "Spacing",
+                "color": "Color",
+                "color_with_age": "Color with age",
+                "thickness": "Thickness",
+                "texture": "Texture",
+            })
+        if hymenium_type == "pores" or (features.get("pores") or {}).get("color"):
+            _show_section("Pores", features.get("pores") or {}, {
+                "color": "Color",
+                "color_with_age": "Color with age",
+                "bruising_color": "Bruising",
+                "density_per_mm": "Density (per mm)",
+            })
+            _show_section("Tubes", features.get("tubes") or {}, {
+                "depth_mm": "Depth (mm)",
+            })
+
+        _show_section("Stem", features.get("stem") or {}, {
+            "color": "Color",
+            "color_with_age": "Color with age",
+            "surface_texture": "Surface",
+            "reticulation": "Reticulation",
+            "shape": "Shape",
+            "consistency": "Consistency",
+            "hollow_or_solid": "Hollow / solid",
+            "base_color": "Base color",
+            "basal_mycelium_color": "Basal mycelium",
+            "finger_stain_color": "Finger stain",
+            "height_min_cm": "Height min (cm)",
+            "height_max_cm": "Height max (cm)",
+            "diameter_min_cm": "Diam. min (cm)",
+            "diameter_max_cm": "Diam. max (cm)",
+        })
+        _show_section("Veil / ring", features.get("veil") or {}, {
+            "present": "Present",
+            "type": "Type",
+            "cortina_present": "Cortina",
+            "shape": "Shape",
+            "color": "Color",
+        })
+        _show_section("Volva", features.get("volva") or {}, {
+            "present": "Present",
+            "type": "Type",
+            "shape": "Shape",
+            "color": "Color",
+        })
+        _show_section("Flesh", features.get("flesh") or {}, {
+            "color": "Color",
+            "bruising_color": "Bruising",
+            "odor": "Odor",
+            "taste": "Taste",
+            "texture": "Texture",
+            "quantity": "Quantity",
+        })
+
+        sp = features.get("spore_print_color")
+        if sp:
+            st.markdown(f"*Spore print color:* {sp}")
+        sz = features.get("overall_size_class")
+        if sz:
+            st.markdown(f"*Overall size:* {sz}")
+
+        _show_section("Spores (microscopic)", features.get("spore") or {}, {
+            "shape": "Shape",
+            "length_min_um": "Length min (µm)",
+            "length_max_um": "Length max (µm)",
+            "width_min_um": "Width min (µm)",
+            "width_max_um": "Width max (µm)",
+            "ornamentation": "Ornamentation",
+            "spine_length_um": "Spine length (µm)",
+            "spine_base_width_um": "Spine base width (µm)",
+            "amyloidity": "Amyloidity",
+            "color_in_KOH": "Color in KOH",
+        })
+        _show_section("Microscopic anatomy", features.get("microscopic") or {}, {
+            "basidia_spore_count": "Basidia",
+            "cheilocystidia_shape": "Cheilocystidia shape",
+            "cheilocystidia_dims_um": "Cheilocystidia dims (µm)",
+            "pleurocystidia_shape": "Pleurocystidia shape",
+            "pleurocystidia_dims_um": "Pleurocystidia dims (µm)",
+            "cystidia_color_in_KOH": "Cystidia in KOH",
+            "pileipellis_type": "Pileipellis type",
+            "pileipellis_element_width_um": "Pileipellis width (µm)",
+            "pileipellis_terminal_cell_shape": "Terminal cell shape",
+        })
+        _show_section("Chemical reactions", features.get("chemical") or {}, {
+            "KOH_cap": "KOH (cap)",
+            "KOH_flesh": "KOH (flesh)",
+            "NH4OH_cap": "NH₄OH (cap)",
+            "NH4OH_flesh": "NH₄OH (flesh)",
+            "FeSO4_cap": "FeSO₄ (cap)",
+            "FeSO4_flesh": "FeSO₄ (flesh)",
+        })
+
+    with col_eco:
+        st.markdown("**🌿 Ecological**")
+        eco = features.get("ecology") or {}
+        if eco.get("trophic_mode"):
+            st.markdown(f"**Trophic mode:** {eco['trophic_mode']}")
+        _show_list("Habitat", eco.get("habitat_types"))
+        if eco.get("substrate"):
+            st.markdown(f"**Substrate:** {eco['substrate']}")
+        _show_list("Associated trees", eco.get("associated_trees"))
+        _show_list("Fruiting seasons", eco.get("fruiting_seasons"))
+        if eco.get("fruiting_months"):
+            st.markdown(f"**Fruiting months:** {eco['fruiting_months']}")
+        _show_list("Regions", eco.get("geographic_regions"))
+        if eco.get("growth_pattern"):
+            st.markdown(f"**Growth pattern:** {eco['growth_pattern']}")
+        if eco.get("growth_position"):
+            st.markdown(f"**Growth position:** {eco['growth_position']}")
+        if eco.get("altitude_notes"):
+            st.markdown(f"**Altitude:** {eco['altitude_notes']}")
+        if eco.get("microhabitat_notes"):
+            st.markdown(f"**Microhabitat:** {eco['microhabitat_notes']}")
+
+        st.markdown("---")
+        st.markdown("**⚠️ Safety**")
+        edib = s.get("edibility") or features.get("edibility_status") or features.get("edibility")
+        if edib:
+            st.markdown(f"**Edibility:** {edibility_badge(edib)}")
+        toxins = features.get("known_toxins") or []
+        if toxins:
+            st.markdown(f"**Toxins:** {', '.join(toxins)}")
+        lookalikes = features.get("known_lookalikes") or []
+        if lookalikes:
+            st.markdown(f"**Known lookalikes:** {', '.join(lookalikes)}")
+
+    notes = features.get("extraction_notes")
+    if notes:
+        st.caption(f"📝 Extraction notes: {notes}")
 
 
 # --- Search ---
@@ -99,7 +302,7 @@ if st.button("Find Lookalikes", type="primary", disabled=not species_name):
             st.error(f"API error: {e}")
             st.stop()
 
-    # --- Safety warning (prominent red box) ---
+    # --- Safety warning ---
     safety = data.get("explanation_safety_warning")
     if safety:
         st.error(f"⚠️ **Safety Warning:** {safety}")
@@ -157,16 +360,16 @@ with st.expander("📋 Species currently indexed in the database"):
     try:
         r = requests.get(f"{API_BASE}/api/v1/species?limit=200", timeout=10)
         if r.ok:
-            rows = [
-                {
-                    "Scientific name": s["scientific_name"],
-                    "Common name(s)": ", ".join(s["common_names"] or []) or "—",
-                    "Edibility": edibility_badge(s.get("edibility")),
-                    "Genus": s.get("genus") or "—",
-                }
-                for s in r.json()
-            ]
-            st.dataframe(rows, use_container_width=True, hide_index=True)
+            species_list = r.json()
+            st.caption(f"{len(species_list)} species in database")
+            for s in species_list:
+                common = ", ".join(s["common_names"] or [])
+                header = f"*{s['scientific_name']}*"
+                if common:
+                    header += f" — {common}"
+                header += f"  {edibility_badge(s.get('edibility'))}"
+                with st.expander(header):
+                    _render_species_features(s)
     except Exception:
         st.warning("Could not load species list — is the API running?")
 

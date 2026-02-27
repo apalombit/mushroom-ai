@@ -47,11 +47,13 @@ def _save_cache(scientific_name: str, data: dict) -> None:
         json.dump(data, f, ensure_ascii=False, indent=2)
 
 
-def fetch_species_page(scientific_name: str) -> dict | None:
+def fetch_species_page(scientific_name: str, aliases: list[str] | None = None) -> dict | None:
     """
     Fetch the Wikipedia page for a species by scientific name.
 
     Returns {"text": <full page text>, "url": <page url>} or None if not found.
+    aliases is accepted for interface uniformity but ignored — the Wikipedia API
+    handles synonyms via title normalization and redirects.
     Results are cached to data/cache/ — delete the file to force re-fetch.
     """
     cached = _load_cache(scientific_name)

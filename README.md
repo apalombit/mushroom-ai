@@ -77,9 +77,9 @@ See [docs/GETTING_STARTED.md](docs/GETTING_STARTED.md).
 
 ```bash
 cp .env.example .env
+make setup
 docker compose up -d          # Postgres + pgvector, MLflow, Ollama
 source .venv/bin/activate
-pip install -r requirements.txt
 python -m scripts.test_setup  # verify everything connects
 ```
 

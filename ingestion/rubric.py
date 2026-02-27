@@ -16,28 +16,142 @@ requires updating: this file, the extraction schema, and the embedding logic.
 # ---------------------------------------------------------------------------
 
 MORPHOLOGICAL_FIELDS = [
-    "cap.shape", "cap.colors", "cap.surface_texture", "cap.scales_or_warts",
-    "cap.diameter_min_cm", "cap.diameter_max_cm",
-    "gills.hymenium_type", "gills.attachment", "gills.spacing", "gills.color",
-    "stem.color", "stem.surface_texture", "stem.consistency",
-    "stem.height_min_cm", "stem.height_max_cm",
-    "veil.present", "veil.type", "veil.shape", "veil.color",
-    "volva.present", "volva.type", "volva.shape", "volva.color",
-    "flesh.color", "flesh.bruising_color", "flesh.odor",
+    # --- Cap ---
+    "cap.shape",                        # convex, broadly convex, flat, depressed, umbonate, etc.
+    "cap.colors",                       # list of observed colors (fresh)
+    "cap.color_faded",                  # color when dried/faded — e.g. buff, brownish
+    "cap.hygrophanous",                 # bool — changes color markedly with moisture loss
+    "cap.color_pattern",                # uniform, darker center, two-toned, mottled, etc.
+    "cap.surface_texture",              # velvety, slimy, smooth, fibrous, hairy-scaly, dry, etc.
+    "cap.scales_or_warts",              # present/absent + description
+    "cap.margin_type",                  # inrolled, wavy, even, striate/lined, etc.
+    "cap.margin_lined_at_maturity",     # bool — lined/striate at margin with age (e.g. Laccaria)
+    "cap.central_depression",           # bool — depressed at disc
+    "cap.diameter_min_cm",
+    "cap.diameter_max_cm",
+
+    # --- Hymenium type ---
+    "hymenium.type",                    # gills | pores | teeth | ridges | smooth
+
+    # --- Gills (if hymenium.type == gills) ---
+    "gills.attachment",                 # free, adnate, decurrent, sinuate, etc.
+    "gills.spacing",                    # crowded, close, subdistant, distant
+    "gills.color",
+    "gills.color_with_age",
+    "gills.thickness",                  # thin, thick — e.g. Laccaria thick gills
+    "gills.texture",                    # waxy, brittle, normal
+
+    # --- Pores / Tubes (if hymenium.type == pores) ---
+    "pores.color",
+    "pores.color_with_age",
+    "pores.bruising_color",             # e.g. slowly orangish-brown, blue, none
+    "pores.density_per_mm",
+    "tubes.depth_mm",
+
+    # --- Stem ---
+    "stem.color",
+    "stem.color_with_age",
+    "stem.surface_texture",             # smooth, reticulate, fibrous, hairy, scaly, powdery
+    "stem.reticulation",                # none | partial | full — key for boletes
+    "stem.shape",                       # equal, club-shaped, tapered base, bulbous, swollen base
+    "stem.consistency",                 # firm, fibrous, spongy, brittle
+    "stem.hollow_or_solid",             # hollow | stuffed | solid
+    "stem.base_color",
+    "stem.basal_mycelium_color",        # color of mycelium threads at base — e.g. lilac in Laccaria
+    "stem.finger_stain_color",          # e.g. yellow stain from Retiboletus ornatipes
+    "stem.height_min_cm",
+    "stem.height_max_cm",
+    "stem.diameter_min_cm",
+    "stem.diameter_max_cm",
+
+    # --- Veil ---
+    "veil.present",
+    "veil.type",                        # partial | universal | cortina | absent
+    "veil.cortina_present",             # bool — explicit flag; key differentiator vs. Cortinarius
+    "veil.shape",
+    "veil.color",
+
+    # --- Volva ---
+    "volva.present",
+    "volva.type",
+    "volva.shape",
+    "volva.color",
+
+    # --- Flesh ---
+    "flesh.color",
+    "flesh.bruising_color",
+    "flesh.odor",
+    "flesh.taste",                      # mild, bitter, acrid, farinaceous, not distinctive
+    "flesh.texture",                    # firm, soft, brittle, insubstantial, watery
+    "flesh.quantity",                   # insubstantial | thin | moderate | thick
+
+    # --- Spore print ---
     "spore_print_color",
-    "overall_size_class",
+
+    # --- Spores (microscopic) ---
+    "spore.shape",                      # globose, ellipsoid, subfusoid, amygdaliform, etc.
+    "spore.length_min_um",
+    "spore.length_max_um",
+    "spore.width_min_um",
+    "spore.width_max_um",
+    "spore.ornamentation",              # smooth | echinulate | warty | reticulate | striate
+    "spore.spine_length_um",            # for echinulate spores — e.g. 1.5–3 µm in Laccaria
+    "spore.spine_base_width_um",        # diagnostic detail for Laccaria genus
+    "spore.amyloidity",                 # amyloid | inamyloid | dextrinoid
+    "spore.color_in_KOH",
+
+    # --- Microscopic: basidia ---
+    "microscopic.basidia_spore_count",  # 4-spored, 2-spored, mixed — can differ within species
+
+    # --- Microscopic: cystidia ---
+    "microscopic.cheilocystidia_shape",       # shape descriptor — narrowly cylindric, subclavate, etc.
+    "microscopic.cheilocystidia_dims_um",     # e.g. "25–65 x 4–12"
+    "microscopic.pleurocystidia_shape",
+    "microscopic.pleurocystidia_dims_um",
+    "microscopic.cystidia_color_in_KOH",
+
+    # --- Microscopic: pileipellis ---
+    "microscopic.pileipellis_type",           # cutis | trichoderm | ixocutis | hymeniderm
+    "microscopic.pileipellis_element_width_um",
+    "microscopic.pileipellis_terminal_cell_shape",  # subclavate, capitate, rounded, etc.
+
+    # --- Chemical reactions ---
+    "chemical.KOH_cap",
+    "chemical.KOH_flesh",
+    "chemical.NH4OH_cap",
+    "chemical.NH4OH_flesh",
+    "chemical.FeSO4_cap",
+    "chemical.FeSO4_flesh",
+
+    # --- Overall ---
+    "overall_size_class",               # small | medium | large
+    "edibility_status",                 # edible | inedible | toxic | choice | unknown
     "known_lookalikes",
 ]
 
 ECOLOGICAL_FIELDS = [
-    "ecology.habitat_types", "ecology.substrate", "ecology.associated_trees",
-    "ecology.fruiting_seasons", "ecology.geographic_regions",
+    "ecology.trophic_mode",             # mycorrhizal | saprotrophic | parasitic
+    "ecology.habitat_types",            # hardwood forest, conifer forest, grassland, etc.
+    "ecology.substrate",                # soil, wood, dung, leaf litter, etc.
+    "ecology.associated_trees",         # oak, beech, pine, etc.
+    "ecology.fruiting_seasons",         # spring | summer | fall | winter
+    "ecology.fruiting_months",          # e.g. "July–September", "late spring and summer"
+    "ecology.geographic_regions",
     "ecology.altitude_notes",
-    "ecology.growth_pattern", "ecology.growth_position",
+    "ecology.growth_pattern",           # solitary | scattered | gregarious | clustered
+    "ecology.growth_position",          # terrestrial | lignicolous | coprophilous | etc.
+    "ecology.microhabitat_notes",       # e.g. mossy ground, disturbed areas
 ]
 
 TAXONOMIC_FIELDS = [
-    "family", "genus",
+    "kingdom",
+    "phylum",                           # e.g. Basidiomycetes — useful for broad filtering
+    "order",
+    "family",
+    "genus",
+    "species",
+    "common_names",
+    "synonyms",
 ]
 
 

@@ -12,7 +12,7 @@ def test_extract_amanita_muscaria_returns_valid_schema():
     page = fetch_species_page("Amanita muscaria")
     assert page is not None, "Cache miss — run python -m scripts.ingest --fetch-only first"
 
-    features = extract_features_from_text("Amanita muscaria", page["text"])
+    features = extract_features_from_text("Amanita muscaria", page["text"], source_name="Wikipedia")
 
     assert isinstance(features, ExtractedSpeciesFeatures)
     assert features.scientific_name == "Amanita muscaria"
@@ -20,7 +20,7 @@ def test_extract_amanita_muscaria_returns_valid_schema():
 
 def test_extract_amanita_muscaria_key_fields():
     page = fetch_species_page("Amanita muscaria")
-    features = extract_features_from_text("Amanita muscaria", page["text"])
+    features = extract_features_from_text("Amanita muscaria", page["text"], source_name="Wikipedia")
 
     assert len(features.cap.colors) > 0, "Cap colors should be present"
     # shape may be absent if the model applies strict "explicitly stated" rules;

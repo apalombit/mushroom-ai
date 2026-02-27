@@ -25,9 +25,9 @@ class SimilarityWeights:
         ecological: float | None = None,
         taxonomic: float | None = None,
     ):
-        self.morphological = morphological or settings.weight_morphological
-        self.ecological = ecological or settings.weight_ecological
-        self.taxonomic = taxonomic or settings.weight_taxonomic
+        self.morphological = morphological if morphological is not None else settings.weight_morphological
+        self.ecological = ecological if ecological is not None else settings.weight_ecological
+        self.taxonomic = taxonomic if taxonomic is not None else settings.weight_taxonomic
         self._normalize()
 
     def _normalize(self):
