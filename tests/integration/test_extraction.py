@@ -27,4 +27,4 @@ def test_extract_amanita_muscaria_key_fields():
     # check that at least one other cap morphological field is populated instead
     cap_fields = [features.cap.shape, features.cap.surface_texture, features.cap.scales_or_warts]
     assert any(f is not None for f in cap_fields), "At least one cap morphological field should be extracted"
-    assert features.edibility is not None, "Edibility should be present"
+    assert features.edibility_status is not None, "Edibility should be present"

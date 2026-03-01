@@ -124,7 +124,7 @@ def _render_species_features(s: dict) -> None:
             "shape": "Shape",
             "colors": "Colors",
             "color_faded": "Color (faded)",
-            "hygrophanous": "Hygrophanous",
+            "surface_moisture": "Surface moisture",
             "color_pattern": "Pattern",
             "surface_texture": "Surface",
             "scales_or_warts": "Scales / warts",
@@ -249,8 +249,8 @@ def _render_species_features(s: dict) -> None:
         if eco.get("fruiting_months"):
             st.markdown(f"**Fruiting months:** {eco['fruiting_months']}")
         _show_list("Regions", eco.get("geographic_regions"))
-        if eco.get("growth_pattern"):
-            st.markdown(f"**Growth pattern:** {eco['growth_pattern']}")
+        if eco.get("growth_habit"):
+            st.markdown(f"**Growth habit:** {eco['growth_habit']}")
         if eco.get("growth_position"):
             st.markdown(f"**Growth position:** {eco['growth_position']}")
         if eco.get("altitude_notes"):

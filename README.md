@@ -52,6 +52,47 @@ User: "Amanita caesarea" + region: Northern Italy, autumn
     └────────────────────────────────────────┘
 ```
 
+## Ingestion Pipeline
+
+```
+"Amanita muscaria"
+        │
+   ┌────▼─────────────────────────────────┐
+   │  FETCH                               │
+   │  Wikipedia/sources → raw text        │
+   └────┬─────────────────────────────────┘
+        │
+   ┌────▼─────────────────────────────────┐
+   │  EXTRACT (2-pass, 6 LLM calls)      │
+   │  Pass 1: identity, taxonomy, body    │
+   │  Pass 2: 5 parallel detail groups    │
+   │  → 114 structured fields (JSON)      │
+   │  Stored as source_observations (L1)  │
+   └────┬─────────────────────────────────┘
+        │
+   ┌────▼─────────────────────────────────┐
+   │  RECONCILE                           │
+   │  Multiple sources per species →      │
+   │  LLM merges into one canonical row   │
+   │  Stored as reconciled_species (L2)   │
+   └────┬─────────────────────────────────┘
+        │
+   ┌────▼─────────────────────────────────┐
+   │  EMBED                               │
+   │  Rubric splits 114 fields into       │
+   │  3 semantic groups:                  │
+   │    morphological / ecological / taxon│
+   │  Each → text → sentence-transformer  │
+   │  → 3 × 384-dim vectors per species  │
+   │  Stored on reconciled_species (L2)   │
+   └──────────────────────────────────────┘
+```
+
+The 2-pass extraction groups (cap, hymenium, stem/veil, flesh/chem, spore/eco)
+are purely an extraction-time split to help smaller LLMs handle the 114-field
+schema. Once merged and stored, the rubric's 3-group split (morphological,
+ecological, taxonomic) takes over for embedding and search.
+
 ## Data Architecture (Three-Layer Model)
 
 | Layer | Purpose | Storage |
@@ -59,6 +100,21 @@ User: "Amanita caesarea" + region: Northern Italy, autumn
 | **Layer 1 — Raw Sources** | One row per species per source, exactly as extracted by LLM | PostgreSQL |
 | **Layer 2 — Reconciled Profiles** | One canonical feature row per species, merged from Layer 1 | PostgreSQL |
 | **Layer 3 — Embeddings** | Per-group vectors for similarity search | pgvector columns on Layer 2 |
+
+## Similarity Search
+
+At query time, the 3 embedding vectors drive lookalike discovery:
+
+1. Look up the query species' 3 embeddings from Layer 2
+2. Run 3 independent pgvector cosine similarity searches (one per group)
+3. Merge candidates into a single ranked list with tunable weights
+   (default: 60% morphological, 25% ecological, 15% taxonomic)
+4. Filter/boost by user context (region, season) if provided
+5. Return top-K with per-group score breakdown + LLM-generated explanation
+
+Morphology dominates because lookalikes are primarily a visual confusion risk.
+Ecology and taxonomy help refine: species sharing the same habitat and lineage
+are more likely to be encountered together.
 
 ## Tech Stack
 

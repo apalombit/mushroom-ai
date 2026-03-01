@@ -69,13 +69,6 @@ class ExtractedCapFeatures(BaseModel):
         None,
         description="Color when dried or faded. Examples: buff, pale ochraceous, brownish",
     )
-    hygrophanous: bool | None = Field(
-        None,
-        description=(
-            "True if the cap changes color markedly as it dries out "
-            "(e.g. darkens when wet, pales when dry)"
-        ),
-    )
     color_pattern: str | None = Field(
         None,
         description=(
@@ -89,6 +82,10 @@ class ExtractedCapFeatures(BaseModel):
             "Surface feel/appearance. "
             "Examples: smooth, slimy/viscid, dry, velvety, fibrous, hairy-scaly, powdery, matt"
         ),
+    )
+    surface_moisture: str | None = Field(
+        None,
+        description=("Surface moisture. Examples: dry, viscid, glutinous, hygrophanous"),
     )
     scales_or_warts: str | None = Field(
         None,
@@ -111,6 +108,10 @@ class ExtractedCapFeatures(BaseModel):
             "e.g. as in Laccaria species"
         ),
     )
+    bruising_color: str | None = Field(
+        None,
+        description="Color change when cap is handled or bruised",
+    )
     central_depression: bool | None = Field(
         None,
         description="True if cap is depressed (funnel-like) at the center at maturity",
@@ -122,9 +123,7 @@ class ExtractedCapFeatures(BaseModel):
     @classmethod
     def coerce_bools(cls, data: dict) -> dict:
         if isinstance(data, dict):
-            _coerce_bool_fields(
-                data, ("hygrophanous", "margin_lined_at_maturity", "central_depression")
-            )
+            _coerce_bool_fields(data, ("margin_lined_at_maturity", "central_depression"))
         return data
 
 
@@ -174,6 +173,10 @@ class ExtractedGillFeatures(BaseModel):
         None,
         description="Gill texture. Examples: waxy (Hygrocybe), brittle (Russula), normal/soft",
     )
+    edge_texture: str | None = Field(
+        None,
+        description="Gill edge character. Examples: smooth, serrate, eroded, fimbriate",
+    )
 
 
 class ExtractedPoreFeatures(BaseModel):
@@ -214,8 +217,7 @@ class ExtractedStemFeatures(BaseModel):
     color_with_age: str | None = Field(
         None,
         description=(
-            "Color change as stem ages. "
-            "Examples: 'white becoming brownish at base', 'yellowing'"
+            "Color change as stem ages. Examples: 'white becoming brownish at base', 'yellowing'"
         ),
     )
     surface_texture: str | None = Field(
@@ -240,6 +242,10 @@ class ExtractedStemFeatures(BaseModel):
             "tapered base, bulbous, swollen base"
         ),
     )
+    attachment_position: str | None = Field(
+        None,
+        description=("Where stipe attaches to cap. Examples: central, eccentric, lateral, absent"),
+    )
     consistency: str | None = Field(
         None,
         description="Internal texture. Examples: firm, fibrous, spongy, brittle, cartilaginous",
@@ -251,8 +257,7 @@ class ExtractedStemFeatures(BaseModel):
     base_color: str | None = Field(
         None,
         description=(
-            "Color specifically at stem base. "
-            "Examples: white, bluish, yellowish, staining red"
+            "Color specifically at stem base. Examples: white, bluish, yellowish, staining red"
         ),
     )
     basal_mycelium_color: str | None = Field(
@@ -268,6 +273,10 @@ class ExtractedStemFeatures(BaseModel):
             "Color left on fingers when stem is rubbed. "
             "Examples: yellow (Retiboletus ornatipes), none"
         ),
+    )
+    bruising_color: str | None = Field(
+        None,
+        description="Color change when stem is bruised or cut",
     )
     height_min_cm: float | None = Field(None, description="Minimum typical stem height in cm")
     height_max_cm: float | None = Field(None, description="Maximum typical stem height in cm")
@@ -297,6 +306,18 @@ class ExtractedVeilFeatures(BaseModel):
         description="Ring shape. Examples: pendant (skirt-like), ascending, flaring, fragile",
     )
     color: str | None = None
+    ring_position: str | None = Field(
+        None,
+        description="Ring position on stem. Examples: superior, median, inferior, apical",
+    )
+    ring_mobility: str | None = Field(
+        None,
+        description="Whether ring slides. Examples: fixed, movable",
+    )
+    ring_persistence: str | None = Field(
+        None,
+        description="Ring durability. Examples: persistent, fugacious, ring_zone",
+    )
 
     @model_validator(mode="before")
     @classmethod
@@ -342,6 +363,12 @@ class ExtractedFleshFeatures(BaseModel):
             "Examples: blue (Gyroporus cyanescens), red, none/unchanged"
         ),
     )
+    latex: str | None = Field(
+        None,
+        description=(
+            "Latex when cut. Examples: absent, white, white_to_yellow, blue, red, orange"
+        ),
+    )
     odor: str | None = Field(
         None,
         description=(
@@ -362,6 +389,14 @@ class ExtractedFleshFeatures(BaseModel):
             "Texture when handled/cut. "
             "Examples: firm, soft, brittle (snaps cleanly like Russula), insubstantial, watery"
         ),
+    )
+    hyphal_structure: str | None = Field(
+        None,
+        description="Cell type. Examples: homoiomerous, heteromerous",
+    )
+    cap_stem_consistency: str | None = Field(
+        None,
+        description=("Whether cap and stem flesh match. Examples: homogeneous, heterogeneous"),
     )
     quantity: str | None = Field(
         None,
@@ -389,12 +424,8 @@ class ExtractedSporeFeatures(BaseModel):
     length_max_um: float | None = Field(
         None, description="Maximum spore length in micrometres (µm)"
     )
-    width_min_um: float | None = Field(
-        None, description="Minimum spore width in micrometres (µm)"
-    )
-    width_max_um: float | None = Field(
-        None, description="Maximum spore width in micrometres (µm)"
-    )
+    width_min_um: float | None = Field(None, description="Minimum spore width in micrometres (µm)")
+    width_max_um: float | None = Field(None, description="Maximum spore width in micrometres (µm)")
     ornamentation: str | None = Field(
         None,
         description=(
@@ -435,8 +466,7 @@ class ExtractedMicroscopicFeatures(BaseModel):
     basidia_spore_count: str | None = Field(
         None,
         description=(
-            "Number of spores per basidium. "
-            "Examples: 4-spored, 2-spored, mixed 2- and 4-spored"
+            "Number of spores per basidium. Examples: 4-spored, 2-spored, mixed 2- and 4-spored"
         ),
     )
     cheilocystidia_shape: str | None = Field(
@@ -456,8 +486,7 @@ class ExtractedMicroscopicFeatures(BaseModel):
     pleurocystidia_shape: str | None = Field(
         None,
         description=(
-            "Shape of cystidia on gill faces. "
-            "Examples: fusoid-ventricose, metuloid, absent"
+            "Shape of cystidia on gill faces. Examples: fusoid-ventricose, metuloid, absent"
         ),
     )
     pleurocystidia_dims_um: str | None = Field(
@@ -518,8 +547,7 @@ class ExtractedChemicalReactions(BaseModel):
     FeSO4_flesh: str | None = Field(
         None,
         description=(
-            "Iron sulfate (FeSO₄) reaction on flesh. "
-            "Examples: blue-green, grey-green, negative"
+            "Iron sulfate (FeSO₄) reaction on flesh. Examples: blue-green, grey-green, negative"
         ),
     )
 
@@ -578,13 +606,6 @@ class ExtractedEcologicalFeatures(BaseModel):
             "Examples: 'lowland to montane', 'alpine zones', 'below 1000m'"
         ),
     )
-    growth_pattern: str | None = Field(
-        None,
-        description=(
-            "How fruiting bodies are arranged. "
-            "Examples: solitary, scattered, gregarious (in groups), clustered, trooping"
-        ),
-    )
     growth_position: str | None = Field(
         None,
         description=(
@@ -605,10 +626,123 @@ class ExtractedEcologicalFeatures(BaseModel):
     def coerce_null_lists(cls, data: dict) -> dict:
         if isinstance(data, dict):
             for field in (
-                "habitat_types", "associated_trees", "fruiting_seasons", "geographic_regions"
+                "habitat_types",
+                "associated_trees",
+                "fruiting_seasons",
+                "geographic_regions",
             ):
                 if data.get(field) is None:
                     data[field] = []
+        return data
+
+
+# ---------------------------------------------------------------------------
+# Grouped extraction schemas (2-pass pipeline)
+# ---------------------------------------------------------------------------
+
+
+class Pass1IdentityFeatures(BaseModel):
+    """Pass 1 — identity, taxonomy, body plan, safety (~18 fields)."""
+
+    scientific_name: str
+    species_epithet: str | None = None
+    common_names: list[str] = Field(default_factory=list)
+    synonyms: list[str] = Field(default_factory=list)
+    kingdom: str | None = None
+    phylum: str | None = None
+    order: str | None = None
+    family: str | None = None
+    genus: str | None = None
+    overall_body_form: str | None = None
+    overall_size_class: str | None = None
+    growth_habit: str | None = None
+    hymenium_type: str | None = None
+    edibility_status: str | None = None
+    known_toxins: list[str] = Field(default_factory=list)
+    known_lookalikes: list[str] = Field(default_factory=list)
+    extraction_notes: str | None = None
+
+    @model_validator(mode="before")
+    @classmethod
+    def coerce_null_lists(cls, data: dict) -> dict:
+        if isinstance(data, dict):
+            for field in ("common_names", "synonyms", "known_toxins", "known_lookalikes"):
+                if data.get(field) is None:
+                    data[field] = []
+        return data
+
+
+class Pass2CapFeatures(BaseModel):
+    """Pass 2 Group A — cap & surface (13 fields)."""
+
+    cap: ExtractedCapFeatures = Field(default_factory=ExtractedCapFeatures)
+
+
+class Pass2HymeniumFeatures(BaseModel):
+    """Pass 2 Group B — hymenium details (13 fields)."""
+
+    gills: ExtractedGillFeatures = Field(default_factory=ExtractedGillFeatures)
+    pores: ExtractedPoreFeatures = Field(default_factory=ExtractedPoreFeatures)
+    tubes: ExtractedTubeFeatures = Field(default_factory=ExtractedTubeFeatures)
+    spore_print_color: str | None = None
+
+    @model_validator(mode="before")
+    @classmethod
+    def coerce_null_nested(cls, data: dict) -> dict:
+        if isinstance(data, dict):
+            for field in ("gills", "pores", "tubes"):
+                if data.get(field) is None:
+                    data[field] = {}
+        return data
+
+
+class Pass2StemVeilFeatures(BaseModel):
+    """Pass 2 Group C — stem, veil & volva (26 fields)."""
+
+    stem: ExtractedStemFeatures = Field(default_factory=ExtractedStemFeatures)
+    veil: ExtractedVeilFeatures = Field(default_factory=ExtractedVeilFeatures)
+    volva: ExtractedVolvaFeatures = Field(default_factory=ExtractedVolvaFeatures)
+
+    @model_validator(mode="before")
+    @classmethod
+    def coerce_null_nested(cls, data: dict) -> dict:
+        if isinstance(data, dict):
+            for field in ("stem", "veil", "volva"):
+                if data.get(field) is None:
+                    data[field] = {}
+        return data
+
+
+class Pass2FleshChemFeatures(BaseModel):
+    """Pass 2 Group D — flesh & chemistry (15 fields)."""
+
+    flesh: ExtractedFleshFeatures = Field(default_factory=ExtractedFleshFeatures)
+    chemical: ExtractedChemicalReactions = Field(default_factory=ExtractedChemicalReactions)
+
+    @model_validator(mode="before")
+    @classmethod
+    def coerce_null_nested(cls, data: dict) -> dict:
+        if isinstance(data, dict):
+            for field in ("flesh", "chemical"):
+                if data.get(field) is None:
+                    data[field] = {}
+        return data
+
+
+class Pass2SporeEcoFeatures(BaseModel):
+    """Pass 2 Group E — spores, microscopic & ecology (29 fields)."""
+
+    spore: ExtractedSporeFeatures = Field(default_factory=ExtractedSporeFeatures)
+    microscopic: ExtractedMicroscopicFeatures = Field(default_factory=ExtractedMicroscopicFeatures)
+    ecology: ExtractedEcologicalFeatures = Field(default_factory=ExtractedEcologicalFeatures)
+
+    @model_validator(mode="before")
+    @classmethod
+    def coerce_null_nested(cls, data: dict) -> dict:
+        if isinstance(data, dict):
+            for field in ("spore", "microscopic", "ecology"):
+                if data.get(field) is None:
+                    data[field] = {}
         return data
 
 
@@ -625,15 +759,13 @@ class ExtractedSpeciesFeatures(BaseModel):
     species_epithet: str | None = Field(
         None,
         description=(
-            "The species part of the binomial only. "
-            "Example: for Amanita caesarea → 'caesarea'"
+            "The species part of the binomial only. Example: for Amanita caesarea → 'caesarea'"
         ),
     )
     common_names: list[str] = Field(
         default_factory=list,
         description=(
-            "Common names in any language. "
-            "Examples: [\"Caesar's mushroom\", 'Fly agaric', 'Cep']"
+            "Common names in any language. Examples: [\"Caesar's mushroom\", 'Fly agaric', 'Cep']"
         ),
     )
     synonyms: list[str] = Field(
@@ -651,22 +783,18 @@ class ExtractedSpeciesFeatures(BaseModel):
     order: str | None = Field(
         None,
         description=(
-            "Taxonomic order. "
-            "Examples: Agaricales, Boletales, Russulales, Cantharellales"
+            "Taxonomic order. Examples: Agaricales, Boletales, Russulales, Cantharellales"
         ),
     )
     family: str | None = Field(
         None,
         description=(
-            "Taxonomic family. "
-            "Examples: Amanitaceae, Boletaceae, Russulaceae, Cantharellaceae"
+            "Taxonomic family. Examples: Amanitaceae, Boletaceae, Russulaceae, Cantharellaceae"
         ),
     )
     genus: str | None = Field(
         None,
-        description=(
-            "Taxonomic genus. Examples: Amanita, Boletus, Russula, Cantharellus"
-        ),
+        description=("Taxonomic genus. Examples: Amanita, Boletus, Russula, Cantharellus"),
     )
 
     # Morphological
@@ -692,6 +820,14 @@ class ExtractedSpeciesFeatures(BaseModel):
     overall_size_class: str | None = Field(
         None,
         description="Relative size. One of: small, medium, large",
+    )
+    overall_body_form: str | None = Field(
+        None,
+        description=("Body plan. Examples: agaricoid, boletoid, gasteroid, tremelloid"),
+    )
+    growth_habit: str | None = Field(
+        None,
+        description=("Growth arrangement. Examples: solitary, scattered, gregarious, caespitose"),
     )
 
     # Ecological
@@ -737,9 +873,19 @@ class ExtractedSpeciesFeatures(BaseModel):
         # Coerce null nested objects to {} so sub-models get their defaults
         # (LLMs often return null for sections that don't apply, e.g. pores on a gill mushroom)
         for field in (
-            "cap", "hymenium", "gills", "pores", "tubes",
-            "stem", "veil", "volva", "flesh",
-            "spore", "microscopic", "chemical", "ecology",
+            "cap",
+            "hymenium",
+            "gills",
+            "pores",
+            "tubes",
+            "stem",
+            "veil",
+            "volva",
+            "flesh",
+            "spore",
+            "microscopic",
+            "chemical",
+            "ecology",
         ):
             if data.get(field) is None:
                 data[field] = {}
@@ -808,7 +954,6 @@ class LookalikeExplanation(BaseModel):
     )
     safety_warning: str = Field(
         description=(
-            "Safety note if any lookalikes are toxic or deadly. "
-            "Must be prominent and unambiguous."
+            "Safety note if any lookalikes are toxic or deadly. Must be prominent and unambiguous."
         )
     )

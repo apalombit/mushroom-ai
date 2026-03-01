@@ -20,12 +20,13 @@ MORPHOLOGICAL_FIELDS = [
     "cap.shape",                        # convex, broadly convex, flat, depressed, umbonate, etc.
     "cap.colors",                       # list of observed colors (fresh)
     "cap.color_faded",                  # color when dried/faded — e.g. buff, brownish
-    "cap.hygrophanous",                 # bool — changes color markedly with moisture loss
     "cap.color_pattern",                # uniform, darker center, two-toned, mottled, etc.
     "cap.surface_texture",              # velvety, slimy, smooth, fibrous, hairy-scaly, dry, etc.
+    "cap.surface_moisture",             # dry, viscid, glutinous, hygrophanous, etc.
     "cap.scales_or_warts",              # present/absent + description
     "cap.margin_type",                  # inrolled, wavy, even, striate/lined, etc.
     "cap.margin_lined_at_maturity",     # bool — lined/striate at margin with age (e.g. Laccaria)
+    "cap.bruising_color",               # color change on handling/damage
     "cap.central_depression",           # bool — depressed at disc
     "cap.diameter_min_cm",
     "cap.diameter_max_cm",
@@ -40,6 +41,7 @@ MORPHOLOGICAL_FIELDS = [
     "gills.color_with_age",
     "gills.thickness",                  # thin, thick — e.g. Laccaria thick gills
     "gills.texture",                    # waxy, brittle, normal
+    "gills.edge_texture",               # smooth, serrate, eroded, fimbriate
 
     # --- Pores / Tubes (if hymenium.type == pores) ---
     "pores.color",
@@ -54,11 +56,13 @@ MORPHOLOGICAL_FIELDS = [
     "stem.surface_texture",             # smooth, reticulate, fibrous, hairy, scaly, powdery
     "stem.reticulation",                # none | partial | full — key for boletes
     "stem.shape",                       # equal, club-shaped, tapered base, bulbous, swollen base
+    "stem.attachment_position",         # central, eccentric, lateral, absent
     "stem.consistency",                 # firm, fibrous, spongy, brittle
     "stem.hollow_or_solid",             # hollow | stuffed | solid
     "stem.base_color",
-    "stem.basal_mycelium_color",        # color of mycelium threads at base — e.g. lilac in Laccaria
+    "stem.basal_mycelium_color",        # mycelium color at base — e.g. lilac in Laccaria
     "stem.finger_stain_color",          # e.g. yellow stain from Retiboletus ornatipes
+    "stem.bruising_color",              # color change on bruising
     "stem.height_min_cm",
     "stem.height_max_cm",
     "stem.diameter_min_cm",
@@ -70,6 +74,9 @@ MORPHOLOGICAL_FIELDS = [
     "veil.cortina_present",             # bool — explicit flag; key differentiator vs. Cortinarius
     "veil.shape",
     "veil.color",
+    "veil.ring_position",               # superior, median, inferior, apical
+    "veil.ring_mobility",               # fixed, movable
+    "veil.ring_persistence",            # persistent, fugacious, ring_zone
 
     # --- Volva ---
     "volva.present",
@@ -80,9 +87,12 @@ MORPHOLOGICAL_FIELDS = [
     # --- Flesh ---
     "flesh.color",
     "flesh.bruising_color",
+    "flesh.latex",                      # absent, white, blue, red, orange, etc.
     "flesh.odor",
     "flesh.taste",                      # mild, bitter, acrid, farinaceous, not distinctive
     "flesh.texture",                    # firm, soft, brittle, insubstantial, watery
+    "flesh.hyphal_structure",           # homoiomerous, heteromerous
+    "flesh.cap_stem_consistency",       # homogeneous, heterogeneous
     "flesh.quantity",                   # insubstantial | thin | moderate | thick
 
     # --- Spore print ---
@@ -104,7 +114,7 @@ MORPHOLOGICAL_FIELDS = [
     "microscopic.basidia_spore_count",  # 4-spored, 2-spored, mixed — can differ within species
 
     # --- Microscopic: cystidia ---
-    "microscopic.cheilocystidia_shape",       # shape descriptor — narrowly cylindric, subclavate, etc.
+    "microscopic.cheilocystidia_shape",       # narrowly cylindric, subclavate, etc.
     "microscopic.cheilocystidia_dims_um",     # e.g. "25–65 x 4–12"
     "microscopic.pleurocystidia_shape",
     "microscopic.pleurocystidia_dims_um",
@@ -125,6 +135,8 @@ MORPHOLOGICAL_FIELDS = [
 
     # --- Overall ---
     "overall_size_class",               # small | medium | large
+    "overall_body_form",                # agaricoid, boletoid, gasteroid, tremelloid, etc.
+    "growth_habit",                     # solitary, scattered, gregarious, caespitose, connate
     "edibility_status",                 # edible | inedible | toxic | choice | unknown
     "known_lookalikes",
 ]
@@ -138,7 +150,6 @@ ECOLOGICAL_FIELDS = [
     "ecology.fruiting_months",          # e.g. "July–September", "late spring and summer"
     "ecology.geographic_regions",
     "ecology.altitude_notes",
-    "ecology.growth_pattern",           # solitary | scattered | gregarious | clustered
     "ecology.growth_position",          # terrestrial | lignicolous | coprophilous | etc.
     "ecology.microhabitat_notes",       # e.g. mossy ground, disturbed areas
 ]

@@ -9,8 +9,14 @@
 #   aliases:           { variant_wording: canonical_term }
 #   similarity_matrix: { "termA-termB": score }  (optional, 0.0-1.0)
 #
-# Sources: Wikipedia (Mycology glossary), MushroomExpert.com, NYBG Glossary,
-#          Mycology Start, Great Lakes Data Terms, field guide conventions.
+# Sources:
+#   - Senthilarasu & Kumaresan 2018 (CREAM Journal 8(5):501-555) [primary schema source]
+#   - Largent & Stuntz 1977 -- How to Identify Mushrooms to Genus I
+#   - Singer 1986 -- The Agaricales in Modern Taxonomy, 4th ed.
+#   - Lodge et al. 2004 -- Collecting and Describing Macrofungi
+#   - Snell & Dick 1971 -- A Glossary of Mycology (Harvard UP)
+#   - MushroomExpert.com (M. Kuo), PVMA Myco-Speak, mycologyst.art
+#   - Wikipedia Glossary of Mycology, Stipe (mycology)
 
 # =============================================================================
 #  HYMENIUM TYPE -- the single most diagnostic macro feature
@@ -24,7 +30,9 @@ hymenium_type:
     ridges: "Blunt, forking, vein-like folds that cannot be separated from the cap flesh (chanterelles)"
     pores: "Sponge-like openings on the cap underside, the mouths of vertical tubes (boletes, polypores)"
     teeth: "Hanging spine-like or tooth-like projections (Hydnum, Hericium)"
-    smooth: "No differentiated spore-bearing surface; spores produced internally or on a smooth surface (puffballs, earthstars)"
+    smooth: "Smooth, undifferentiated fertile surface with no structural differentiation (corticioid, resupinate fungi)"
+    gleba: "Enclosed internal spore mass not exposed until maturity; outer wall ruptures or degrades to release spores (puffballs, earthstars, stinkhorns)"
+    alveolate: "Deeply pitted or honeycomb-like fertile surface (Morchella, Gyromitra)"
   aliases:
     "lamellae": "gills"
     "false gills": "ridges"
@@ -32,10 +40,12 @@ hymenium_type:
     "tubes": "pores"
     "spines": "teeth"
     "spikes": "teeth"
-    "gleba": "smooth"
+    "internal spore mass": "gleba"
+    "powdery internal mass": "gleba"
+    "honeycomb surface": "alveolate"
+    "pitted surface": "alveolate"
   similarity_matrix:
-    # Forager-confusion likelihood: how often these get visually confused
-    "gills-ridges": 0.7      # classic chanterelle vs jack-o-lantern confusion
+    "gills-ridges": 0.7
     "gills-teeth": 0.15
     "gills-pores": 0.1
     "gills-smooth": 0.0
@@ -45,6 +55,8 @@ hymenium_type:
     "pores-teeth": 0.1
     "pores-smooth": 0.0
     "teeth-smooth": 0.0
+    "gleba-smooth": 0.1
+    "alveolate-pores": 0.1
 
 # =============================================================================
 #  OVERALL BODY FORM -- the broadest macro character
@@ -65,6 +77,7 @@ overall_body_form:
     corticioid: "Crust-like, flat against substrate, resupinate"
     secotioid: "Intermediate between agaricoid and gasteroid; cap may not fully expand"
     hypogeous: "Fruiting underground (truffles, false truffles)"
+    tremelloid: "Gelatinous, jelly-like fruiting body of variable and irregular form (Tremella, Auricularia, Dacryopinax)"
   aliases:
     "mushroom-shaped": "agaricoid"
     "classic mushroom": "agaricoid"
@@ -86,6 +99,9 @@ overall_body_form:
     "tooth fungus": "hydnoid"
     "truffle": "hypogeous"
     "truffle-like": "hypogeous"
+    "jelly fungus": "tremelloid"
+    "jelly-like body": "tremelloid"
+    "ear fungus": "tremelloid"
   similarity_matrix:
     "agaricoid-cantharelloid": 0.7
     "agaricoid-boletoid": 0.6
@@ -95,6 +111,7 @@ overall_body_form:
     "gasteroid-hypogeous": 0.4
     "hydnoid-cantharelloid": 0.3
     "clavarioid-corticioid": 0.2
+    "corticioid-tremelloid": 0.2
 
 # =============================================================================
 #  CAP SHAPE
@@ -103,12 +120,14 @@ cap_shape:
   description: >
     The overall shape of the pileus (cap) in profile. Shape often changes with
     maturity -- the canonical value should represent the typical mature form.
+    Source: Senthilarasu & Kumaresan 2018 (CREAM).
   canonical_values:
     convex: "Broadly rounded, dome-shaped"
-    flat: "Plane, horizontally spread with little curvature"
+    flat: "Plane, horizontally spread with little curvature (applanate)"
     conical: "Cone-shaped, sharply pointed or narrowing upward"
     campanulate: "Bell-shaped; taller than wide, rounded at apex"
-    umbonate: "Flat or convex with a distinct central knob (umbo)"
+    parabolic: "Taller than wide with a smoothly rounded, regular curved apex; not sharply pointed (as conic) and not bell-curved (as campanulate)"
+    umbonate: "Flat or convex with a distinct central knob or bump (umbo)"
     depressed: "Sunken or concave at the center, raised at margins"
     infundibuliform: "Funnel-shaped; deeply depressed center with upturned margins"
     irregular: "No consistent geometric shape; wavy, lobed, or asymmetric"
@@ -123,7 +142,7 @@ cap_shape:
     "convex to broadly convex": "convex"
     "convex to spherical when young, becoming broadly convex or nearly flat in age": "convex"
     "hemispherical then plano-convex": "convex"
-    "plano-convex": "flat"
+    "plano-convex": "convex"
     "plane": "flat"
     "applanate": "flat"
     "flattened": "flat"
@@ -132,11 +151,13 @@ cap_shape:
     "conic": "conical"
     "conic to broadly conical": "conical"
     "bell-shaped": "campanulate"
-    "umbrella-shaped": "flat"
+    "umbrella-shaped": "convex"
     "egg-shaped": "ovoid"
     "bullet-shaped": "ovoid"
+    "narrowly parabolic": "parabolic"
+    "broadly parabolic": "parabolic"
   similarity_matrix:
-    "convex-flat": 0.7         # common maturation progression
+    "convex-flat": 0.7
     "convex-campanulate": 0.5
     "convex-umbonate": 0.6
     "convex-globose": 0.5
@@ -145,6 +166,8 @@ cap_shape:
     "flat-infundibuliform": 0.4
     "depressed-infundibuliform": 0.8
     "conical-campanulate": 0.7
+    "conical-parabolic": 0.7
+    "campanulate-parabolic": 0.6
     "conical-umbonate": 0.5
     "campanulate-ovoid": 0.5
     "globose-ovoid": 0.7
@@ -163,7 +186,7 @@ color_palette:
     yellow: "Clear yellow, lemon, golden"
     orange: "True orange to amber"
     red: "Bright red, scarlet, vermillion"
-    pink: "Light red, salmon, rose"
+    pink: "Light red, salmon, rose, vinaceous (dull pinkish wine-red)"
     brown: "Medium to dark brown, chestnut, hazelnut"
     tan: "Light brown, pale brown, sandy, ochre"
     grey: "Neutral grey, ash"
@@ -198,7 +221,6 @@ color_palette:
     "yellowish orange": "orange"
     "yellowish-orange": "orange"
     "yellow-orange": "orange"
-    "yellow-orange": "orange"
     "reddish orange": "orange"
     "brownish orange": "orange"
     "amber": "orange"
@@ -215,6 +237,7 @@ color_palette:
     "pinkish": "pink"
     "rose": "pink"
     "flesh-colored": "pink"
+    "vinaceous": "pink"
     # Brown family
     "brownish": "brown"
     "dark brown": "brown"
@@ -233,6 +256,8 @@ color_palette:
     "yellow-brown": "brown"
     "grey-brown": "brown"
     "orangish brown": "brown"
+    "ferruginous": "brown"
+    "rufous": "brown"
     # Tan/pale brown family
     "pale brown": "tan"
     "light brown": "tan"
@@ -240,6 +265,7 @@ color_palette:
     "sandy": "tan"
     "beige": "tan"
     "pale olive-buff": "tan"
+    "fawn": "tan"
     # Grey family
     "greyish": "grey"
     "grayish": "grey"
@@ -247,6 +273,7 @@ color_palette:
     "pale grey": "grey"
     "ash": "grey"
     "lead": "grey"
+    "fuliginous": "grey"
     # Olive family
     "olivaceous": "olive"
     "olive-buff": "olive"
@@ -260,13 +287,11 @@ color_palette:
     "lavender": "purple"
     "mauve": "purple"
     "deep purple": "purple"
-    "vinaceous": "purple"
     # Blue family
     "indigo": "blue"
     "bluish": "blue"
     # Black family
     "blackish": "black"
-    "dark": "black"
   similarity_matrix:
     "white-cream": 0.8
     "yellow-orange": 0.7
@@ -282,7 +307,6 @@ color_palette:
     "purple-pink": 0.5
     "purple-blue": 0.6
     "olive-green": 0.6
-    "olive-brown": 0.5
     "black-brown": 0.4
     "black-grey": 0.5
 
@@ -307,6 +331,7 @@ bruising_color:
     pink: "Turning pink or salmon"
     grey: "Turning grey or greyish"
     green: "Turning green (distinct from blue-green)"
+    lilac: "Turning lilac or pale violet (some Lactarius, Laccaria amethystina context)"
   aliases:
     "no change": "none"
     "unchanged": "none"
@@ -335,6 +360,9 @@ bruising_color:
     "stains yellow": "yellow"
     "pinkish": "pink"
     "greying": "grey"
+    "violet": "lilac"
+    "purplish": "lilac"
+    "turning lilac": "lilac"
   similarity_matrix:
     "blue-blue_green": 0.7
     "blue-black": 0.4
@@ -345,7 +373,9 @@ bruising_color:
     "brown-orange": 0.4
     "yellow-orange": 0.5
     "grey-black": 0.5
-    "none-brown": 0.1     # very faint browning can be ambiguous with "none"
+    "none-brown": 0.1
+    "lilac-pink": 0.5
+    "lilac-grey": 0.3
 
 # =============================================================================
 #  GILL ATTACHMENT
@@ -354,12 +384,15 @@ gill_attachment:
   description: >
     How the gills connect to the stem. A primary diagnostic feature for gilled
     mushrooms, often the first character checked after confirming gills are present.
+    Source: Senthilarasu & Kumaresan 2018 (CREAM), Largent & Stuntz 1977.
   canonical_values:
-    free: "Gills do not reach or touch the stem"
-    adnate: "Gills broadly attached to the stem at full width"
+    remote: "Gills conspicuously separated from the stem with a wide gap, not touching at all (broader separation than free; Amanita, Volvariella)"
+    free: "Gills do not reach or touch the stem; narrow clear gap"
     adnexed: "Gills narrowly attached, curving up slightly before meeting stem"
-    decurrent: "Gills run down the stem below the cap-stem junction"
+    adnate: "Gills broadly attached to the stem at full gill width"
     sinuate: "Gills notched or scooped out just before attaching to stem (also: emarginate)"
+    subdecurrent: "Gills running slightly down the stem below the cap-stem junction; less than fully decurrent"
+    decurrent: "Gills running conspicuously down the stem below the cap-stem junction"
     seceding: "Initially attached but breaking away from stem with age"
   aliases:
     "attached": "adnate"
@@ -368,17 +401,18 @@ gill_attachment:
     "adnate to adnexed": "adnexed"
     "adnate to adnexed or seceding to free": "seceding"
     "adnate to decurrent": "decurrent"
-    "subdecurrent": "decurrent"
     "emarginate": "sinuate"
     "notched": "sinuate"
   similarity_matrix:
+    "remote-free": 0.6
     "free-adnexed": 0.4
     "adnate-adnexed": 0.8
-    "adnate-decurrent": 0.5
     "adnate-sinuate": 0.6
     "adnexed-sinuate": 0.5
-    "decurrent-adnate": 0.5
+    "adnate-subdecurrent": 0.6
+    "subdecurrent-decurrent": 0.7
     "free-sinuate": 0.3
+    "remote-adnexed": 0.2
 
 # =============================================================================
 #  GILL SPACING
@@ -387,6 +421,7 @@ gill_spacing:
   description: >
     The density of gills around the cap margin. Assessed by counting gills
     per centimeter at the cap margin or by visual impression.
+    Source: Senthilarasu & Kumaresan 2018 (CREAM), Largent & Stuntz 1977.
   canonical_values:
     crowded: "Gills very close together, many per cm"
     close: "Gills moderately spaced, typical density"
@@ -408,117 +443,240 @@ gill_spacing:
     "close-distant": 0.4
 
 # =============================================================================
+#  GILL EDGE TEXTURE  [new feature]
+# =============================================================================
+gill_edge_texture:
+  description: >
+    The character of the gill margin (lower free edge), best seen with a
+    hand lens or under a dissecting microscope. Diagnostic at species level
+    in some Lactarius and Russula.
+    Source: Senthilarasu & Kumaresan 2018 (CREAM), Largent & Stuntz 1977.
+  canonical_values:
+    smooth: "Gill edge entire and without interruption or texture"
+    serrate: "Gill edge tooth-like with sharp, regular projections"
+    eroded: "Gill edge irregularly torn or tattered"
+    undulating: "Gill edge broadly and irregularly wavy"
+    fimbriate: "Gill edge with fine hair-like or thread-like fringe"
+  aliases:
+    "entire": "smooth"
+    "even": "smooth"
+    "toothed": "serrate"
+    "saw-edged": "serrate"
+    "ragged": "eroded"
+    "torn": "eroded"
+    "wavy": "undulating"
+    "fringed": "fimbriate"
+    "hairy edge": "fimbriate"
+  similarity_matrix:
+    "smooth-undulating": 0.4
+    "serrate-eroded": 0.5
+    "eroded-fimbriate": 0.4
+    "smooth-serrate": 0.2
+
+# =============================================================================
 #  STEM SHAPE
 # =============================================================================
 stem_shape:
   description: >
-    The overall form of the stipe (stem) in profile. Important for
-    distinguishing genera (e.g. bulbous base typical of Amanita).
+    The overall form and cross-section of the stipe (stem) in profile.
+    Important for distinguishing genera (e.g. bulbous base typical of Amanita).
+    Note: where the stipe attaches to the cap (central/eccentric/lateral) is
+    a separate feature; see stipe_attachment_position.
+    Source: Senthilarasu & Kumaresan 2018 (CREAM), Largent & Stuntz 1977.
   canonical_values:
-    equal: "Uniform diameter from base to apex (cylindrical)"
-    clavate: "Club-shaped; thicker at the base, tapering upward"
-    bulbous: "Distinctly swollen or bulb-like at the base"
-    tapering: "Narrowing toward the base"
-    ventricose: "Swollen in the middle, narrowing at both ends"
-    rooting: "Base extends into a root-like structure below ground"
-    slender: "Thin and elongated relative to cap size"
+    equal: "Uniform diameter from base to apex (cylindrical, terete)"
+    clavate: "Club-shaped; gradually thickening toward the base"
+    obclavate: "Widest at the apex, gradually narrowing toward the base (inverted club)"
+    bulbous: "Distinctly and abruptly swollen or bulb-like at the base"
+    attenuated: "Diameter gradually reduced toward the apex and/or base (tapering)"
+    ventricose: "Swollen in the middle, narrowing at both apex and base"
+    compressed: "Laterally flattened, oval or elliptic in cross-section rather than round"
+    rooting: "Base extending into a pseudorrhiza, a root-like structure penetrating the substrate"
   aliases:
     "cylindrical": "equal"
     "cylindric": "equal"
     "subcylindric": "equal"
     "club-shaped": "clavate"
-    "tapered base": "tapering"
+    "tapering": "attenuated"
+    "tapered base": "attenuated"
+    "attenuated toward base": "attenuated"
+    "attenuated toward apex": "attenuated"
     "equal to tapering": "equal"
     "slightly swollen at the base": "bulbous"
-    "inverted cone": "tapering"
+    "abruptly bulbous": "bulbous"
+    "inverted cone": "obclavate"
+    "flattened stipe": "compressed"
+    "radicated": "rooting"
+    "pseudorrhiza": "rooting"
+    "slender": "equal"
   similarity_matrix:
     "equal-clavate": 0.5
-    "equal-tapering": 0.5
-    "equal-slender": 0.7
+    "equal-attenuated": 0.5
     "clavate-bulbous": 0.6
-    "tapering-slender": 0.5
+    "equal-compressed": 0.4
+    "obclavate-clavate": 0.4
+    "ventricose-equal": 0.3
 
 # =============================================================================
-#  SURFACE TEXTURE -- shared vocabulary for cap and stem surfaces
+#  CAP SURFACE MOISTURE  [new feature — split from surface_texture]
+# =============================================================================
+cap_surface_moisture:
+  description: >
+    The wetness and stickiness of the cap surface. A distinct dimension from
+    surface texture (fibril/scale architecture). Best assessed on fresh specimens
+    in natural conditions; viscidity often disappears on drying.
+    Source: Senthilarasu & Kumaresan 2018 (CREAM), MushroomExpert.com.
+  canonical_values:
+    dry: "Not sticky, matte or powdery finish, unchanged by wetting"
+    moist: "Slightly damp-looking, hygroscopic but not sticky or slimy"
+    subviscid: "Very slightly sticky, barely perceptible on the fingertip"
+    viscid: "Distinctly sticky or slimy when touched in moist conditions; gelatinous surface layer present"
+    glutinous: "Heavily coated with a thick, liquid glue-like gelatinous substance"
+    gelatinous: "Surface with a thickened jelly-like layer (typical of some Suillus, jelly fungi)"
+    hygrophanous: "Changes color conspicuously as moisture evaporates; markedly darker when wet, paler when dry"
+  aliases:
+    "slimy": "glutinous"
+    "sticky": "viscid"
+    "tacky": "viscid"
+    "glassy": "viscid"
+    "slippery": "viscid"
+    "slightly sticky": "subviscid"
+    "watery": "moist"
+    "damp": "moist"
+    "velvety": "dry"
+    "matt": "dry"
+    "matte": "dry"
+    "not sticky": "dry"
+    "changing color with moisture": "hygrophanous"
+    "fading on drying": "hygrophanous"
+    "water-soaked": "hygrophanous"
+  similarity_matrix:
+    "dry-moist": 0.5
+    "moist-subviscid": 0.6
+    "subviscid-viscid": 0.7
+    "viscid-glutinous": 0.7
+    "glutinous-gelatinous": 0.6
+    "moist-hygrophanous": 0.4
+    "dry-viscid": 0.1
+
+# =============================================================================
+#  SURFACE TEXTURE -- visual and tactile fibril/scale architecture
 # =============================================================================
 surface_texture:
   description: >
-    The tactile and visual texture of the cap or stem surface. Shared
-    vocabulary used for both cap.surface_texture and stem.surface_texture.
+    The tactile and visual architecture of the cap or stem surface, describing
+    fibril, scale, hair, and pit structures. Shared vocabulary for both
+    cap.surface_texture and stem.surface_texture.
+    Note: wetness and stickiness are a separate dimension; see cap_surface_moisture.
+    Source: Senthilarasu & Kumaresan 2018 (CREAM), Largent & Stuntz 1977.
   canonical_values:
-    smooth: "Glabrous, without any texture or ornamentation"
-    viscid: "Slimy or sticky when moist, with a gelatinous surface layer"
-    dry: "Not sticky, matte finish"
-    fibrillose: "Covered with fine thread-like fibers (fibrils)"
-    scaly: "Bearing distinct scales (squamules or larger scales)"
-    velvety: "Finely pubescent, like velvet to the touch"
-    silky: "With a silky sheen, fine appressed fibrils"
-    warty: "Covered with wart-like projections (e.g. Amanita veil remnants)"
-    reticulate: "With a net-like pattern (especially on bolete stems)"
-    powdery: "Covered with a fine dust-like or pruinose coating"
-    pitted: "Surface with small depressions or pits (e.g. Morchella)"
-    wrinkled: "Surface with folds or wrinkles, rugose"
+    smooth: "No surface fibrils, scales, hairs, pits or ornamentation (glabrous)"
+    fibrillose: "Covered with fine thread-like fibers (fibrils) arranged radially or irregularly"
+    silky: "Fine, closely appressed fibrils giving a silky or satin-like sheen (sericeous)"
+    velvety: "Compact, short, fine, soft hairs giving a velvet-like feel (velutinose, pubescent)"
+    tomentose: "Densely matted, woolly or felt-like layer of interwoven fibrils"
+    floccose: "Loose, cottony tufts or patches on surface; more open and fluffy than tomentose"
+    scaly: "Bearing distinct scales, either appressed (squamulose) or erect (imbricate)"
+    squarrose: "Scales or fibril-tips erect, spreading, or recurved outward, especially prominent at the disc"
+    warty: "Covered with discrete rounded wart-like projections (e.g. Amanita veil remnants on cap)"
+    reticulate: "With a raised net-like pattern of ridges (especially on bolete stems)"
+    pruinose: "Covered with very fine powder, appearing frosted or dusted with flour (pulverulent)"
+    areolate: "Surface cracked into irregular block-like patches, resembling dried mud"
+    pitted: "Surface with small rounded depressions or pits (e.g. Morchella cap)"
+    wrinkled: "Surface with broad folds or longitudinal ridges (rugose)"
   aliases:
     "bald": "smooth"
     "glabrous": "smooth"
     "more or less bald": "smooth"
     "bald or finely silky": "smooth"
-    "slimy": "viscid"
-    "sticky": "viscid"
-    "glutinous": "viscid"
     "hairy": "fibrillose"
     "finely hairy": "fibrillose"
-    "fibrous": "fibrillose"
     "silky-fibrillose": "silky"
+    "appressed-fibrillose": "silky"
+    "sericeous": "silky"
     "finely velvety": "velvety"
-    "tomentose": "velvety"
+    "velutinose": "velvety"
+    "pubescent": "velvety"
+    "densely woolly": "tomentose"
+    "felted": "tomentose"
+    "matted-fibrillose": "tomentose"
     "squamulose": "scaly"
     "squamose": "scaly"
+    "imbricate-scaly": "scaly"
+    "appressed-squamulose": "scaly"
+    "recurved-squamulose": "squarrose"
     "smooth to finely silky or a little scaly": "smooth"
-    "spiny": "warty"
-    "pruinose": "powdery"
-    "farinose": "powdery"
+    "powdery": "pruinose"
+    "farinose": "pruinose"
+    "pulverulent": "pruinose"
+    "cracked": "areolate"
+    "rugose": "wrinkled"
   similarity_matrix:
-    "smooth-dry": 0.7
     "smooth-silky": 0.7
     "smooth-velvety": 0.4
-    "viscid-smooth": 0.3
     "fibrillose-silky": 0.7
     "fibrillose-scaly": 0.5
-    "scaly-warty": 0.5
+    "fibrillose-tomentose": 0.4
+    "tomentose-floccose": 0.6
+    "scaly-squarrose": 0.5
+    "scaly-warty": 0.4
     "velvety-silky": 0.6
-    "powdery-velvety": 0.4
+    "pruinose-velvety": 0.4
+    "areolate-wrinkled": 0.3
+    "pitted-areolate": 0.3
 
 # =============================================================================
-#  CAP MARGIN TYPE
+#  CAP MARGIN
 # =============================================================================
 cap_margin:
   description: >
-    The character of the cap edge. Useful for distinguishing species within
-    a genus and indicating maturity stage.
+    The character of the cap edge. Encompasses both the direction the margin
+    curves (inrolled, incurved, decurved, uplifted) and the surface/outline
+    character of the edge itself (entire, striate, appendiculate, etc.).
+    Useful for distinguishing species within a genus and indicating maturity.
+    Source: Senthilarasu & Kumaresan 2018 (CREAM), Largent & Stuntz 1977.
   canonical_values:
-    inrolled: "Margin curved inward toward the gills (involute)"
-    even: "Smooth and regular, not distinctly modified"
-    wavy: "Undulating or irregularly curved margin"
-    striate: "With fine radial lines visible at the margin"
-    appendiculate: "With hanging remnants of the partial veil at margin edge"
-    split: "Cracked or torn with age"
-    lobed: "Divided into broad rounded sections"
-    fringed: "With fine frayed or hairy edge"
+    inrolled: "Margin rolled inward toward itself; the very tip curls back under (involute)"
+    incurved: "Margin curved toward the gills but not rolled back on itself; less extreme than inrolled"
+    decurved: "Margin curving downward toward the stipe, between incurved and plane"
+    entire: "Margin smooth, regular, and uninterrupted in outline"
+    wavy: "Margin broadly and irregularly undulating (undulate, crenulate)"
+    striate: "Margin with fine radial lines or grooves due to underlying gill positions (translucent-striate when wet)"
+    appendiculate: "Margin with hanging remnants of the partial veil at the edge"
+    rimose: "Margin with radial splits or cracks running inward toward the disc"
+    split: "Margin cracked or torn irregularly with age"
+    lobed: "Margin divided into broad, rounded sections"
+    fringed: "Margin with fine frayed or hair-like appendages (ciliate)"
+    uplifted: "Margin turned upward with age (upturned, revolute)"
   aliases:
-    "incurved": "inrolled"
     "rolled under": "inrolled"
     "involute": "inrolled"
+    "rolled inward": "inrolled"
     "irregularly wavy": "wavy"
+    "undulate": "wavy"
     "knobbly": "wavy"
+    "crenulate": "wavy"
+    "even": "entire"
+    "smooth margin": "entire"
+    "translucent-striate": "striate"
+    "pellucid-striate": "striate"
     "ragged": "split"
     "frayed": "fringed"
+    "ciliate": "fringed"
+    "upturned": "uplifted"
+    "revolute": "uplifted"
+    "turned up": "uplifted"
   similarity_matrix:
-    "inrolled-even": 0.4
-    "even-wavy": 0.5
+    "inrolled-incurved": 0.7
+    "incurved-decurved": 0.6
+    "decurved-entire": 0.5
+    "entire-wavy": 0.5
     "wavy-lobed": 0.6
-    "striate-even": 0.5
-    "split-fringed": 0.5
+    "striate-entire": 0.5
+    "rimose-split": 0.7
+    "split-fringed": 0.4
+    "inrolled-entire": 0.3
+    "uplifted-entire": 0.4
 
 # =============================================================================
 #  STEM INTERIOR
@@ -527,19 +685,49 @@ stem_interior:
   description: >
     Whether the stem is hollow, solid, or intermediate. Checked by cutting
     the stem lengthwise. Diagnostic for many genera.
+    Source: Senthilarasu & Kumaresan 2018 (CREAM), MushroomExpert.com.
   canonical_values:
-    hollow: "Completely empty inside"
+    hollow: "Completely empty inside with no flesh in the central canal"
     solid: "Firm flesh throughout, no cavity"
-    stuffed: "Filled with soft pith that may become hollow with age"
+    stuffed: "Filled with soft pithy or cottony tissue that may become hollow with age"
   aliases:
-    "fistoloso": "hollow"
     "solid to stuffed": "stuffed"
     "solid or pithy-hollow": "stuffed"
     "stuffed then hollow": "stuffed"
+    "pithy": "stuffed"
+    "spongy inside": "stuffed"
   similarity_matrix:
     "hollow-stuffed": 0.5
     "stuffed-solid": 0.5
     "hollow-solid": 0.0
+
+# =============================================================================
+#  STIPE ATTACHMENT POSITION  [new feature]
+# =============================================================================
+stipe_attachment_position:
+  description: >
+    Where the stipe attaches to the underside of the cap. Lateral attachment
+    is diagnostic for Pleurotus, Crepidotus, Panus, and other genera growing
+    on wood or bark. Absent indicates a sessile (stalkless) fruiting body.
+    Source: Senthilarasu & Kumaresan 2018 (CREAM).
+  canonical_values:
+    central: "Stipe attached at the geometric center of the cap"
+    eccentric: "Stipe attached off-center, between the center and the margin"
+    lateral: "Stipe attached at or very close to the cap margin"
+    absent: "No stipe present; cap attached directly to the substrate (sessile)"
+  aliases:
+    "centrally attached": "central"
+    "off-center": "eccentric"
+    "off-centre": "eccentric"
+    "excentric": "eccentric"
+    "side-attached": "lateral"
+    "stemless": "absent"
+    "sessile": "absent"
+    "no stem": "absent"
+  similarity_matrix:
+    "central-eccentric": 0.5
+    "eccentric-lateral": 0.5
+    "central-lateral": 0.1
 
 # =============================================================================
 #  FLESH ODOR
@@ -548,19 +736,27 @@ flesh_odor:
   description: >
     The smell of fresh flesh when cut or crushed. One of the most important
     field characters, especially for Russulaceae, Agaricus, and Tricholoma.
+    Source: Largent & Stuntz 1977, PVMA Myco-Speak, MushroomExpert.com.
   canonical_values:
     none: "No distinctive odor, or neutral/mushroomy"
     pleasant: "Agreeable but non-specific pleasant smell"
-    fruity: "Fruit-like aroma (apricot, plum, etc.)"
-    farinaceous: "Smell of fresh flour, raw pastry, or cucumber rind"
+    fruity: "Fruit-like aroma (apricot, plum, banana)"
+    farinaceous: "Smell of fresh flour, raw pastry, or cucumber rind (mealy)"
     anise: "Anise or licorice-like aroma"
+    garlic: "Garlic or onion-like smell (alliaceous; Marasmius scorodonius, some Mycena)"
     phenolic: "Chemical, ink-like, carbolic acid smell"
+    coal_tar: "Coal-tar or creosote-like smell; typically accompanied by yellowing flesh on rubbing (Agaricus xanthodermus -- safety-critical discriminator)"
     raphanoid: "Radish-like or turnip-like smell"
     fishy: "Fish-like, trimethylamine odor"
     sweet: "Honey, maple, or generic sweet smell"
     earthy: "Soil-like, humus, or petrichor-like smell"
-    unpleasant: "Foul, fetid, or otherwise objectionable odor"
     almond: "Bitter almond or marzipan scent"
+    turpentine: "Resinous, turpentine or pine-resin-like smell (Tricholoma sulphureum, some Lactarius)"
+    iodine: "Iodine or medicinal smell (some Russula, some Amanita)"
+    rancid: "Rancid, stale fat or grease smell (some Lactarius, Tricholoma rancida)"
+    coconut: "Coconut or tropical sweet smell (some Hebeloma)"
+    chlorine: "Bleach or chlorine-like smell (some Tricholoma, some Clitocybe)"
+    unpleasant: "Foul, fetid, or otherwise objectionable odor not matching other categories"
   aliases:
     "not distinctive": "none"
     "mild": "none"
@@ -575,6 +771,12 @@ flesh_odor:
     "similar to that of almond extract or marzipan": "almond"
     "mealy": "farinaceous"
     "cucumber": "farinaceous"
+    "alliaceous": "garlic"
+    "onion-like": "garlic"
+    "turnip-like": "raphanoid"
+    "resinous": "turpentine"
+    "medicinal": "iodine"
+    "bleach-like": "chlorine"
     "unpleasant rotten": "unpleasant"
     "foul": "unpleasant"
     "fetid": "unpleasant"
@@ -585,8 +787,13 @@ flesh_odor:
     "fruity-pleasant": 0.5
     "farinaceous-earthy": 0.3
     "anise-sweet": 0.3
+    "phenolic-coal_tar": 0.6
     "phenolic-unpleasant": 0.5
     "almond-sweet": 0.4
+    "garlic-unpleasant": 0.3
+    "turpentine-unpleasant": 0.3
+    "rancid-unpleasant": 0.5
+    "iodine-phenolic": 0.4
 
 # =============================================================================
 #  FLESH TASTE
@@ -595,14 +802,18 @@ flesh_taste:
   description: >
     The taste of fresh flesh (tiny nibble and spit). Critical for Russula
     and Lactarius identification. Never swallow when taste-testing.
+    Source: Largent & Stuntz 1977, MushroomExpert.com.
   canonical_values:
     mild: "No distinctive or strong taste"
     bitter: "Distinctly bitter"
-    acrid: "Sharp, peppery, burning sensation on tongue"
+    acrid: "Sharp, peppery, burning sensation on tongue (Russula, hot Lactarius)"
+    acidic: "Sour or tart taste (some Russula species)"
     sweet: "Noticeably sweet"
     farinaceous: "Mealy, flour-like taste"
     nutty: "Nut-like, pleasant savory taste"
-    unpleasant: "Disagreeable taste, not further specified"
+    raphanoid: "Radish-like or sharp vegetable taste (some Russula, some Lepiota)"
+    astringent: "Drying, puckering, tannin-like sensation on the tongue (some Cortinarius)"
+    unpleasant: "Disagreeable taste not further specified"
   aliases:
     "not distinctive": "mild"
     "mildly fungine": "mild"
@@ -616,12 +827,19 @@ flesh_taste:
     "burning": "acrid"
     "mealy": "farinaceous"
     "sweetish": "sweet"
+    "sour": "acidic"
+    "tart": "acidic"
+    "radish-like": "raphanoid"
+    "puckering": "astringent"
   similarity_matrix:
     "mild-nutty": 0.5
     "mild-sweet": 0.4
     "bitter-unpleasant": 0.5
     "acrid-bitter": 0.3
     "acrid-unpleasant": 0.5
+    "acidic-acrid": 0.3
+    "raphanoid-acrid": 0.4
+    "astringent-bitter": 0.4
 
 # =============================================================================
 #  FLESH TEXTURE
@@ -629,15 +847,18 @@ flesh_taste:
 flesh_texture:
   description: >
     The consistency of the flesh when cut or broken. Diagnostic for some
-    groups (e.g. brittle flesh is characteristic of Russulaceae).
+    groups (e.g. brittle chalk-snap flesh is characteristic of Russulaceae).
+    Source: Senthilarasu & Kumaresan 2018 (CREAM), MushroomExpert.com.
   canonical_values:
-    firm: "Dense, holds shape when pressed"
+    firm: "Dense, holds shape when pressed (meaty)"
     soft: "Easily compressed, yielding"
-    brittle: "Snaps cleanly like chalk (granular, not fibrous)"
+    brittle: "Snaps cleanly like chalk without fibrous tearing (granular; Russulaceae)"
     fragile: "Very thin, easily damaged or crumbled"
     fibrous: "Stringy, tears into fibers rather than breaking cleanly"
-    cartilaginous: "Tough, rubbery, flexible like cartilage"
-    waxy: "Smooth, slightly translucent consistency"
+    cartilaginous: "Tough, rubbery, flexible like cartilage; bends considerably before breaking"
+    waxy: "Smooth, slightly greasy or translucent consistency (Hygrophorus, Hygrocybe)"
+    gelatinous: "Jelly-like, soft and elastic or translucent (some Cortinarius, Suillus, Tremella)"
+    woody: "Very hard, wood-like and resistant to breaking (perennial polypores, bracket fungi)"
   aliases:
     "meaty": "firm"
     "thick": "firm"
@@ -647,12 +868,19 @@ flesh_texture:
     "insubstantial": "fragile"
     "insubstantial in cap, fibrous in stem": "fragile"
     "full, fairly firm": "firm"
+    "rubbery": "cartilaginous"
+    "leathery": "cartilaginous"
+    "jelly-like": "gelatinous"
+    "hard": "woody"
   similarity_matrix:
     "firm-fibrous": 0.5
     "soft-fragile": 0.6
     "brittle-fragile": 0.6
     "firm-cartilaginous": 0.4
     "waxy-soft": 0.4
+    "gelatinous-soft": 0.4
+    "woody-firm": 0.3
+    "cartilaginous-woody": 0.3
 
 # =============================================================================
 #  FLESH HYPHAL STRUCTURE (microscopic)
@@ -700,6 +928,60 @@ flesh_cap_stem_consistency:
     "homogeneous-heterogeneous": 0.0
 
 # =============================================================================
+#  SPORE PRINT COLOR  [new feature]
+# =============================================================================
+spore_print_color:
+  description: >
+    The color of a mass of deposited spores on paper. One of the single most
+    important field identification characters. Collected by placing the cap
+    gill-side down on white and dark paper for several hours. Canonical values
+    represent genus-level groupings.
+    NOTE: 'ochre' here means the cinnamon-to-rust-brown range characteristic of
+    Cortinarius and related genera -- not the pale sandy-tan meaning ochre carries
+    in the general color_palette feature. Do not cross-normalize these two features.
+    Source: Largent & Stuntz 1977, Lodge et al. 2004, MushroomExpert.com.
+  canonical_values:
+    white: "White to whitish spore deposit (Amanita, Tricholoma, Lepiota, Marasmius)"
+    cream: "Cream, buff, or pale yellow spore deposit (Cantharellus, some Russula)"
+    pink: "Pink, salmon, or flesh-colored spore deposit (Pluteus, Entoloma, Clitopilus)"
+    ochre: "Ochre, rust, or cinnamon-brown spore deposit (Cortinarius, Pholiota, Inocybe)"
+    brown: "Medium to dark brown spore deposit (Agaricus, Galerina, some Boletus)"
+    purple_brown: "Purple-brown, chocolate, or dark vinaceous-brown spore deposit (Stropharia, Hypholoma, Psilocybe)"
+    black: "Black or very dark grey-black spore deposit (Coprinoid fungi, Pisolithus)"
+    green: "Olive-green spore deposit (Chlorophyllum, Lepiota cristata)"
+    yellow: "Bright yellow spore deposit (rare; some Bolbitius)"
+  aliases:
+    "white to cream": "cream"
+    "off-white": "white"
+    "whitish": "white"
+    "pale buff": "cream"
+    "pale yellowish": "cream"
+    "salmon-pink": "pink"
+    "pinkish": "pink"
+    "cinnamon": "ochre"
+    "rust": "ochre"
+    "ferruginous": "ochre"
+    "rusty brown": "ochre"
+    "clay-brown": "brown"
+    "chocolate brown": "brown"
+    "dark brown": "brown"
+    "purple-black": "purple_brown"
+    "dark vinaceous": "purple_brown"
+    "dark grey-black": "black"
+    "blackish": "black"
+    "olive": "green"
+  similarity_matrix:
+    "white-cream": 0.8
+    "cream-ochre": 0.4
+    "ochre-brown": 0.6
+    "brown-purple_brown": 0.5
+    "purple_brown-black": 0.5
+    "pink-cream": 0.3
+    "pink-white": 0.2
+    "green-brown": 0.2
+    "yellow-cream": 0.4
+
+# =============================================================================
 #  SPORE SHAPE
 # =============================================================================
 spore_shape:
@@ -713,7 +995,8 @@ spore_shape:
     broadly_ellipsoid: "Wide oval; Q = 1.15-1.3"
     ellipsoid: "Oval/elliptical; Q = 1.3-1.6"
     oblong: "Elongated oval; Q = 1.6-2.0"
-    cylindric: "Rod-shaped; Q > 2.0"
+    cylindric: "Rod-shaped, straight; Q > 2.0"
+    allantoid: "Sausage-shaped or slightly curved-cylindric; Q > 2.0 with visible curvature (Coprinoid fungi, some Marasmius)"
     fusiform: "Spindle-shaped, tapered at both ends"
     amygdaliform: "Almond-shaped, pointed at one end"
     ovoid: "Egg-shaped, broader at one end"
@@ -730,12 +1013,16 @@ spore_shape:
     "ellipsoid to ovoid": "ellipsoid"
     "pip-shaped": "amygdaliform"
     "almond-shaped": "amygdaliform"
+    "sausage-shaped": "allantoid"
+    "curved-cylindric": "allantoid"
+    "banana-shaped": "allantoid"
   similarity_matrix:
     "globose-subglobose": 0.9
     "subglobose-broadly_ellipsoid": 0.8
     "broadly_ellipsoid-ellipsoid": 0.8
     "ellipsoid-oblong": 0.7
     "oblong-cylindric": 0.7
+    "cylindric-allantoid": 0.6
     "ellipsoid-ovoid": 0.7
     "ellipsoid-amygdaliform": 0.6
     "fusiform-cylindric": 0.5
@@ -768,7 +1055,6 @@ spore_ornamentation:
     "spiny": "echinulate"
     "thin-lined": "striate"
     "smooth to finely roughened": "smooth"
-    "amyloid": "verrucose"
   similarity_matrix:
     "verrucose-echinulate": 0.6
     "verrucose-punctate": 0.5
@@ -781,7 +1067,8 @@ spore_ornamentation:
 spore_amyloidity:
   description: >
     Reaction of spore walls to Melzer's reagent (iodine-based). A key
-    microscopic character for higher-level taxonomy.
+    microscopic character for higher-level taxonomy. Entirely distinct from
+    spore ornamentation; amyloid describes a chemical reaction, not surface structure.
   canonical_values:
     amyloid: "Spore walls turn blue-black in Melzer's reagent"
     inamyloid: "No reaction to Melzer's reagent"
@@ -800,17 +1087,26 @@ veil_type:
   description: >
     The type of veil tissue present. Universal veils enclose the entire
     young fruiting body; partial veils cover only the gills.
+    Both may be present simultaneously, notably in Amanita.
+    Source: Senthilarasu & Kumaresan 2018 (CREAM), Largent & Stuntz 1977.
   canonical_values:
-    partial: "Tissue connecting cap margin to stem, covering gills in young specimens"
-    universal: "Tissue enclosing entire young fruiting body (leaves volva + cap patches)"
-    cortina: "Cobweb-like partial veil of fine silky fibers (Cortinarius)"
+    partial: "Tissue connecting cap margin to stem, covering gills in young specimens; leaves annulus on stem"
+    universal: "Tissue enclosing entire young fruiting body; leaves volva at base and/or patches on cap"
+    cortina: "Cobweb-like partial veil of fine silky fibers (Cortinarius); leaves a fibrous zone or ring-zone on the stem"
+    both: "Universal and partial veil both present simultaneously (notably Amanita phalloides group)"
     absent: "No veil tissue present"
   aliases:
     "ring": "partial"
     "annulus": "partial"
+    "inner veil": "partial"
+    "outer veil": "universal"
+    "cortinate": "cortina"
+    "cobwebby veil": "cortina"
   similarity_matrix:
     "partial-cortina": 0.5
     "partial-universal": 0.3
+    "both-partial": 0.6
+    "both-universal": 0.6
     "cortina-absent": 0.2
     "partial-absent": 0.0
     "universal-absent": 0.0
@@ -822,13 +1118,16 @@ volva_type:
   description: >
     The form of the volva (basal cup), a remnant of the universal veil.
     Present in Amanita, Volvariella, and a few other genera. One of the
-    most critical safety-relevant features — a saccate volva combined with
+    most critical safety-relevant features -- a saccate volva combined with
     a ring strongly suggests Amanita sect. Phalloideae (deadly).
+    Source: Senthilarasu & Kumaresan 2018 (CREAM), Largent & Stuntz 1977.
   canonical_values:
-    saccate: "Sac-like or cup-shaped with a distinct free margin (classic Amanita volva)"
-    sheathing: "Close-fitting, sock-like, tightly wrapping the stem base"
-    friable: "Breaking into rings, patches, or scales around the bulb base"
-    napiform: "Forming a turnip-shaped swelling at the stem base with adhering patches"
+    saccate: "Sac-like or cup-shaped with a distinct free margin not attached to the stipe (classic free volva of Amanita phalloides)"
+    flaring: "Volva attached to the stipe along its length except at the upper margin, which flares outward"
+    circumsessile: "Volva tightly attached forming a rim around the stipe base, with no free margin and no flaring"
+    zoned: "Volva forming concentric ring-like bands or zones of tissue just above the main cup structure"
+    friable: "Universal veil remnants crumbling into powdery concentric rings or patches around the bulb base (informal; some Amanita)"
+    napiform: "Bulb and adhering veil remnants forming a turnip-shaped swelling; no distinct free cup formed"
     absent: "No volva present"
   aliases:
     "sac-like": "saccate"
@@ -836,21 +1135,23 @@ volva_type:
     "bag-like": "saccate"
     "membranous cup": "saccate"
     "free cup": "saccate"
-    "sock-like": "sheathing"
-    "close-fitting": "sheathing"
+    "sock-like": "circumsessile"
+    "close-fitting rim": "circumsessile"
     "scaly rings": "friable"
     "rings of scales": "friable"
-    "concentric rings": "friable"
+    "concentric rings": "zoned"
     "patches on bulb": "friable"
     "turnip-shaped bulb": "napiform"
     "bulbous with adhering scales": "napiform"
   similarity_matrix:
-    "saccate-sheathing": 0.5
+    "saccate-flaring": 0.4
+    "flaring-circumsessile": 0.6
+    "circumsessile-zoned": 0.5
     "saccate-friable": 0.2
-    "sheathing-friable": 0.3
-    "napiform-friable": 0.5
+    "friable-napiform": 0.5
+    "napiform-circumsessile": 0.4
     "saccate-absent": 0.0
-    "sheathing-absent": 0.0
+    "circumsessile-absent": 0.0
     "friable-absent": 0.0
 
 # =============================================================================
@@ -861,14 +1162,15 @@ ring_shape:
     The shape and form of the annulus (ring) on the stem. The ring is a
     remnant of the partial veil and its form helps distinguish genera
     and species (e.g. double ring in Agaricus sect. Arvenses).
+    Note: ring persistence (persistent vs fugacious) is in ring_persistence.
+    Cortina zone on the stipe is described via veil_type = cortina.
+    Source: Senthilarasu & Kumaresan 2018 (CREAM), Largent & Stuntz 1977.
   canonical_values:
-    pendant: "Hanging skirt-like from upper stem, free margin pointing downward"
-    ascending: "Attached low, flaring upward along the stem"
-    flaring: "Spreading outward like a collar or funnel"
-    sheathing: "Forming a tight sleeve around the stem"
-    double: "Two-layered ring (inner + outer layer), characteristic of Agaricus sect. Arvenses"
-    fragile: "Thin, easily lost or visible only as fragments"
-    cobwebby: "Cortina remnant; silky web-like zone on stem"
+    pendant: "Hanging skirt-like from the upper stem, free margin pointing downward"
+    ascending: "Attached lower on stem, flaring upward along the stipe"
+    flaring: "Spreading outward from the stipe like a collar or funnel"
+    sheathing: "Forming a tight sleeve or sock around the stipe"
+    double: "Two-layered ring with distinct inner and outer layers (characteristic of Agaricus sect. Arvenses)"
     absent: "No ring present"
   aliases:
     "skirt-like": "pendant"
@@ -880,18 +1182,42 @@ ring_shape:
     "double ring": "double"
     "two-layered": "double"
     "cogwheel ring": "double"
-    "fugacious": "fragile"
-    "evanescent": "fragile"
-    "cortina zone": "cobwebby"
-    "cortina remnant": "cobwebby"
   similarity_matrix:
     "pendant-flaring": 0.5
     "pendant-ascending": 0.4
     "pendant-sheathing": 0.3
     "flaring-ascending": 0.5
-    "fragile-cobwebby": 0.4
     "pendant-double": 0.5
-    "fragile-absent": 0.5
+
+# =============================================================================
+#  RING PERSISTENCE  [new feature — split from ring_shape]
+# =============================================================================
+ring_persistence:
+  description: >
+    How long the ring remains on the stipe and how firmly it is attached.
+    Relevant when the ring may be absent in older specimens; a ring-zone
+    may be the only remaining evidence.
+    Source: Senthilarasu & Kumaresan 2018 (CREAM), Largent & Stuntz 1977.
+  canonical_values:
+    persistent: "Ring remains firmly attached and intact throughout the mushroom's lifespan"
+    fugacious: "Ring present only in young or fresh specimens; collapses or drops off early"
+    ring_zone: "Ring entirely absent but a discolored, fibrillose, or darker zone remains on the stipe surface"
+  aliases:
+    "fixed": "persistent"
+    "remaining": "persistent"
+    "durable": "persistent"
+    "fragile": "fugacious"
+    "evanescent": "fugacious"
+    "soon disappearing": "fugacious"
+    "falling off": "fugacious"
+    "trace only": "ring_zone"
+    "zone only": "ring_zone"
+    "cortina zone": "ring_zone"
+    "ring remnant": "ring_zone"
+  similarity_matrix:
+    "persistent-fugacious": 0.2
+    "fugacious-ring_zone": 0.5
+    "persistent-ring_zone": 0.1
 
 # =============================================================================
 #  RING POSITION
@@ -900,6 +1226,7 @@ ring_position:
   description: >
     Where the ring sits on the stem. Position helps separate species
     within Amanita, Agaricus, Lepiota, and other ringed genera.
+    Source: Senthilarasu & Kumaresan 2018 (CREAM).
   canonical_values:
     superior: "In the upper third of the stem, near the cap"
     median: "Roughly midway along the stem"
@@ -927,8 +1254,8 @@ ring_mobility:
     Whether the ring can slide up and down the stem. A movable ring is
     diagnostic for Macrolepiota (parasol mushrooms) and a few Agaricus.
   canonical_values:
-    fixed: "Ring firmly attached, does not move"
-    movable: "Ring can be slid up and down the stem freely"
+    fixed: "Ring firmly attached, does not move along the stipe"
+    movable: "Ring can be slid up and down the stipe freely"
   aliases:
     "immovable": "fixed"
     "attached": "fixed"
@@ -937,6 +1264,84 @@ ring_mobility:
     "loose": "movable"
   similarity_matrix:
     "fixed-movable": 0.0
+
+# =============================================================================
+#  GROWTH HABIT  [new feature]
+# =============================================================================
+growth_habit:
+  description: >
+    The spatial arrangement of individual fruiting bodies relative to each
+    other. Important for distinguishing species with similar morphology that
+    differ in growth pattern (e.g. Armillaria vs Galerina, Hypholoma vs Psilocybe).
+    Source: Senthilarasu & Kumaresan 2018 (CREAM).
+  canonical_values:
+    solitary: "Single fruiting body growing alone, with no nearby conspecifics"
+    scattered: "Several fruiting bodies spread apart, individually arising but in the same general area"
+    gregarious: "Multiple fruiting bodies growing close together, each arising separately from the substrate without a shared base"
+    caespitose: "Tight cluster of fruiting bodies sharing a common base or arising from the same point in the substrate"
+    connate: "Stipes of two or more fruiting bodies fused together at the base"
+  aliases:
+    "alone": "solitary"
+    "single": "solitary"
+    "grouped": "gregarious"
+    "in groups": "gregarious"
+    "in troops": "gregarious"
+    "in large numbers": "gregarious"
+    "clustered": "caespitose"
+    "in clusters": "caespitose"
+    "tufted": "caespitose"
+    "fasciculate": "caespitose"
+    "fused at base": "connate"
+  similarity_matrix:
+    "scattered-gregarious": 0.6
+    "gregarious-caespitose": 0.5
+    "caespitose-connate": 0.7
+    "solitary-scattered": 0.4
+    "gregarious-solitary": 0.2
+
+# =============================================================================
+#  LATEX  [new feature]
+# =============================================================================
+latex:
+  description: >
+    Whether the flesh exudes a latex (milk) when cut or broken, and if so
+    its color and behavior on exposure to air. Latex is the defining
+    character of the genus Lactarius; its color, abundance, and change
+    on exposure are critical for species-level identification.
+    Source: Largent & Stuntz 1977, MushroomExpert.com.
+  canonical_values:
+    absent: "No latex exuded when cut; flesh dry"
+    white: "White latex that does not change color on exposure to air"
+    white_to_yellow: "Latex initially white, slowly turning yellow or sulphur-yellow on exposure (Lactarius chrysorrheus)"
+    white_to_lilac: "Latex initially white, slowly turning lilac or violet (some Lactarius species)"
+    watery: "Watery, colorless or very pale transparent latex"
+    blue: "Blue latex from the moment of cutting (Lactarius indigo)"
+    red: "Red or blood-red latex (Lactarius sanguifluus, L. deliciosus group)"
+    orange: "Orange or carrot-colored latex (Lactarius deliciosus group)"
+  aliases:
+    "no milk": "absent"
+    "no latex": "absent"
+    "dry flesh": "absent"
+    "milky": "white"
+    "white milk": "white"
+    "copious white latex": "white"
+    "white turning yellow": "white_to_yellow"
+    "clear": "watery"
+    "transparent": "watery"
+    "colorless": "watery"
+    "blue milk": "blue"
+    "indigo milk": "blue"
+    "red milk": "red"
+    "blood red latex": "red"
+    "carrot-colored": "orange"
+    "saffron-colored": "orange"
+  similarity_matrix:
+    "white-watery": 0.3
+    "white-white_to_yellow": 0.5
+    "white-white_to_lilac": 0.5
+    "red-orange": 0.5
+    "blue-absent": 0.0
+    "white-absent": 0.0
 
 # =============================================================================
 #  PILEIPELLIS TYPE (microscopic)
@@ -956,9 +1361,10 @@ pileipellis_type:
     "cutis or an ixocutis": "cutis"
     "cutis or ixocutis": "cutis"
     "interwoven septate hyphae": "cutis"
-    "peli articulated and branched": "trichoderm"
-    "pseudo-parenchymatic": "epithelium"
+    "branched erect hyphae": "trichoderm"
     "densely tangled layer of clamped, cylindric hyphae": "trichoderm"
+    "pseudo-parenchymatic": "epithelium"
+    "cellular": "epithelium"
   similarity_matrix:
     "cutis-ixocutis": 0.7
     "trichoderm-ixotrichoderm": 0.7
