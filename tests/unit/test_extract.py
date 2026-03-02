@@ -10,6 +10,7 @@ from ingestion.extract import (
     _GROUP_D_VOCAB_KEYS,
     _GROUP_E_VOCAB_KEYS,
     _PASS1_VOCAB_KEYS,
+    _SKIP_ALIASES_FOR,
     _VOCAB_PATH,
     _VOCAB_TO_SECTION,
     SYSTEM_PROMPT,
@@ -19,6 +20,7 @@ from ingestion.extract import (
     SYSTEM_PROMPT_GROUP_D,
     SYSTEM_PROMPT_GROUP_E,
     SYSTEM_PROMPT_PASS1,
+    _build_vocab_guidance,
     merge_extraction_results,
 )
 from llm.schemas import (
@@ -367,3 +369,45 @@ def test_per_group_prompt_has_header():
         assert "Extract ONLY what is explicitly stated" in prompt, (
             f"Prompt {i} missing general rules"
         )
+
+
+# ---------------------------------------------------------------------------
+# Alias inclusion tests
+# ---------------------------------------------------------------------------
+
+
+def test_aliases_appear_for_non_color_features():
+    """Aliases should appear in `term (= alias1, alias2)` format for non-color features."""
+    guidance = _build_vocab_guidance({"hymenium_type"})
+    # hymenium_type has aliases: lamellae → gills, false gills → ridges, etc.
+    assert "(= lamellae)" in guidance, "gills alias 'lamellae' missing"
+    assert "ridges (= " in guidance, "ridges aliases missing"
+    assert "gleba (= " in guidance, "gleba aliases missing"
+
+
+def test_aliases_skipped_for_color_features():
+    """color_palette and bruising_color should NOT have aliases in the guidance."""
+    with open(_VOCAB_PATH) as f:
+        vocab = yaml.safe_load(f)
+
+    for key in _SKIP_ALIASES_FOR:
+        if key not in vocab:
+            continue
+        aliases = vocab[key].get("aliases", {})
+        if not aliases:
+            continue
+        guidance = _build_vocab_guidance({key})
+        for alias in aliases:
+            assert f"(= {alias})" not in guidance, f"Alias '{alias}' should be skipped for '{key}'"
+
+
+def test_alias_format_matches_expected_pattern():
+    """Verify the `term (= alias1, alias2)` output format."""
+    guidance = _build_vocab_guidance({"hymenium_type"})
+    # "gills (= lamellae)" — single alias
+    assert "gills (= lamellae)" in guidance
+    # "teeth" has multiple aliases: spines, spikes
+    assert "teeth (= " in guidance
+    # Terms without aliases should appear bare (no parentheses)
+    assert "smooth" in guidance
+    assert "smooth (=" not in guidance

@@ -80,6 +80,10 @@ _VOCAB_TO_SECTION = {
 }
 
 
+# Features with too many aliases (color-heavy) — already covered by LANGUAGE rules.
+_SKIP_ALIASES_FOR = {"color_palette", "bruising_color"}
+
+
 def _build_vocab_guidance(feature_keys: set[str] | None = None) -> str:
     """Build the canonical-values prompt section from the vocabulary YAML.
 
@@ -97,8 +101,23 @@ def _build_vocab_guidance(feature_keys: set[str] | None = None) -> str:
             continue
         if yaml_key not in vocab:
             continue
-        values = list(vocab[yaml_key]["canonical_values"].keys())
-        line = f"- {field}: {' | '.join(values)}"
+        canonical = vocab[yaml_key]["canonical_values"]
+
+        # Build reverse map: canonical_term → [alias1, alias2, ...]
+        alias_map: dict[str, list[str]] = defaultdict(list)
+        if yaml_key not in _SKIP_ALIASES_FOR:
+            for alias, canon in vocab[yaml_key].get("aliases", {}).items():
+                alias_map[canon].append(alias)
+
+        # Format each term, appending aliases if present
+        parts = []
+        for term in canonical:
+            if term in alias_map:
+                aka = ", ".join(alias_map[term])
+                parts.append(f"{term} (= {aka})")
+            else:
+                parts.append(term)
+        line = f"- {field}: {' | '.join(parts)}"
         sections[section].append(line)
 
     # Build the output block
