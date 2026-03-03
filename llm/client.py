@@ -54,7 +54,7 @@ def get_instructor_client() -> instructor.Instructor:
     Uses TOOLS mode for cloud providers (Anthropic, OpenAI) which support it natively.
     """
     provider = settings.llm_provider.lower()
-    mode = instructor.Mode.JSON if provider == "ollama" else instructor.Mode.TOOLS
+    mode = instructor.Mode.MD_JSON if provider == "ollama" else instructor.Mode.TOOLS
     client = instructor.from_litellm(_litellm_completion, mode=mode)
     logger.info(
         "Instructor client initialized: provider=%s model=%s mode=%s",
@@ -63,6 +63,13 @@ def get_instructor_client() -> instructor.Instructor:
         mode,
     )
     return client
+
+
+def _ollama_kwargs() -> dict:
+    """Return Ollama-specific params (num_ctx) when provider is Ollama."""
+    if settings.llm_provider.lower() == "ollama":
+        return {"num_ctx": settings.ollama_num_ctx}
+    return {}
 
 
 def _api_key_kwargs() -> dict:
@@ -99,6 +106,7 @@ def completion(
         temperature=temp,
         max_tokens=max_tokens,
         **_api_key_kwargs(),
+        **_ollama_kwargs(),
         **kwargs,
     )
     return response.choices[0].message.content
@@ -132,5 +140,6 @@ def structured_completion(
         temperature=temperature,
         max_retries=max_retries,
         **_api_key_kwargs(),
+        **_ollama_kwargs(),
         **kwargs,
     )

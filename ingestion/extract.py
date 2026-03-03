@@ -34,10 +34,11 @@ from llm.schemas import (
 
 logger = logging.getLogger(__name__)
 
-# Truncate source text to keep prompts within a safe token budget.
-# gemma3:27b has 8192 max output tokens; 8000 chars ≈ ~2000 tokens of input, leaving
-# plenty of room for the structured output.
-_MAX_TEXT_CHARS = 8_000
+# Truncate source text to keep per-call input well within the model's context window.
+# gemma3:27b context = 128K tokens; 20 000 chars ≈ 5 000 tokens of input text.
+# Combined with system prompt (~1 200 tokens) and user prefix (~150 tokens),
+# each call stays under ~6 400 tokens — about 5 % of the context window.
+_MAX_TEXT_CHARS = 20_000
 
 _VOCAB_PATH = (
     Path(__file__).resolve().parent.parent / "data" / "reference" / "morphological_vocabulary.yaml"

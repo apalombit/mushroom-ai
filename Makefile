@@ -1,4 +1,4 @@
-.PHONY: help setup up down lint test test-setup
+.PHONY: help setup up down lint test test-setup eval eval-benchmark
 
 help:  ## Show this help
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | \
@@ -39,3 +39,9 @@ serve:  ## Start FastAPI server
 
 ui:  ## Start Streamlit dashboard
 	streamlit run ui/app.py --server.port 8501
+
+eval:  ## Evaluate retrieval recall (logs to MLflow)
+	python -m scripts.eval
+
+eval-benchmark:  ## Run benchmark across weight configs
+	python -m scripts.eval --benchmark

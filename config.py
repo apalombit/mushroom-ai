@@ -12,6 +12,7 @@ class Settings(BaseSettings):
     llm_base_url: str | None = "http://localhost:11434"
     llm_temperature: float = 0.2
     llm_max_tokens: int = 2048
+    ollama_num_ctx: int = 32_768
 
     # API keys — only needed for cloud providers
     anthropic_api_key: str = ""

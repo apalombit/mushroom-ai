@@ -125,6 +125,7 @@ def reconcile_species(session: Session, scientific_name: str) -> ReconciledSpeci
             system=SYSTEM_PROMPT,
             temperature=0.1,
             max_tokens=4096,
+            max_retries=4,
         )
         features = result.reconciled_features.model_dump()
         # Deterministic fallback for safety-critical edibility field.
