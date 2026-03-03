@@ -115,6 +115,18 @@ def _render_species_features(s: dict) -> None:
     if meta:
         st.caption(" · ".join(meta))
 
+    # Source links
+    source_links = []
+    for src in s.get("sources") or []:
+        name = src.get("source_name", "")
+        url = src.get("source_url")
+        if url:
+            source_links.append(f"[{name}]({url})")
+        elif name:
+            source_links.append(name)
+    if source_links:
+        st.caption("🔗 " + " · ".join(source_links))
+
     col_morph, col_eco = st.columns(2)
 
     with col_morph:

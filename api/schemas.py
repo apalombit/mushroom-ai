@@ -65,6 +65,13 @@ class LookalikeResponse(BaseModel):
     species_count_in_db: int  # How many species were compared
 
 
+class SourceLink(BaseModel):
+    """A source that contributed to a reconciled species profile."""
+
+    source_name: str
+    source_url: str | None = None
+
+
 class SpeciesProfile(BaseModel):
     """Full species profile from the reconciled database."""
 
@@ -77,6 +84,7 @@ class SpeciesProfile(BaseModel):
     source_count: int = 0
     needs_review: bool = False
     reconciliation_confidence: float | None = None
+    sources: list[SourceLink] = []
 
 
 class AssociationPair(BaseModel):

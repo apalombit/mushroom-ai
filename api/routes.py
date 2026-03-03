@@ -11,10 +11,11 @@ from api.schemas import (
     LookalikeCandidate,
     LookalikeRequest,
     LookalikeResponse,
+    SourceLink,
     SpeciesProfile,
 )
 from db.connection import get_session
-from db.models import GroundTruthPair, ReconciledSpecies
+from db.models import GroundTruthPair, ReconciledSpecies, SourceObservation
 from similarity.explain import generate_explanation
 from similarity.search import build_comparison_table, search_lookalikes
 from similarity.weights import SimilarityWeights
@@ -122,7 +123,7 @@ async def get_species(name: str):
         )
         if row is None:
             raise HTTPException(status_code=404, detail=f"Species not found: {name!r}")
-        return _species_profile(row)
+        return _species_profile(session, row)
     finally:
         session.close()
 
@@ -133,12 +134,21 @@ async def list_species(limit: int = 100, offset: int = 0):
     session = get_session()
     try:
         rows = session.query(ReconciledSpecies).offset(offset).limit(limit).all()
-        return [_species_profile(row) for row in rows]
+        return [_species_profile(session, row) for row in rows]
     finally:
         session.close()
 
 
-def _species_profile(row: ReconciledSpecies) -> SpeciesProfile:
+def _species_profile(session, row: ReconciledSpecies) -> SpeciesProfile:
+    obs_rows = (
+        session.query(SourceObservation)
+        .filter(SourceObservation.scientific_name == row.scientific_name)
+        .all()
+    )
+    sources = [
+        SourceLink(source_name=obs.source_name, source_url=obs.source_url)
+        for obs in obs_rows
+    ]
     return SpeciesProfile(
         scientific_name=row.scientific_name,
         common_names=row.common_names or [],
@@ -149,6 +159,7 @@ def _species_profile(row: ReconciledSpecies) -> SpeciesProfile:
         source_count=row.source_count or 0,
         needs_review=row.needs_review or False,
         reconciliation_confidence=row.reconciliation_confidence,
+        sources=sources,
     )
 
 
