@@ -39,9 +39,14 @@ async def find_lookalikes(request: LookalikeRequest):
     """
     start = time.monotonic()
     weights = SimilarityWeights(
-        morphological=request.weight_morphological,
+        macro_visual=request.weight_macro_visual,
+        structural=request.weight_structural,
+        flesh_sensory=request.weight_flesh_sensory,
+        microscopic_lab=request.weight_microscopic_lab,
         ecological=request.weight_ecological,
         taxonomic=request.weight_taxonomic,
+        numeric=request.weight_numeric,
+        body_form_filter=request.body_form_filter,
     )
 
     session = get_session()
@@ -77,18 +82,19 @@ async def find_lookalikes(request: LookalikeRequest):
         # Build response
         response_candidates = []
         for cand in comparison_table:
-            feature_comps = [
-                FeatureComparison(**fc)
-                for fc in cand.get("feature_comparisons", [])
-            ]
+            feature_comps = [FeatureComparison(**fc) for fc in cand.get("feature_comparisons", [])]
             response_candidates.append(
                 LookalikeCandidate(
                     scientific_name=cand["scientific_name"],
                     common_names=cand.get("common_names") or [],
                     edibility=cand.get("edibility"),
-                    similarity_morphological=cand["similarity_morphological"],
+                    similarity_macro_visual=cand["similarity_macro_visual"],
+                    similarity_structural=cand["similarity_structural"],
+                    similarity_flesh_sensory=cand["similarity_flesh_sensory"],
+                    similarity_microscopic_lab=cand["similarity_microscopic_lab"],
                     similarity_ecological=cand["similarity_ecological"],
                     similarity_taxonomic=cand["similarity_taxonomic"],
+                    similarity_numeric=cand["similarity_numeric"],
                     similarity_overall=cand["similarity_overall"],
                     feature_comparisons=feature_comps,
                 )
@@ -146,8 +152,7 @@ def _species_profile(session, row: ReconciledSpecies) -> SpeciesProfile:
         .all()
     )
     sources = [
-        SourceLink(source_name=obs.source_name, source_url=obs.source_url)
-        for obs in obs_rows
+        SourceLink(source_name=obs.source_name, source_url=obs.source_url) for obs in obs_rows
     ]
     return SpeciesProfile(
         scientific_name=row.scientific_name,

@@ -2,15 +2,17 @@
 Similarity search engine.
 
 Finds lookalike species by running independent pgvector similarity queries
-per feature group (morphological, ecological, taxonomic), then merging
-and reranking with tunable weights.
+per feature group (6 embedding groups), then merging with numeric similarity,
+body-form gating, and tunable weights.
 
 Query-time pipeline:
     1. Look up query species embeddings from ReconciledSpecies
-    2. Run 3 pgvector cosine similarity queries (one per group)
-    3. Merge candidate sets, compute weighted score
-    4. Apply user context (region/season) as boost
-    5. Return top-K with per-group similarity breakdown
+    2. Run 6 pgvector cosine similarity queries (one per embedding group)
+    3. Merge candidate sets, apply body-form filter
+    4. Compute numeric similarity from features_json
+    5. Compute weighted overall score (7 components)
+    6. Apply user context (region/season) as boost
+    7. Return top-K with per-group similarity breakdown
 """
 
 import logging
@@ -20,13 +22,18 @@ from sqlalchemy import text
 from sqlalchemy.orm import Session
 
 from db.models import ReconciledSpecies
-from ingestion.rubric import ECOLOGICAL_FIELDS, MORPHOLOGICAL_FIELDS, TAXONOMIC_FIELDS
-from similarity.weights import SimilarityWeights
+from ingestion.rubric import EMBEDDING_GROUPS, MORPHOLOGICAL_FIELDS, _get_nested
+from similarity.numeric import compute_numeric_similarity
+from similarity.weights import WEIGHT_FIELDS, SimilarityWeights
 
 logger = logging.getLogger(__name__)
 
+# Maps weight field name → DB column for embedding-based groups
 _GROUP_COLUMN = {
-    "morphological": "embedding_morphological",
+    "macro_visual": "embedding_macro_visual",
+    "structural": "embedding_structural",
+    "flesh_sensory": "embedding_flesh_sensory",
+    "microscopic_lab": "embedding_microscopic_lab",
     "ecological": "embedding_ecological",
     "taxonomic": "embedding_taxonomic",
 }
@@ -75,8 +82,9 @@ def search_lookalikes(
     Returns (query_species, candidates) where candidates is a list of dicts sorted
     by similarity_overall descending. Each dict contains:
         id, scientific_name, common_names, edibility, features_json,
-        similarity_morphological, similarity_ecological, similarity_taxonomic,
-        similarity_overall.
+        similarity_macro_visual, similarity_structural, similarity_flesh_sensory,
+        similarity_microscopic_lab, similarity_ecological, similarity_taxonomic,
+        similarity_numeric, similarity_overall.
 
     Raises ValueError if species is not found or has no embeddings.
     """
@@ -91,45 +99,61 @@ def search_lookalikes(
     if query_species is None:
         raise ValueError(f"Species not found: {species_name!r}")
 
-    if query_species.embedding_morphological is None:
-        raise ValueError(
-            f"Species {species_name!r} has no embeddings — run --embed first."
-        )
+    if query_species.embedding_macro_visual is None:
+        raise ValueError(f"Species {species_name!r} has no embeddings — run --embed first.")
 
-    # Larger pool for merging — use 5x top_k (min 60) to ensure all candidates are
-    # considered in databases up to a few hundred species.
+    # Larger pool for merging
     pool_k = max(top_k * 5, 60)
-    morph_results = search_by_group(session, query_species.id, "morphological", pool_k)
-    eco_results = search_by_group(session, query_species.id, "ecological", pool_k)
-    taxon_results = search_by_group(session, query_species.id, "taxonomic", pool_k)
 
-    # Index by species_id → (name, score)
-    morph_map = {sid: (name, score) for sid, name, score in morph_results}
-    eco_map = {sid: (name, score) for sid, name, score in eco_results}
-    taxon_map = {sid: (name, score) for sid, name, score in taxon_results}
+    # Run 6 embedding searches
+    group_maps: dict[str, dict[int, tuple[str, float]]] = {}
+    for group in _GROUP_COLUMN:
+        results = search_by_group(session, query_species.id, group, pool_k)
+        group_maps[group] = {sid: (name, score) for sid, name, score in results}
 
-    all_ids = set(morph_map) | set(eco_map) | set(taxon_map)
+    # Collect all candidate IDs
+    all_ids: set[int] = set()
+    for gmap in group_maps.values():
+        all_ids.update(gmap)
+
+    query_features = query_species.features_json or {}
+    query_body_form = _get_nested(query_features, "overall_body_form")
 
     candidates = []
     for sid in all_ids:
-        name = (morph_map.get(sid) or eco_map.get(sid) or taxon_map.get(sid))[0]
-        sim_morph = morph_map.get(sid, (None, 0.0))[1]
-        sim_eco = eco_map.get(sid, (None, 0.0))[1]
-        sim_taxon = taxon_map.get(sid, (None, 0.0))[1]
-        sim_overall = (
-            weights.morphological * sim_morph
-            + weights.ecological * sim_eco
-            + weights.taxonomic * sim_taxon
-        )
+        # Get name from any group that found this candidate
+        name = None
+        for gmap in group_maps.values():
+            if sid in gmap:
+                name = gmap[sid][0]
+                break
+
+        species_row = session.get(ReconciledSpecies, sid)
+        cand_features = (species_row.features_json if species_row else {}) or {}
+
+        # Body-form gating
+        if weights.body_form_filter and query_body_form:
+            cand_body_form = _get_nested(cand_features, "overall_body_form")
+            if cand_body_form and cand_body_form.lower() != query_body_form.lower():
+                continue
+
+        # Embedding similarities (6 groups)
+        sims: dict[str, float] = {}
+        for group in _GROUP_COLUMN:
+            sims[group] = group_maps[group].get(sid, (None, 0.0))[1]
+
+        # Numeric similarity
+        sims["numeric"] = compute_numeric_similarity(query_features, cand_features)
+
+        # Weighted overall score
+        sim_overall = sum(getattr(weights, f) * sims.get(f, 0.0) for f in WEIGHT_FIELDS)
 
         # Context boost for matching region/season
-        species_row = session.get(ReconciledSpecies, sid)
         boost = 0.0
-        if species_row and species_row.features_json:
-            eco = species_row.features_json.get("ecology", {})
+        if species_row and cand_features:
+            eco = cand_features.get("ecology", {})
             if region and any(
-                region.lower() in r.lower()
-                for r in (eco.get("geographic_regions") or [])
+                region.lower() in r.lower() for r in (eco.get("geographic_regions") or [])
             ):
                 boost += 0.02
             if season and season.lower() in [
@@ -137,17 +161,23 @@ def search_lookalikes(
             ]:
                 boost += 0.02
 
-        candidates.append({
-            "id": sid,
-            "scientific_name": name,
-            "common_names": (species_row.common_names if species_row else []) or [],
-            "edibility": species_row.edibility if species_row else None,
-            "features_json": (species_row.features_json if species_row else {}) or {},
-            "similarity_morphological": round(sim_morph, 4),
-            "similarity_ecological": round(sim_eco, 4),
-            "similarity_taxonomic": round(sim_taxon, 4),
-            "similarity_overall": round(min(1.0, sim_overall + boost), 4),
-        })
+        candidates.append(
+            {
+                "id": sid,
+                "scientific_name": name,
+                "common_names": (species_row.common_names if species_row else []) or [],
+                "edibility": species_row.edibility if species_row else None,
+                "features_json": cand_features,
+                "similarity_macro_visual": round(sims["macro_visual"], 4),
+                "similarity_structural": round(sims["structural"], 4),
+                "similarity_flesh_sensory": round(sims["flesh_sensory"], 4),
+                "similarity_microscopic_lab": round(sims["microscopic_lab"], 4),
+                "similarity_ecological": round(sims["ecological"], 4),
+                "similarity_taxonomic": round(sims["taxonomic"], 4),
+                "similarity_numeric": round(sims["numeric"], 4),
+                "similarity_overall": round(min(1.0, sim_overall + boost), 4),
+            }
+        )
 
     candidates.sort(key=lambda x: x["similarity_overall"], reverse=True)
     return query_species, candidates[:top_k]
@@ -166,11 +196,17 @@ def build_comparison_table(
     """
     query_features = query_species.features_json or {}
 
-    all_fields = [
-        ("morphological", MORPHOLOGICAL_FIELDS),
-        ("ecological", ECOLOGICAL_FIELDS),
-        ("taxonomic", TAXONOMIC_FIELDS),
+    # Use EMBEDDING_GROUPS for the 6 embedding groups + morphological for numeric fields
+    all_fields: list[tuple[str, list[str]]] = [
+        (name, fields) for name, fields in EMBEDDING_GROUPS.items()
     ]
+    # Add numeric fields from MORPHOLOGICAL_FIELDS not covered by embedding groups
+    embed_field_set = set()
+    for fields in EMBEDDING_GROUPS.values():
+        embed_field_set.update(fields)
+    extra_morph = [f for f in MORPHOLOGICAL_FIELDS if f not in embed_field_set]
+    if extra_morph:
+        all_fields.append(("numeric", extra_morph))
 
     result = []
     for candidate in candidates:
@@ -183,13 +219,15 @@ def build_comparison_table(
                 c_val = _get_nested_str(cand_features, field_path)
                 if q_val is None and c_val is None:
                     continue
-                comparisons.append({
-                    "feature_group": group,
-                    "feature_name": field_path,
-                    "query_value": q_val,
-                    "candidate_value": c_val,
-                    "is_similar": _values_similar(q_val, c_val),
-                })
+                comparisons.append(
+                    {
+                        "feature_group": group,
+                        "feature_name": field_path,
+                        "query_value": q_val,
+                        "candidate_value": c_val,
+                        "is_similar": _values_similar(q_val, c_val),
+                    }
+                )
 
         result.append({**candidate, "feature_comparisons": comparisons})
 
@@ -207,8 +245,8 @@ def _get_nested_str(d: dict, path: str) -> str | None:
         if current is None:
             return None
     if isinstance(current, list):
-        text = ", ".join(str(v) for v in current if v is not None)
-        return text if text else None
+        joined = ", ".join(str(v) for v in current if v is not None)
+        return joined if joined else None
     if isinstance(current, bool):
         return "yes" if current else "no"
     return str(current) if current is not None else None

@@ -28,6 +28,7 @@ def _mock_session(count=10):
 # Health
 # ---------------------------------------------------------------------------
 
+
 def test_health(client):
     resp = client.get("/health")
     assert resp.status_code == 200
@@ -37,6 +38,7 @@ def test_health(client):
 # ---------------------------------------------------------------------------
 # Species list
 # ---------------------------------------------------------------------------
+
 
 def test_species_list_empty(client):
     with patch("api.routes.get_session", return_value=_mock_session()):
@@ -74,6 +76,7 @@ def test_species_list_returns_profiles(client):
 # Single species lookup
 # ---------------------------------------------------------------------------
 
+
 def test_get_species_not_found(client):
     with patch("api.routes.get_session", return_value=_mock_session()):
         resp = client.get("/api/v1/species/Nonexistentus fakicus")
@@ -108,6 +111,7 @@ def test_get_species_found(client):
 # Lookalikes endpoint
 # ---------------------------------------------------------------------------
 
+
 def test_find_lookalikes_species_not_found(client):
     with patch("api.routes.search_lookalikes", side_effect=ValueError("Species not found")):
         with patch("api.routes.get_session", return_value=_mock_session()):
@@ -139,9 +143,13 @@ def test_find_lookalikes_success(client):
         "scientific_name": "Amanita muscaria",
         "common_names": ["Fly agaric"],
         "edibility": "toxic",
-        "similarity_morphological": 0.80,
+        "similarity_macro_visual": 0.80,
+        "similarity_structural": 0.75,
+        "similarity_flesh_sensory": 0.60,
+        "similarity_microscopic_lab": 0.50,
         "similarity_ecological": 0.70,
         "similarity_taxonomic": 0.90,
+        "similarity_numeric": 0.65,
         "similarity_overall": 0.82,
         "features_json": {},
         "feature_comparisons": [],
@@ -175,6 +183,7 @@ def test_find_lookalikes_success(client):
 # Associations endpoint
 # ---------------------------------------------------------------------------
 
+
 def test_list_associations_empty(client):
     session = _mock_session()
     session.query.return_value.all.return_value = []
@@ -186,6 +195,7 @@ def test_list_associations_empty(client):
 
 def test_list_associations_returns_pairs(client):
     from db.models import GroundTruthPair
+
     mock_pair = MagicMock(spec=GroundTruthPair)
     mock_pair.species_a = "Amanita caesarea"
     mock_pair.species_b = "Amanita muscaria"
@@ -213,9 +223,13 @@ def test_find_lookalikes_explanation_failure_is_non_fatal(client):
         "scientific_name": "Amanita muscaria",
         "common_names": [],
         "edibility": "toxic",
-        "similarity_morphological": 0.80,
+        "similarity_macro_visual": 0.80,
+        "similarity_structural": 0.75,
+        "similarity_flesh_sensory": 0.60,
+        "similarity_microscopic_lab": 0.50,
         "similarity_ecological": 0.70,
         "similarity_taxonomic": 0.90,
+        "similarity_numeric": 0.65,
         "similarity_overall": 0.82,
         "features_json": {},
         "feature_comparisons": [],

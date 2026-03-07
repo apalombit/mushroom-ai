@@ -6,7 +6,6 @@ Logs Recall@1/3/5 to stdout and to MLflow experiment "eval_retrieval".
 Usage:
     python -m scripts.eval
     python -m scripts.eval --top-k 10
-    python -m scripts.eval --w-morph 0.8 --w-eco 0.1 --w-taxon 0.1
     python -m scripts.eval --benchmark
 """
 
@@ -48,19 +47,22 @@ def main() -> None:
     parser.add_argument(
         "--benchmark",
         action="store_true",
-        help="Sweep standard weight configs (mutually exclusive with --w-* flags)",
+        help="Sweep standard weight configs",
     )
-
-    weight_group = parser.add_argument_group("weight overrides (incompatible with --benchmark)")
-    weight_group.add_argument("--w-morph", type=float, default=None, help="Morphological weight")
-    weight_group.add_argument("--w-eco", type=float, default=None, help="Ecological weight")
-    weight_group.add_argument("--w-taxon", type=float, default=None, help="Taxonomic weight")
+    parser.add_argument(
+        "--sweep",
+        type=int,
+        default=None,
+        metavar="N",
+        help="Sweep N random weight configs (precompute + rescore)",
+    )
+    parser.add_argument(
+        "--seed",
+        type=int,
+        default=42,
+        help="Random seed for --sweep (default: 42)",
+    )
     args = parser.parse_args()
-
-    # Validate mutual exclusivity
-    has_custom_weights = any(w is not None for w in [args.w_morph, args.w_eco, args.w_taxon])
-    if args.benchmark and has_custom_weights:
-        parser.error("--benchmark cannot be combined with --w-morph/--w-eco/--w-taxon")
 
     logging.basicConfig(level=logging.INFO)
 
@@ -81,9 +83,11 @@ def main() -> None:
         if args.benchmark:
             # Sweep all benchmark configs
             results: dict[str, object] = {}
-            for label, (w_m, w_e, w_t) in BENCHMARK_CONFIGS.items():
+            for label, config in BENCHMARK_CONFIGS.items():
                 print(f"\n--- {label} ---")
-                weights = SimilarityWeights(morphological=w_m, ecological=w_e, taxonomic=w_t)
+                bff = config.pop("body_form_filter", True)
+                weights = SimilarityWeights(**config, body_form_filter=bff)
+                config["body_form_filter"] = bff  # restore for next iteration
                 result = _run_single(session, pairs, weights, args.top_k, label, stats)
                 results[label] = result
 
@@ -103,13 +107,40 @@ def main() -> None:
                     f"{res.duration_s:>5.1f}s"
                 )
             print("=" * 70)
-        else:
-            # Single config run (original behavior)
-            weights = SimilarityWeights(
-                morphological=args.w_morph,
-                ecological=args.w_eco,
-                taxonomic=args.w_taxon,
+        elif args.sweep:
+            from evaluation.sweep import sweep_weights
+            from similarity.weights import WEIGHT_FIELDS as _WF
+
+            print(f"\nSweeping {args.sweep} random configs (seed={args.seed})...")
+            results = sweep_weights(
+                session, pairs, n_configs=args.sweep, top_k=args.top_k, seed=args.seed
             )
+
+            # Print top-10
+            n_show = min(10, len(results))
+            print(f"\nTOP {n_show} CONFIGS (of {len(results)} total)")
+            print("=" * 120)
+            w_headers = [f[:8] for f in _WF]
+            header = f"{'#':>3}  {'R@1':>6} {'R@3':>6} {'R@5':>6}  {'BFF':>4}  " + "  ".join(
+                f"{h:>8}" for h in w_headers
+            )
+            print(header)
+            print("-" * 120)
+            for i, r in enumerate(results[:n_show], 1):
+                w = r.weights
+                bff = "Y" if w.get("body_form_filter") else "N"
+                weight_vals = "  ".join(f"{w.get(f, 0.0):>8.4f}" for f in _WF)
+                print(
+                    f"{i:>3}  "
+                    f"{r.recall_at.get(1, 0.0):>5.1%} "
+                    f"{r.recall_at.get(3, 0.0):>5.1%} "
+                    f"{r.recall_at.get(5, 0.0):>5.1%}  "
+                    f"{bff:>4}  " + weight_vals
+                )
+            print("=" * 120)
+        else:
+            # Single config run with defaults
+            weights = SimilarityWeights()
             _run_single(session, pairs, weights, args.top_k, args.run_name, stats)
     finally:
         session.close()

@@ -4,7 +4,7 @@ used throughout the system.
 
 This rubric governs:
     - What the ingestion LLM extracts (via schemas in llm/schemas.py)
-    - How features are grouped for embedding (morphological, ecological, taxonomic)
+    - How features are grouped for embedding (6 embedding groups + numeric)
     - What the similarity engine compares
 
 The rubric is designed to be expanded over time. Adding new features
@@ -12,151 +12,134 @@ requires updating: this file, the extraction schema, and the embedding logic.
 """
 
 # ---------------------------------------------------------------------------
-# Feature groups — define which fields belong to each similarity group
+# Morphological sub-groups — focused embedding groups for better recall
 # ---------------------------------------------------------------------------
 
-MORPHOLOGICAL_FIELDS = [
-    # --- Cap ---
-    "cap.shape",                        # convex, broadly convex, flat, depressed, umbonate, etc.
-    "cap.colors",                       # list of observed colors (fresh)
-    "cap.color_faded",                  # color when dried/faded — e.g. buff, brownish
-    "cap.color_pattern",                # uniform, darker center, two-toned, mottled, etc.
-    "cap.surface_texture",              # velvety, slimy, smooth, fibrous, hairy-scaly, dry, etc.
-    "cap.surface_moisture",             # dry, viscid, glutinous, hygrophanous, etc.
-    "cap.scales_or_warts",              # present/absent + description
-    "cap.margin_type",                  # inrolled, wavy, even, striate/lined, etc.
-    "cap.margin_lined_at_maturity",     # bool — lined/striate at margin with age (e.g. Laccaria)
-    "cap.bruising_color",               # color change on handling/damage
-    "cap.central_depression",           # bool — depressed at disc
-    "cap.diameter_min_cm",
-    "cap.diameter_max_cm",
+# What you see at a glance: cap, hymenium type, body form, size, spore print
+MACRO_VISUAL_FIELDS = [
+    "cap.shape",
+    "cap.colors",
+    "cap.color_faded",
+    "cap.color_pattern",
+    "cap.surface_texture",
+    "cap.surface_moisture",
+    "cap.scales_or_warts",
+    "cap.margin_type",
+    "cap.margin_lined_at_maturity",
+    "cap.bruising_color",
+    "cap.central_depression",
+    "hymenium.type",
+    "spore_print_color",
+    "overall_size_class",
+    "overall_body_form",
+    "growth_habit",
+    "edibility_status",
+    "known_lookalikes",
+]
 
-    # --- Hymenium type ---
-    "hymenium.type",                    # gills | pores | teeth | ridges | smooth
-
-    # --- Gills (if hymenium.type == gills) ---
-    "gills.attachment",                 # free, adnate, decurrent, sinuate, etc.
-    "gills.spacing",                    # crowded, close, subdistant, distant
+# Secondary visual cues: gills/pores (non-numeric), stem (non-numeric), veil, volva
+STRUCTURAL_FIELDS = [
+    # Gills
+    "gills.attachment",
+    "gills.spacing",
     "gills.color",
     "gills.color_with_age",
-    "gills.thickness",                  # thin, thick — e.g. Laccaria thick gills
-    "gills.texture",                    # waxy, brittle, normal
-    "gills.edge_texture",               # smooth, serrate, eroded, fimbriate
-
-    # --- Pores / Tubes (if hymenium.type == pores) ---
+    "gills.thickness",
+    "gills.texture",
+    "gills.edge_texture",
+    # Pores (non-numeric)
     "pores.color",
     "pores.color_with_age",
-    "pores.bruising_color",             # e.g. slowly orangish-brown, blue, none
-    "pores.density_per_mm",
-    "tubes.depth_mm",
-
-    # --- Stem ---
+    "pores.bruising_color",
+    # Stem (non-numeric)
     "stem.color",
     "stem.color_with_age",
-    "stem.surface_texture",             # smooth, reticulate, fibrous, hairy, scaly, powdery
-    "stem.reticulation",                # none | partial | full — key for boletes
-    "stem.shape",                       # equal, club-shaped, tapered base, bulbous, swollen base
-    "stem.attachment_position",         # central, eccentric, lateral, absent
-    "stem.consistency",                 # firm, fibrous, spongy, brittle
-    "stem.hollow_or_solid",             # hollow | stuffed | solid
+    "stem.surface_texture",
+    "stem.reticulation",
+    "stem.shape",
+    "stem.attachment_position",
+    "stem.consistency",
+    "stem.hollow_or_solid",
     "stem.base_color",
-    "stem.basal_mycelium_color",        # mycelium color at base — e.g. lilac in Laccaria
-    "stem.finger_stain_color",          # e.g. yellow stain from Retiboletus ornatipes
-    "stem.bruising_color",              # color change on bruising
-    "stem.height_min_cm",
-    "stem.height_max_cm",
-    "stem.diameter_min_cm",
-    "stem.diameter_max_cm",
-
-    # --- Veil ---
+    "stem.basal_mycelium_color",
+    "stem.finger_stain_color",
+    "stem.bruising_color",
+    # Veil
     "veil.present",
-    "veil.type",                        # partial | universal | cortina | absent
-    "veil.cortina_present",             # bool — explicit flag; key differentiator vs. Cortinarius
+    "veil.type",
+    "veil.cortina_present",
     "veil.shape",
     "veil.color",
-    "veil.ring_position",               # superior, median, inferior, apical
-    "veil.ring_mobility",               # fixed, movable
-    "veil.ring_persistence",            # persistent, fugacious, ring_zone
-
-    # --- Volva ---
+    "veil.ring_position",
+    "veil.ring_mobility",
+    "veil.ring_persistence",
+    # Volva
     "volva.present",
     "volva.type",
     "volva.shape",
     "volva.color",
+]
 
-    # --- Flesh ---
+# Handling features: flesh color, bruising, odor, taste, latex, texture
+FLESH_SENSORY_FIELDS = [
     "flesh.color",
     "flesh.bruising_color",
-    "flesh.latex",                      # absent, white, blue, red, orange, etc.
+    "flesh.latex",
     "flesh.odor",
-    "flesh.taste",                      # mild, bitter, acrid, farinaceous, not distinctive
-    "flesh.texture",                    # firm, soft, brittle, insubstantial, watery
-    "flesh.hyphal_structure",           # homoiomerous, heteromerous
-    "flesh.cap_stem_consistency",       # homogeneous, heterogeneous
-    "flesh.quantity",                   # insubstantial | thin | moderate | thick
+    "flesh.taste",
+    "flesh.texture",
+    "flesh.hyphal_structure",
+    "flesh.cap_stem_consistency",
+    "flesh.quantity",
+]
 
-    # --- Spore print ---
-    "spore_print_color",
-
-    # --- Spores (microscopic) ---
-    "spore.shape",                      # globose, ellipsoid, subfusoid, amygdaliform, etc.
-    "spore.length_min_um",
-    "spore.length_max_um",
-    "spore.width_min_um",
-    "spore.width_max_um",
-    "spore.ornamentation",              # smooth | echinulate | warty | reticulate | striate
-    "spore.spine_length_um",            # for echinulate spores — e.g. 1.5–3 µm in Laccaria
-    "spore.spine_base_width_um",        # diagnostic detail for Laccaria genus
-    "spore.amyloidity",                 # amyloid | inamyloid | dextrinoid
+# Lab confirmation: spore morphology, cystidia, pileipellis, chemical reactions
+MICROSCOPIC_LAB_FIELDS = [
+    # Spore (non-numeric)
+    "spore.shape",
+    "spore.ornamentation",
+    "spore.amyloidity",
     "spore.color_in_KOH",
-
-    # --- Microscopic: basidia ---
-    "microscopic.basidia_spore_count",  # 4-spored, 2-spored, mixed — can differ within species
-
-    # --- Microscopic: cystidia ---
-    "microscopic.cheilocystidia_shape",       # narrowly cylindric, subclavate, etc.
-    "microscopic.cheilocystidia_dims_um",     # e.g. "25–65 x 4–12"
+    # Basidia
+    "microscopic.basidia_spore_count",
+    # Cystidia
+    "microscopic.cheilocystidia_shape",
+    "microscopic.cheilocystidia_dims_um",
     "microscopic.pleurocystidia_shape",
     "microscopic.pleurocystidia_dims_um",
     "microscopic.cystidia_color_in_KOH",
-
-    # --- Microscopic: pileipellis ---
-    "microscopic.pileipellis_type",           # cutis | trichoderm | ixocutis | hymeniderm
-    "microscopic.pileipellis_element_width_um",
-    "microscopic.pileipellis_terminal_cell_shape",  # subclavate, capitate, rounded, etc.
-
-    # --- Chemical reactions ---
+    # Pileipellis (non-numeric)
+    "microscopic.pileipellis_type",
+    "microscopic.pileipellis_terminal_cell_shape",
+    # Chemical reactions
     "chemical.KOH_cap",
     "chemical.KOH_flesh",
     "chemical.NH4OH_cap",
     "chemical.NH4OH_flesh",
     "chemical.FeSO4_cap",
     "chemical.FeSO4_flesh",
-
-    # --- Overall ---
-    "overall_size_class",               # small | medium | large
-    "overall_body_form",                # agaricoid, boletoid, gasteroid, tremelloid, etc.
-    "growth_habit",                     # solitary, scattered, gregarious, caespitose, connate
-    "edibility_status",                 # edible | inedible | toxic | choice | unknown
-    "known_lookalikes",
 ]
 
+# ---------------------------------------------------------------------------
+# Ecological and taxonomic groups (unchanged)
+# ---------------------------------------------------------------------------
+
 ECOLOGICAL_FIELDS = [
-    "ecology.trophic_mode",             # mycorrhizal | saprotrophic | parasitic
-    "ecology.habitat_types",            # hardwood forest, conifer forest, grassland, etc.
-    "ecology.substrate",                # soil, wood, dung, leaf litter, etc.
-    "ecology.associated_trees",         # oak, beech, pine, etc.
-    "ecology.fruiting_seasons",         # spring | summer | fall | winter
-    "ecology.fruiting_months",          # e.g. "July–September", "late spring and summer"
+    "ecology.trophic_mode",  # mycorrhizal | saprotrophic | parasitic
+    "ecology.habitat_types",  # hardwood forest, conifer forest, grassland, etc.
+    "ecology.substrate",  # soil, wood, dung, leaf litter, etc.
+    "ecology.associated_trees",  # oak, beech, pine, etc.
+    "ecology.fruiting_seasons",  # spring | summer | fall | winter
+    "ecology.fruiting_months",  # e.g. "July–September", "late spring and summer"
     "ecology.geographic_regions",
     "ecology.altitude_notes",
-    "ecology.growth_position",          # terrestrial | lignicolous | coprophilous | etc.
-    "ecology.microhabitat_notes",       # e.g. mossy ground, disturbed areas
+    "ecology.growth_position",  # terrestrial | lignicolous | coprophilous | etc.
+    "ecology.microhabitat_notes",  # e.g. mossy ground, disturbed areas
 ]
 
 TAXONOMIC_FIELDS = [
     "kingdom",
-    "phylum",                           # e.g. Basidiomycetes — useful for broad filtering
+    "phylum",  # e.g. Basidiomycetes — useful for broad filtering
     "order",
     "family",
     "genus",
@@ -164,6 +147,66 @@ TAXONOMIC_FIELDS = [
     "common_names",
     "synonyms",
 ]
+
+# ---------------------------------------------------------------------------
+# Numeric fields — for direct comparison, not embedded
+# ---------------------------------------------------------------------------
+
+# Range pairs: (min_field, max_field)
+NUMERIC_RANGE_FIELDS: list[tuple[str, str]] = [
+    ("cap.diameter_min_cm", "cap.diameter_max_cm"),
+    ("stem.height_min_cm", "stem.height_max_cm"),
+    ("stem.diameter_min_cm", "stem.diameter_max_cm"),
+    ("spore.length_min_um", "spore.length_max_um"),
+    ("spore.width_min_um", "spore.width_max_um"),
+]
+
+# Single values: (field, tolerance) — tolerance is max distance for score = 0
+NUMERIC_SINGLE_FIELDS: list[tuple[str, float]] = [
+    ("pores.density_per_mm", 3.0),
+    ("tubes.depth_mm", 15.0),
+    ("spore.spine_length_um", 2.0),
+    ("spore.spine_base_width_um", 1.0),
+    ("microscopic.pileipellis_element_width_um", 5.0),
+]
+
+# Combined list for iteration
+NUMERIC_FIELDS: list[tuple] = NUMERIC_RANGE_FIELDS + NUMERIC_SINGLE_FIELDS
+
+# ---------------------------------------------------------------------------
+# Embedding groups — each maps to one pgvector column
+# ---------------------------------------------------------------------------
+
+EMBEDDING_GROUPS: dict[str, list[str]] = {
+    "macro_visual": MACRO_VISUAL_FIELDS,
+    "structural": STRUCTURAL_FIELDS,
+    "flesh_sensory": FLESH_SENSORY_FIELDS,
+    "microscopic_lab": MICROSCOPIC_LAB_FIELDS,
+    "ecological": ECOLOGICAL_FIELDS,
+    "taxonomic": TAXONOMIC_FIELDS,
+}
+
+# ---------------------------------------------------------------------------
+# Backward-compatible union — used by build_comparison_table
+# ---------------------------------------------------------------------------
+
+# All numeric field paths (flattened from range pairs + single values)
+_NUMERIC_FIELD_PATHS = [f for pair in NUMERIC_RANGE_FIELDS for f in pair] + [
+    f for f, _ in NUMERIC_SINGLE_FIELDS
+]
+
+MORPHOLOGICAL_FIELDS = (
+    MACRO_VISUAL_FIELDS
+    + STRUCTURAL_FIELDS
+    + FLESH_SENSORY_FIELDS
+    + MICROSCOPIC_LAB_FIELDS
+    + _NUMERIC_FIELD_PATHS
+)
+
+
+# ---------------------------------------------------------------------------
+# Helpers
+# ---------------------------------------------------------------------------
 
 
 def _get_nested(d: dict, path: str):

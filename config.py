@@ -27,15 +27,20 @@ class Settings(BaseSettings):
     postgres_password: str = "mushroom_dev"
 
     # Embeddings
-    embedding_model: str = "all-MiniLM-L6-v2"
+    embedding_model: str = "all-mpnet-base-v2"
 
     # MLflow
     mlflow_tracking_uri: str = "http://localhost:5000"
 
-    # Similarity weights
-    weight_morphological: float = 0.60
-    weight_ecological: float = 0.25
-    weight_taxonomic: float = 0.15
+    # Similarity weights (7 groups + body-form filter)
+    weight_macro_visual: float = 0.69
+    weight_structural: float = 0.12
+    weight_flesh_sensory: float = 0.07
+    weight_microscopic_lab: float = 0.02
+    weight_ecological: float = 0.01
+    weight_taxonomic: float = 0.01
+    weight_numeric: float = 0.10
+    weight_body_form_filter: bool = False
 
     # App
     log_level: str = "INFO"

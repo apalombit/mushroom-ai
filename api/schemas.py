@@ -14,9 +14,14 @@ class LookalikeRequest(BaseModel):
     season: str | None = Field(None, examples=["autumn"])
 
     # Optional weight overrides (0-1, will be normalized)
-    weight_morphological: float | None = None
+    weight_macro_visual: float | None = None
+    weight_structural: float | None = None
+    weight_flesh_sensory: float | None = None
+    weight_microscopic_lab: float | None = None
     weight_ecological: float | None = None
     weight_taxonomic: float | None = None
+    weight_numeric: float | None = None
+    body_form_filter: bool | None = None
 
     top_k: int = Field(10, ge=1, le=50, description="Number of results to return")
 
@@ -25,10 +30,10 @@ class FeatureComparison(BaseModel):
     """Per-feature comparison between query species and a lookalike candidate."""
 
     feature_group: str  # "morphological", "ecological", "taxonomic"
-    feature_name: str   # e.g. "cap.shape", "ecology.habitat_types"
+    feature_name: str  # e.g. "cap.shape", "ecology.habitat_types"
     query_value: str | None
     candidate_value: str | None
-    is_similar: bool    # Whether this feature contributed to the match
+    is_similar: bool  # Whether this feature contributed to the match
 
 
 class LookalikeCandidate(BaseModel):
@@ -39,9 +44,13 @@ class LookalikeCandidate(BaseModel):
     edibility: str | None = None
 
     # Per-group similarity scores (0-1, higher = more similar)
-    similarity_morphological: float
+    similarity_macro_visual: float
+    similarity_structural: float
+    similarity_flesh_sensory: float
+    similarity_microscopic_lab: float
     similarity_ecological: float
     similarity_taxonomic: float
+    similarity_numeric: float
     similarity_overall: float  # Weighted combination
 
     # Feature-level comparison

@@ -18,9 +18,13 @@ def _make_candidates(*names: str) -> list[dict]:
         {
             "scientific_name": n,
             "similarity_overall": round(0.9 - i * 0.05, 4),
-            "similarity_morphological": 0.85,
+            "similarity_macro_visual": 0.85,
+            "similarity_structural": 0.80,
+            "similarity_flesh_sensory": 0.60,
+            "similarity_microscopic_lab": 0.50,
             "similarity_ecological": 0.90,
             "similarity_taxonomic": 0.70,
+            "similarity_numeric": 0.65,
         }
         for i, n in enumerate(names)
     ]
@@ -119,23 +123,41 @@ def test_eval_result_empty():
 
 
 def test_pair_result_dataclass():
-    """PairResult stores all fields."""
+    """PairResult stores all 7 similarity fields."""
     r = PairResult(
         query="A",
         target="B",
         rank=2,
         sim_overall=0.85,
-        sim_morph=0.90,
-        sim_eco=0.80,
-        sim_taxon=0.70,
+        sim_macro_visual=0.90,
+        sim_structural=0.80,
+        sim_flesh_sensory=0.60,
+        sim_microscopic_lab=0.50,
+        sim_ecological=0.75,
+        sim_taxonomic=0.70,
+        sim_numeric=0.65,
     )
     assert r.rank == 2
+    assert r.sim_numeric == 0.65
     assert r.error is None
 
 
 def test_benchmark_configs():
-    """BENCHMARK_CONFIGS has >= 3 entries and all tuples sum to ~1.0."""
+    """BENCHMARK_CONFIGS has >= 3 entries, each is a dict with weight keys."""
     assert len(BENCHMARK_CONFIGS) >= 3
-    for label, (w_m, w_e, w_t) in BENCHMARK_CONFIGS.items():
+    expected_keys = {
+        "macro_visual",
+        "structural",
+        "flesh_sensory",
+        "microscopic_lab",
+        "ecological",
+        "taxonomic",
+        "numeric",
+        "body_form_filter",
+    }
+    for label, config in BENCHMARK_CONFIGS.items():
         assert isinstance(label, str)
-        assert abs(w_m + w_e + w_t - 1.0) < 0.01, f"{label} weights don't sum to 1.0"
+        assert set(config.keys()) == expected_keys, f"{label} missing keys"
+        float_weights = {k: v for k, v in config.items() if k != "body_form_filter"}
+        total = sum(float_weights.values())
+        assert abs(total - 0.85) < 0.20, f"{label} float weights sum to {total}"

@@ -45,9 +45,19 @@ for i, ex in enumerate(examples):
 
 # --- Weight sliders ---
 with st.expander("⚙️ Similarity weights (advanced)"):
-    w_morph = st.slider("Morphological", 0.0, 1.0, 0.60, 0.05)
-    w_eco = st.slider("Ecological", 0.0, 1.0, 0.25, 0.05)
-    w_taxon = st.slider("Taxonomic", 0.0, 1.0, 0.15, 0.05)
+    col_w1, col_w2 = st.columns(2)
+    with col_w1:
+        w_macro = st.slider("Macro visual", 0.0, 1.0, 0.69, 0.05)
+        w_struct = st.slider("Structural", 0.0, 1.0, 0.12, 0.05)
+        w_flesh = st.slider("Flesh / sensory", 0.0, 1.0, 0.07, 0.05)
+        w_micro = st.slider("Microscopic / lab", 0.0, 1.0, 0.02, 0.01)
+    with col_w2:
+        w_eco = st.slider("Ecological", 0.0, 1.0, 0.01, 0.05)
+        w_taxon = st.slider("Taxonomic", 0.0, 1.0, 0.01, 0.05)
+        w_numeric = st.slider("Numeric", 0.0, 1.0, 0.10, 0.01)
+        body_form_filter = st.checkbox(
+            "Body-form filter", value=False, help="Exclude species with incompatible body form"
+        )
 
 _EDIBILITY_ICON = {
     "edible": "🟢",
@@ -132,82 +142,114 @@ def _render_species_features(s: dict) -> None:
     with col_morph:
         st.markdown("**🔬 Morphological**")
 
-        _show_section("Cap", features.get("cap") or {}, {
-            "shape": "Shape",
-            "colors": "Colors",
-            "color_faded": "Color (faded)",
-            "surface_moisture": "Surface moisture",
-            "color_pattern": "Pattern",
-            "surface_texture": "Surface",
-            "scales_or_warts": "Scales / warts",
-            "margin_type": "Margin",
-            "margin_lined_at_maturity": "Margin lined at maturity",
-            "central_depression": "Central depression",
-            "diameter_min_cm": "Diam. min (cm)",
-            "diameter_max_cm": "Diam. max (cm)",
-        })
+        _show_section(
+            "Cap",
+            features.get("cap") or {},
+            {
+                "shape": "Shape",
+                "colors": "Colors",
+                "color_faded": "Color (faded)",
+                "surface_moisture": "Surface moisture",
+                "color_pattern": "Pattern",
+                "surface_texture": "Surface",
+                "scales_or_warts": "Scales / warts",
+                "margin_type": "Margin",
+                "margin_lined_at_maturity": "Margin lined at maturity",
+                "central_depression": "Central depression",
+                "diameter_min_cm": "Diam. min (cm)",
+                "diameter_max_cm": "Diam. max (cm)",
+            },
+        )
 
         hymenium_type = (features.get("hymenium") or {}).get("type")
         if hymenium_type:
             st.markdown(f"*Hymenium type:* **{hymenium_type}**")
 
         if hymenium_type == "gills" or (features.get("gills") or {}).get("attachment"):
-            _show_section("Gills", features.get("gills") or {}, {
-                "attachment": "Attachment",
-                "spacing": "Spacing",
-                "color": "Color",
-                "color_with_age": "Color with age",
-                "thickness": "Thickness",
-                "texture": "Texture",
-            })
+            _show_section(
+                "Gills",
+                features.get("gills") or {},
+                {
+                    "attachment": "Attachment",
+                    "spacing": "Spacing",
+                    "color": "Color",
+                    "color_with_age": "Color with age",
+                    "thickness": "Thickness",
+                    "texture": "Texture",
+                },
+            )
         if hymenium_type == "pores" or (features.get("pores") or {}).get("color"):
-            _show_section("Pores", features.get("pores") or {}, {
+            _show_section(
+                "Pores",
+                features.get("pores") or {},
+                {
+                    "color": "Color",
+                    "color_with_age": "Color with age",
+                    "bruising_color": "Bruising",
+                    "density_per_mm": "Density (per mm)",
+                },
+            )
+            _show_section(
+                "Tubes",
+                features.get("tubes") or {},
+                {
+                    "depth_mm": "Depth (mm)",
+                },
+            )
+
+        _show_section(
+            "Stem",
+            features.get("stem") or {},
+            {
                 "color": "Color",
                 "color_with_age": "Color with age",
+                "surface_texture": "Surface",
+                "reticulation": "Reticulation",
+                "shape": "Shape",
+                "consistency": "Consistency",
+                "hollow_or_solid": "Hollow / solid",
+                "base_color": "Base color",
+                "basal_mycelium_color": "Basal mycelium",
+                "finger_stain_color": "Finger stain",
+                "height_min_cm": "Height min (cm)",
+                "height_max_cm": "Height max (cm)",
+                "diameter_min_cm": "Diam. min (cm)",
+                "diameter_max_cm": "Diam. max (cm)",
+            },
+        )
+        _show_section(
+            "Veil / ring",
+            features.get("veil") or {},
+            {
+                "present": "Present",
+                "type": "Type",
+                "cortina_present": "Cortina",
+                "shape": "Shape",
+                "color": "Color",
+            },
+        )
+        _show_section(
+            "Volva",
+            features.get("volva") or {},
+            {
+                "present": "Present",
+                "type": "Type",
+                "shape": "Shape",
+                "color": "Color",
+            },
+        )
+        _show_section(
+            "Flesh",
+            features.get("flesh") or {},
+            {
+                "color": "Color",
                 "bruising_color": "Bruising",
-                "density_per_mm": "Density (per mm)",
-            })
-            _show_section("Tubes", features.get("tubes") or {}, {
-                "depth_mm": "Depth (mm)",
-            })
-
-        _show_section("Stem", features.get("stem") or {}, {
-            "color": "Color",
-            "color_with_age": "Color with age",
-            "surface_texture": "Surface",
-            "reticulation": "Reticulation",
-            "shape": "Shape",
-            "consistency": "Consistency",
-            "hollow_or_solid": "Hollow / solid",
-            "base_color": "Base color",
-            "basal_mycelium_color": "Basal mycelium",
-            "finger_stain_color": "Finger stain",
-            "height_min_cm": "Height min (cm)",
-            "height_max_cm": "Height max (cm)",
-            "diameter_min_cm": "Diam. min (cm)",
-            "diameter_max_cm": "Diam. max (cm)",
-        })
-        _show_section("Veil / ring", features.get("veil") or {}, {
-            "present": "Present",
-            "type": "Type",
-            "cortina_present": "Cortina",
-            "shape": "Shape",
-            "color": "Color",
-        })
-        _show_section("Volva", features.get("volva") or {}, {
-            "present": "Present",
-            "type": "Type",
-            "shape": "Shape",
-            "color": "Color",
-        })
-        _show_section("Flesh", features.get("flesh") or {}, {
-            "color": "Color",
-            "bruising_color": "Bruising",
-            "odor": "Odor",
-            "taste": "Taste",
-            "texture": "Texture",
-            "quantity": "Quantity",
-        })
+                "odor": "Odor",
+                "taste": "Taste",
+                "texture": "Texture",
+                "quantity": "Quantity",
+            },
+        )
 
         sp = features.get("spore_print_color")
         if sp:
@@ -216,37 +258,49 @@ def _render_species_features(s: dict) -> None:
         if sz:
             st.markdown(f"*Overall size:* {sz}")
 
-        _show_section("Spores (microscopic)", features.get("spore") or {}, {
-            "shape": "Shape",
-            "length_min_um": "Length min (µm)",
-            "length_max_um": "Length max (µm)",
-            "width_min_um": "Width min (µm)",
-            "width_max_um": "Width max (µm)",
-            "ornamentation": "Ornamentation",
-            "spine_length_um": "Spine length (µm)",
-            "spine_base_width_um": "Spine base width (µm)",
-            "amyloidity": "Amyloidity",
-            "color_in_KOH": "Color in KOH",
-        })
-        _show_section("Microscopic anatomy", features.get("microscopic") or {}, {
-            "basidia_spore_count": "Basidia",
-            "cheilocystidia_shape": "Cheilocystidia shape",
-            "cheilocystidia_dims_um": "Cheilocystidia dims (µm)",
-            "pleurocystidia_shape": "Pleurocystidia shape",
-            "pleurocystidia_dims_um": "Pleurocystidia dims (µm)",
-            "cystidia_color_in_KOH": "Cystidia in KOH",
-            "pileipellis_type": "Pileipellis type",
-            "pileipellis_element_width_um": "Pileipellis width (µm)",
-            "pileipellis_terminal_cell_shape": "Terminal cell shape",
-        })
-        _show_section("Chemical reactions", features.get("chemical") or {}, {
-            "KOH_cap": "KOH (cap)",
-            "KOH_flesh": "KOH (flesh)",
-            "NH4OH_cap": "NH₄OH (cap)",
-            "NH4OH_flesh": "NH₄OH (flesh)",
-            "FeSO4_cap": "FeSO₄ (cap)",
-            "FeSO4_flesh": "FeSO₄ (flesh)",
-        })
+        _show_section(
+            "Spores (microscopic)",
+            features.get("spore") or {},
+            {
+                "shape": "Shape",
+                "length_min_um": "Length min (µm)",
+                "length_max_um": "Length max (µm)",
+                "width_min_um": "Width min (µm)",
+                "width_max_um": "Width max (µm)",
+                "ornamentation": "Ornamentation",
+                "spine_length_um": "Spine length (µm)",
+                "spine_base_width_um": "Spine base width (µm)",
+                "amyloidity": "Amyloidity",
+                "color_in_KOH": "Color in KOH",
+            },
+        )
+        _show_section(
+            "Microscopic anatomy",
+            features.get("microscopic") or {},
+            {
+                "basidia_spore_count": "Basidia",
+                "cheilocystidia_shape": "Cheilocystidia shape",
+                "cheilocystidia_dims_um": "Cheilocystidia dims (µm)",
+                "pleurocystidia_shape": "Pleurocystidia shape",
+                "pleurocystidia_dims_um": "Pleurocystidia dims (µm)",
+                "cystidia_color_in_KOH": "Cystidia in KOH",
+                "pileipellis_type": "Pileipellis type",
+                "pileipellis_element_width_um": "Pileipellis width (µm)",
+                "pileipellis_terminal_cell_shape": "Terminal cell shape",
+            },
+        )
+        _show_section(
+            "Chemical reactions",
+            features.get("chemical") or {},
+            {
+                "KOH_cap": "KOH (cap)",
+                "KOH_flesh": "KOH (flesh)",
+                "NH4OH_cap": "NH₄OH (cap)",
+                "NH4OH_flesh": "NH₄OH (flesh)",
+                "FeSO4_cap": "FeSO₄ (cap)",
+                "FeSO4_flesh": "FeSO₄ (flesh)",
+            },
+        )
 
     with col_eco:
         st.markdown("**🌿 Ecological**")
@@ -294,9 +348,14 @@ if st.button("Find Lookalikes", type="primary", disabled=not species_name):
             "species_name": species_name,
             "region": region or None,
             "season": season or None,
-            "weight_morphological": w_morph,
+            "weight_macro_visual": w_macro,
+            "weight_structural": w_struct,
+            "weight_flesh_sensory": w_flesh,
+            "weight_microscopic_lab": w_micro,
             "weight_ecological": w_eco,
             "weight_taxonomic": w_taxon,
+            "weight_numeric": w_numeric,
+            "body_form_filter": body_form_filter,
             "top_k": 10,
         }
         try:
@@ -348,23 +407,30 @@ if st.button("Find Lookalikes", type="primary", disabled=not species_name):
             header += f" ({common})"
 
         with st.expander(header):
-            col1, col2, col3 = st.columns(3)
-            col1.metric("Morphological", f"{cand['similarity_morphological']:.1%}")
-            col2.metric("Ecological", f"{cand['similarity_ecological']:.1%}")
-            col3.metric("Taxonomic", f"{cand['similarity_taxonomic']:.1%}")
+            c1, c2, c3, c4 = st.columns(4)
+            c1.metric("Macro visual", f"{cand['similarity_macro_visual']:.1%}")
+            c2.metric("Structural", f"{cand['similarity_structural']:.1%}")
+            c3.metric("Flesh/sensory", f"{cand['similarity_flesh_sensory']:.1%}")
+            c4.metric("Micro/lab", f"{cand['similarity_microscopic_lab']:.1%}")
+            c5, c6, c7, _ = st.columns(4)
+            c5.metric("Ecological", f"{cand['similarity_ecological']:.1%}")
+            c6.metric("Taxonomic", f"{cand['similarity_taxonomic']:.1%}")
+            c7.metric("Numeric", f"{cand['similarity_numeric']:.1%}")
 
             comparisons = cand.get("feature_comparisons", [])
             if comparisons:
                 st.markdown("**Feature comparison:**")
                 rows = []
                 for fc in comparisons:
-                    rows.append({
-                        "Feature": fc["feature_name"],
-                        "Group": fc["feature_group"],
-                        species_name: fc["query_value"] or "—",
-                        name: fc["candidate_value"] or "—",
-                        "Similar": "✓" if fc["is_similar"] else "✗",
-                    })
+                    rows.append(
+                        {
+                            "Feature": fc["feature_name"],
+                            "Group": fc["feature_group"],
+                            species_name: fc["query_value"] or "—",
+                            name: fc["candidate_value"] or "—",
+                            "Similar": "✓" if fc["is_similar"] else "✗",
+                        }
+                    )
                 st.dataframe(rows, use_container_width=True)
 
 # --- Species index expander ---

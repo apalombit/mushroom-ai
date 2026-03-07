@@ -5,7 +5,7 @@ Layer 1 — SourceObservation: One row per species per source. Raw LLM extractio
 Layer 2 — ReconciledSpecies: One canonical row per species. Merged from Layer 1.
 Layer 3 — Embeddings: pgvector columns on ReconciledSpecies for similarity search.
 
-The pgvector dimension (384) matches sentence-transformers all-MiniLM-L6-v2.
+The pgvector dimension (768) matches sentence-transformers all-mpnet-base-v2.
 """
 
 from datetime import datetime
@@ -25,8 +25,7 @@ from sqlalchemy import (
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import DeclarativeBase, relationship
 
-
-EMBEDDING_DIM = 384  # all-MiniLM-L6-v2 output dimension
+EMBEDDING_DIM = 768  # all-mpnet-base-v2 output dimension
 
 
 class Base(DeclarativeBase):
@@ -111,8 +110,14 @@ class ReconciledSpecies(Base):
     reconciled_at = Column(DateTime, default=datetime.utcnow)
     source_count = Column(Integer, default=0)  # How many sources contributed
 
-    # Layer 3 — pgvector embeddings for similarity search
-    embedding_morphological = Column(Vector(EMBEDDING_DIM), nullable=True)
+    # Body form — extracted from features_json for fast filtering
+    overall_body_form = Column(String(64), nullable=True, index=True)
+
+    # Layer 3 — pgvector embeddings for similarity search (6 groups)
+    embedding_macro_visual = Column(Vector(EMBEDDING_DIM), nullable=True)
+    embedding_structural = Column(Vector(EMBEDDING_DIM), nullable=True)
+    embedding_flesh_sensory = Column(Vector(EMBEDDING_DIM), nullable=True)
+    embedding_microscopic_lab = Column(Vector(EMBEDDING_DIM), nullable=True)
     embedding_ecological = Column(Vector(EMBEDDING_DIM), nullable=True)
     embedding_taxonomic = Column(Vector(EMBEDDING_DIM), nullable=True)
     embedded_at = Column(DateTime, nullable=True)
@@ -122,11 +127,32 @@ class ReconciledSpecies(Base):
 
     __table_args__ = (
         Index(
-            "ix_morph_embedding",
-            "embedding_morphological",
+            "ix_macro_visual_embedding",
+            "embedding_macro_visual",
             postgresql_using="ivfflat",
             postgresql_with={"lists": 10},
-            postgresql_ops={"embedding_morphological": "vector_cosine_ops"},
+            postgresql_ops={"embedding_macro_visual": "vector_cosine_ops"},
+        ),
+        Index(
+            "ix_structural_embedding",
+            "embedding_structural",
+            postgresql_using="ivfflat",
+            postgresql_with={"lists": 10},
+            postgresql_ops={"embedding_structural": "vector_cosine_ops"},
+        ),
+        Index(
+            "ix_flesh_sensory_embedding",
+            "embedding_flesh_sensory",
+            postgresql_using="ivfflat",
+            postgresql_with={"lists": 10},
+            postgresql_ops={"embedding_flesh_sensory": "vector_cosine_ops"},
+        ),
+        Index(
+            "ix_microscopic_lab_embedding",
+            "embedding_microscopic_lab",
+            postgresql_using="ivfflat",
+            postgresql_with={"lists": 10},
+            postgresql_ops={"embedding_microscopic_lab": "vector_cosine_ops"},
         ),
         Index(
             "ix_eco_embedding",
@@ -165,6 +191,4 @@ class GroundTruthPair(Base):
     source = Column(String(256), nullable=True)
     notes = Column(Text, nullable=True)
 
-    __table_args__ = (
-        Index("ix_gt_pair", "species_a", "species_b", unique=True),
-    )
+    __table_args__ = (Index("ix_gt_pair", "species_a", "species_b", unique=True),)
