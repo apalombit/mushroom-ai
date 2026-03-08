@@ -14,12 +14,7 @@ class LookalikeRequest(BaseModel):
     season: str | None = Field(None, examples=["autumn"])
 
     # Optional weight overrides (0-1, will be normalized)
-    weight_macro_visual: float | None = None
-    weight_structural: float | None = None
-    weight_flesh_sensory: float | None = None
-    weight_microscopic_lab: float | None = None
-    weight_ecological: float | None = None
-    weight_taxonomic: float | None = None
+    weights: dict[str, float] | None = None  # {group_name: weight}
     weight_numeric: float | None = None
     body_form_filter: bool | None = None
 
@@ -44,12 +39,7 @@ class LookalikeCandidate(BaseModel):
     edibility: str | None = None
 
     # Per-group similarity scores (0-1, higher = more similar)
-    similarity_macro_visual: float
-    similarity_structural: float
-    similarity_flesh_sensory: float
-    similarity_microscopic_lab: float
-    similarity_ecological: float
-    similarity_taxonomic: float
+    group_similarities: dict[str, float]  # {group_name: score}
     similarity_numeric: float
     similarity_overall: float  # Weighted combination
 

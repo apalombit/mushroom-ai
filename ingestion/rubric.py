@@ -7,146 +7,16 @@ This rubric governs:
     - How features are grouped for embedding (6 embedding groups + numeric)
     - What the similarity engine compares
 
-The rubric is designed to be expanded over time. Adding new features
-requires updating: this file, the extraction schema, and the embedding logic.
+Field-to-group assignments are loaded from a YAML profile under
+ingestion/profiles/<name>.yaml. The active profile is set via
+GROUPING_PROFILE in .env (default: "default").
 """
 
-# ---------------------------------------------------------------------------
-# Morphological sub-groups — focused embedding groups for better recall
-# ---------------------------------------------------------------------------
+from pathlib import Path
 
-# What you see at a glance: cap, hymenium type, body form, size, spore print
-MACRO_VISUAL_FIELDS = [
-    "cap.shape",
-    "cap.colors",
-    "cap.color_faded",
-    "cap.color_pattern",
-    "cap.surface_texture",
-    "cap.surface_moisture",
-    "cap.scales_or_warts",
-    "cap.margin_type",
-    "cap.margin_lined_at_maturity",
-    "cap.bruising_color",
-    "cap.central_depression",
-    "hymenium.type",
-    "spore_print_color",
-    "overall_size_class",
-    "overall_body_form",
-    "growth_habit",
-    "edibility_status",
-    "known_lookalikes",
-]
+import yaml
 
-# Secondary visual cues: gills/pores (non-numeric), stem (non-numeric), veil, volva
-STRUCTURAL_FIELDS = [
-    # Gills
-    "gills.attachment",
-    "gills.spacing",
-    "gills.color",
-    "gills.color_with_age",
-    "gills.thickness",
-    "gills.texture",
-    "gills.edge_texture",
-    # Pores (non-numeric)
-    "pores.color",
-    "pores.color_with_age",
-    "pores.bruising_color",
-    # Stem (non-numeric)
-    "stem.color",
-    "stem.color_with_age",
-    "stem.surface_texture",
-    "stem.reticulation",
-    "stem.shape",
-    "stem.attachment_position",
-    "stem.consistency",
-    "stem.hollow_or_solid",
-    "stem.base_color",
-    "stem.basal_mycelium_color",
-    "stem.finger_stain_color",
-    "stem.bruising_color",
-    # Veil
-    "veil.present",
-    "veil.type",
-    "veil.cortina_present",
-    "veil.shape",
-    "veil.color",
-    "veil.ring_position",
-    "veil.ring_mobility",
-    "veil.ring_persistence",
-    # Volva
-    "volva.present",
-    "volva.type",
-    "volva.shape",
-    "volva.color",
-]
-
-# Handling features: flesh color, bruising, odor, taste, latex, texture
-FLESH_SENSORY_FIELDS = [
-    "flesh.color",
-    "flesh.bruising_color",
-    "flesh.latex",
-    "flesh.odor",
-    "flesh.taste",
-    "flesh.texture",
-    "flesh.hyphal_structure",
-    "flesh.cap_stem_consistency",
-    "flesh.quantity",
-]
-
-# Lab confirmation: spore morphology, cystidia, pileipellis, chemical reactions
-MICROSCOPIC_LAB_FIELDS = [
-    # Spore (non-numeric)
-    "spore.shape",
-    "spore.ornamentation",
-    "spore.amyloidity",
-    "spore.color_in_KOH",
-    # Basidia
-    "microscopic.basidia_spore_count",
-    # Cystidia
-    "microscopic.cheilocystidia_shape",
-    "microscopic.cheilocystidia_dims_um",
-    "microscopic.pleurocystidia_shape",
-    "microscopic.pleurocystidia_dims_um",
-    "microscopic.cystidia_color_in_KOH",
-    # Pileipellis (non-numeric)
-    "microscopic.pileipellis_type",
-    "microscopic.pileipellis_terminal_cell_shape",
-    # Chemical reactions
-    "chemical.KOH_cap",
-    "chemical.KOH_flesh",
-    "chemical.NH4OH_cap",
-    "chemical.NH4OH_flesh",
-    "chemical.FeSO4_cap",
-    "chemical.FeSO4_flesh",
-]
-
-# ---------------------------------------------------------------------------
-# Ecological and taxonomic groups (unchanged)
-# ---------------------------------------------------------------------------
-
-ECOLOGICAL_FIELDS = [
-    "ecology.trophic_mode",  # mycorrhizal | saprotrophic | parasitic
-    "ecology.habitat_types",  # hardwood forest, conifer forest, grassland, etc.
-    "ecology.substrate",  # soil, wood, dung, leaf litter, etc.
-    "ecology.associated_trees",  # oak, beech, pine, etc.
-    "ecology.fruiting_seasons",  # spring | summer | fall | winter
-    "ecology.fruiting_months",  # e.g. "July–September", "late spring and summer"
-    "ecology.geographic_regions",
-    "ecology.altitude_notes",
-    "ecology.growth_position",  # terrestrial | lignicolous | coprophilous | etc.
-    "ecology.microhabitat_notes",  # e.g. mossy ground, disturbed areas
-]
-
-TAXONOMIC_FIELDS = [
-    "kingdom",
-    "phylum",  # e.g. Basidiomycetes — useful for broad filtering
-    "order",
-    "family",
-    "genus",
-    "species",
-    "common_names",
-    "synonyms",
-]
+from config import settings
 
 # ---------------------------------------------------------------------------
 # Numeric fields — for direct comparison, not embedded
@@ -173,35 +43,63 @@ NUMERIC_SINGLE_FIELDS: list[tuple[str, float]] = [
 # Combined list for iteration
 NUMERIC_FIELDS: list[tuple] = NUMERIC_RANGE_FIELDS + NUMERIC_SINGLE_FIELDS
 
-# ---------------------------------------------------------------------------
-# Embedding groups — each maps to one pgvector column
-# ---------------------------------------------------------------------------
-
-EMBEDDING_GROUPS: dict[str, list[str]] = {
-    "macro_visual": MACRO_VISUAL_FIELDS,
-    "structural": STRUCTURAL_FIELDS,
-    "flesh_sensory": FLESH_SENSORY_FIELDS,
-    "microscopic_lab": MICROSCOPIC_LAB_FIELDS,
-    "ecological": ECOLOGICAL_FIELDS,
-    "taxonomic": TAXONOMIC_FIELDS,
-}
-
-# ---------------------------------------------------------------------------
-# Backward-compatible union — used by build_comparison_table
-# ---------------------------------------------------------------------------
-
 # All numeric field paths (flattened from range pairs + single values)
 _NUMERIC_FIELD_PATHS = [f for pair in NUMERIC_RANGE_FIELDS for f in pair] + [
     f for f, _ in NUMERIC_SINGLE_FIELDS
 ]
 
-MORPHOLOGICAL_FIELDS = (
-    MACRO_VISUAL_FIELDS
-    + STRUCTURAL_FIELDS
-    + FLESH_SENSORY_FIELDS
-    + MICROSCOPIC_LAB_FIELDS
-    + _NUMERIC_FIELD_PATHS
-)
+# ---------------------------------------------------------------------------
+# YAML profile loading
+# ---------------------------------------------------------------------------
+
+_PROFILES_DIR = Path(__file__).parent / "profiles"
+
+
+def _load_profile(name: str) -> dict[str, list[str]]:
+    """Load a grouping profile YAML and validate it."""
+    path = _PROFILES_DIR / f"{name}.yaml"
+    if not path.exists():
+        raise FileNotFoundError(f"Grouping profile {name!r} not found at {path}")
+    with open(path) as f:
+        profile = yaml.safe_load(f)
+
+    if not profile:
+        raise ValueError(f"Profile {name!r} is empty")
+    # Normalize empty groups to []
+    for key in list(profile):
+        if profile[key] is None:
+            profile[key] = []
+    # Validate no numeric fields in embedding groups
+    numeric = set(_NUMERIC_FIELD_PATHS)
+    for group, fields in profile.items():
+        overlap = numeric & set(fields)
+        if overlap:
+            raise ValueError(
+                f"Profile {name!r}, group {group!r}: numeric fields not allowed: {overlap}"
+            )
+    return profile
+
+
+def get_active_profile() -> str:
+    """Return the name of the active grouping profile."""
+    return settings.grouping_profile
+
+
+# ---------------------------------------------------------------------------
+# Embedding groups — each maps to one pgvector column
+# ---------------------------------------------------------------------------
+
+EMBEDDING_GROUPS: dict[str, list[str]] = _load_profile(settings.grouping_profile)
+GROUP_SLOTS = tuple(EMBEDDING_GROUPS.keys())  # derived from active profile, for backward compat
+
+# ---------------------------------------------------------------------------
+# Backward-compatible union — used by build_comparison_table
+# ---------------------------------------------------------------------------
+
+MORPHOLOGICAL_FIELDS: list[str] = []
+for _fields in EMBEDDING_GROUPS.values():
+    MORPHOLOGICAL_FIELDS.extend(_fields)
+MORPHOLOGICAL_FIELDS.extend(_NUMERIC_FIELD_PATHS)
 
 
 # ---------------------------------------------------------------------------

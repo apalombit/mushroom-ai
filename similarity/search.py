@@ -2,12 +2,12 @@
 Similarity search engine.
 
 Finds lookalike species by running independent pgvector similarity queries
-per feature group (6 embedding groups), then merging with numeric similarity,
-body-form gating, and tunable weights.
+per feature group (N embedding groups from the active profile), then merging
+with numeric similarity, body-form gating, and tunable weights.
 
 Query-time pipeline:
     1. Look up query species embeddings from ReconciledSpecies
-    2. Run 6 pgvector cosine similarity queries (one per embedding group)
+    2. Run N pgvector cosine similarity queries (one per embedding group)
     3. Merge candidate sets, apply body-form filter
     4. Compute numeric similarity from features_json
     5. Compute weighted overall score (7 components)
@@ -28,15 +28,9 @@ from similarity.weights import WEIGHT_FIELDS, SimilarityWeights
 
 logger = logging.getLogger(__name__)
 
-# Maps weight field name → DB column for embedding-based groups
-_GROUP_COLUMN = {
-    "macro_visual": "embedding_macro_visual",
-    "structural": "embedding_structural",
-    "flesh_sensory": "embedding_flesh_sensory",
-    "microscopic_lab": "embedding_microscopic_lab",
-    "ecological": "embedding_ecological",
-    "taxonomic": "embedding_taxonomic",
-}
+# Maps group name → DB column, derived from the active profile
+_GROUP_COLUMN = {g: f"embedding_{g}" for g in EMBEDDING_GROUPS}
+_first_embed_col = f"embedding_{next(iter(EMBEDDING_GROUPS))}"
 
 
 def search_by_group(
@@ -82,8 +76,7 @@ def search_lookalikes(
     Returns (query_species, candidates) where candidates is a list of dicts sorted
     by similarity_overall descending. Each dict contains:
         id, scientific_name, common_names, edibility, features_json,
-        similarity_macro_visual, similarity_structural, similarity_flesh_sensory,
-        similarity_microscopic_lab, similarity_ecological, similarity_taxonomic,
+        similarity_<group> for each group in the active profile,
         similarity_numeric, similarity_overall.
 
     Raises ValueError if species is not found or has no embeddings.
@@ -99,7 +92,7 @@ def search_lookalikes(
     if query_species is None:
         raise ValueError(f"Species not found: {species_name!r}")
 
-    if query_species.embedding_macro_visual is None:
+    if getattr(query_species, _first_embed_col) is None:
         raise ValueError(f"Species {species_name!r} has no embeddings — run --embed first.")
 
     # Larger pool for merging
@@ -161,6 +154,7 @@ def search_lookalikes(
             ]:
                 boost += 0.02
 
+        group_sim_keys = {f"similarity_{g}": round(sims[g], 4) for g in _GROUP_COLUMN}
         candidates.append(
             {
                 "id": sid,
@@ -168,12 +162,7 @@ def search_lookalikes(
                 "common_names": (species_row.common_names if species_row else []) or [],
                 "edibility": species_row.edibility if species_row else None,
                 "features_json": cand_features,
-                "similarity_macro_visual": round(sims["macro_visual"], 4),
-                "similarity_structural": round(sims["structural"], 4),
-                "similarity_flesh_sensory": round(sims["flesh_sensory"], 4),
-                "similarity_microscopic_lab": round(sims["microscopic_lab"], 4),
-                "similarity_ecological": round(sims["ecological"], 4),
-                "similarity_taxonomic": round(sims["taxonomic"], 4),
+                **group_sim_keys,
                 "similarity_numeric": round(sims["numeric"], 4),
                 "similarity_overall": round(min(1.0, sim_overall + boost), 4),
             }

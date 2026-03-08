@@ -92,16 +92,16 @@ class TestRescore:
                 query_name="A",
                 target_name="B",
                 candidates=[
-                    # B: high ecological, low macro_visual
-                    _make_candidate("B", {"ecological": 0.9, "macro_visual": 0.1}),
-                    # C: low ecological, high macro_visual
-                    _make_candidate("C", {"ecological": 0.1, "macro_visual": 0.9}),
+                    # B: high ecological, low cap_viz
+                    _make_candidate("B", {"ecological": 0.9, "cap_viz": 0.1}),
+                    # C: low ecological, high cap_viz
+                    _make_candidate("C", {"ecological": 0.1, "cap_viz": 0.9}),
                 ],
             )
         ]
-        # Weights favoring macro_visual -> C ranks first, miss
+        # Weights favoring cap_viz -> C ranks first, miss
         w_visual = {f: 0.0 for f in WEIGHT_FIELDS}
-        w_visual["macro_visual"] = 1.0
+        w_visual["cap_viz"] = 1.0
         result_visual = rescore(cache, w_visual, body_form_filter=False)
         assert result_visual.recall_at[1] == 0.0
 

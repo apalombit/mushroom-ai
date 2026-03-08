@@ -28,19 +28,41 @@ class Settings(BaseSettings):
 
     # Embeddings
     embedding_model: str = "all-mpnet-base-v2"
+    grouping_profile: str = "default"
 
     # MLflow
     mlflow_tracking_uri: str = "http://localhost:5000"
 
-    # Similarity weights (7 groups + body-form filter)
-    weight_macro_visual: float = 0.69
-    weight_structural: float = 0.12
-    weight_flesh_sensory: float = 0.07
-    weight_microscopic_lab: float = 0.02
-    weight_ecological: float = 0.01
-    weight_taxonomic: float = 0.01
+    # Similarity weights
     weight_numeric: float = 0.10
     weight_body_form_filter: bool = False
+    # Per-group embedding weights (None = use equal-split default)
+    weight_global: float | None = None
+    weight_cap_shape: float | None = None
+    weight_cap_top: float | None = None
+    weight_cap_margin: float | None = None
+    weight_cap_viz: float | None = None
+    weight_hymenium: float | None = None
+    weight_gills_arrange: float | None = None
+    weight_gills_distrib: float | None = None
+    weight_gills_viz: float | None = None
+    weight_pores: float | None = None
+    weight_stem: float | None = None
+    weight_stem_surf: float | None = None
+    weight_stem_viz: float | None = None
+    weight_veil: float | None = None
+    weight_volva: float | None = None
+    weight_flesh_visual: float | None = None
+    weight_flesh_inner: float | None = None
+    weight_uniformity: float | None = None
+    weight_latex: float | None = None
+    weight_flesh_perceptive: float | None = None
+    weight_spore_vis: float | None = None
+    weight_spore: float | None = None
+    weight_microscopic: float | None = None
+    weight_chemical: float | None = None
+    weight_ecological: float | None = None
+    weight_taxonomic: float | None = None
 
     # App
     log_level: str = "INFO"

@@ -5,8 +5,23 @@ Run:
     streamlit run ui/app.py --server.port 8501
 """
 
-import requests
-import streamlit as st
+import sys
+from pathlib import Path
+
+_ROOT = Path(__file__).parent.parent
+if str(_ROOT) not in sys.path:
+    sys.path.insert(0, str(_ROOT))
+
+import requests  # noqa: E402
+import streamlit as st  # noqa: E402
+import yaml  # noqa: E402
+
+from config import settings  # noqa: E402
+from ingestion.rubric import EMBEDDING_GROUPS  # noqa: E402
+
+_PROFILE_FEATURES: dict[str, list[str]] = yaml.safe_load(
+    (_ROOT / "ingestion" / "profiles" / f"{settings.grouping_profile}.yaml").read_text()
+)
 
 API_BASE = "http://localhost:8001"
 
@@ -45,19 +60,30 @@ for i, ex in enumerate(examples):
 
 # --- Weight sliders ---
 with st.expander("⚙️ Similarity weights (advanced)"):
-    col_w1, col_w2 = st.columns(2)
-    with col_w1:
-        w_macro = st.slider("Macro visual", 0.0, 1.0, 0.69, 0.05)
-        w_struct = st.slider("Structural", 0.0, 1.0, 0.12, 0.05)
-        w_flesh = st.slider("Flesh / sensory", 0.0, 1.0, 0.07, 0.05)
-        w_micro = st.slider("Microscopic / lab", 0.0, 1.0, 0.02, 0.01)
-    with col_w2:
-        w_eco = st.slider("Ecological", 0.0, 1.0, 0.01, 0.05)
-        w_taxon = st.slider("Taxonomic", 0.0, 1.0, 0.01, 0.05)
-        w_numeric = st.slider("Numeric", 0.0, 1.0, 0.10, 0.01)
-        body_form_filter = st.checkbox(
-            "Body-form filter", value=False, help="Exclude species with incompatible body form"
+    st.caption("Weights are sent as-is; the API normalizes them to sum to 1.")
+    cols = st.columns(3)
+    group_weights: dict[str, float] = {}
+    for i, group in enumerate(EMBEDDING_GROUPS):
+        default_w = getattr(settings, f"weight_{group}", None) or round(
+            (1.0 - settings.weight_numeric) / len(EMBEDDING_GROUPS), 4
         )
+        features = _PROFILE_FEATURES.get(group, [])
+        tooltip = ", ".join(features) if features else group
+        with cols[i % 3]:
+            group_weights[group] = st.slider(
+                group.replace("_", " ").title(),
+                0.0, 0.5, float(round(default_w, 4)), 0.001,
+                help=tooltip,
+                key=f"w_{group}",
+            )
+    st.divider()
+    w_numeric = st.slider(
+        "Numeric (size/measurements)", 0.0, 0.5, float(settings.weight_numeric), 0.001,
+        key="w_numeric",
+    )
+    body_form_filter = st.checkbox(
+        "Body-form filter", value=False, help="Exclude species with incompatible body form"
+    )
 
 _EDIBILITY_ICON = {
     "edible": "🟢",
@@ -348,12 +374,7 @@ if st.button("Find Lookalikes", type="primary", disabled=not species_name):
             "species_name": species_name,
             "region": region or None,
             "season": season or None,
-            "weight_macro_visual": w_macro,
-            "weight_structural": w_struct,
-            "weight_flesh_sensory": w_flesh,
-            "weight_microscopic_lab": w_micro,
-            "weight_ecological": w_eco,
-            "weight_taxonomic": w_taxon,
+            "weights": group_weights,
             "weight_numeric": w_numeric,
             "body_form_filter": body_form_filter,
             "top_k": 10,
@@ -407,15 +428,14 @@ if st.button("Find Lookalikes", type="primary", disabled=not species_name):
             header += f" ({common})"
 
         with st.expander(header):
-            c1, c2, c3, c4 = st.columns(4)
-            c1.metric("Macro visual", f"{cand['similarity_macro_visual']:.1%}")
-            c2.metric("Structural", f"{cand['similarity_structural']:.1%}")
-            c3.metric("Flesh/sensory", f"{cand['similarity_flesh_sensory']:.1%}")
-            c4.metric("Micro/lab", f"{cand['similarity_microscopic_lab']:.1%}")
-            c5, c6, c7, _ = st.columns(4)
-            c5.metric("Ecological", f"{cand['similarity_ecological']:.1%}")
-            c6.metric("Taxonomic", f"{cand['similarity_taxonomic']:.1%}")
-            c7.metric("Numeric", f"{cand['similarity_numeric']:.1%}")
+            group_rows = [
+                {"Group": g, "Score": f"{v:.1%}"}
+                for g, v in sorted(
+                    cand["group_similarities"].items(), key=lambda x: -x[1]
+                )
+            ]
+            group_rows.append({"Group": "numeric", "Score": f"{cand['similarity_numeric']:.1%}"})
+            st.dataframe(group_rows, use_container_width=True, hide_index=True)
 
             comparisons = cand.get("feature_comparisons", [])
             if comparisons:

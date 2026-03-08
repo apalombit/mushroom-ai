@@ -11,30 +11,71 @@ from ingestion.rubric import (
     _get_nested,
 )
 
+# Size bins keyed by min_field path.
+# Each value is an ordered list of (label, upper_bound).
+# Values above the last upper_bound are still classified as the last label (fallback).
+_SIZE_BINS: dict[str, list[tuple[str, float]]] = {
+    "cap.diameter_min_cm": [("small", 5.0), ("medium", 15.0), ("large", 25.0)],
+    "stem.height_min_cm": [("small", 4.0), ("medium", 12.0), ("large", 25.0)],
+    "stem.diameter_min_cm": [("small", 0.3), ("medium", 1.0), ("large", 2.5)],
+    "spore.length_min_um": [("small", 6.0), ("medium", 14.0), ("large", 25.0)],
+    "spore.width_min_um": [("small", 4.0), ("medium", 9.0), ("large", 15.0)],
+}
 
-def range_overlap(a_min: float, a_max: float, b_min: float, b_max: float) -> float | None:
-    """
-    Compute overlap ratio between two numeric ranges.
 
-    Returns 1.0 for identical ranges, 0.0 for disjoint ranges, and a
-    proportional value in between. Returns None if any input is None.
+def range_to_category(
+    min_val: float | None,
+    max_val: float | None,
+    bins: list[tuple[str, float]],
+) -> str | None:
     """
-    if any(v is None for v in (a_min, a_max, b_min, b_max)):
+    Convert a (min, max) range to a size category using the provided bins.
+
+    Midpoint = (min + max) / 2. If only one end is available, use it as the midpoint.
+    Returns None if both are None.
+    """
+    if min_val is None and max_val is None:
         return None
 
-    overlap_start = max(a_min, b_min)
-    overlap_end = min(a_max, b_max)
-    overlap = max(0.0, overlap_end - overlap_start)
+    if min_val is not None and max_val is not None:
+        midpoint = (min_val + max_val) / 2
+    elif min_val is not None:
+        midpoint = min_val
+    else:
+        midpoint = max_val
 
-    union_start = min(a_min, b_min)
-    union_end = max(a_max, b_max)
-    union = union_end - union_start
+    for label, upper_bound in bins:
+        if midpoint <= upper_bound:
+            return label
 
-    if union == 0:
-        # Both ranges are single identical points
+    return bins[-1][0]
+
+
+def category_similarity(
+    cat_a: str | None,
+    cat_b: str | None,
+    bins: list[tuple[str, float]],
+) -> float | None:
+    """
+    Compute similarity score between two size categories.
+
+    Same category → 1.0, adjacent → 0.5, opposite → 0.0.
+    Returns None if either category is None.
+    """
+    if cat_a is None or cat_b is None:
+        return None
+
+    labels = [label for label, _ in bins]
+    idx_a = labels.index(cat_a)
+    idx_b = labels.index(cat_b)
+    distance = abs(idx_a - idx_b)
+
+    if distance == 0:
         return 1.0
-
-    return overlap / union
+    elif distance == 1:
+        return 0.5
+    else:
+        return 0.0
 
 
 def single_proximity(a: float, b: float, tolerance: float) -> float | None:
@@ -79,24 +120,22 @@ def compute_numeric_similarity(features_a: dict, features_b: dict) -> float:
     """
     Compute overall numeric similarity between two species feature dicts.
 
-    Averages all computable range-overlap and single-proximity scores.
+    Averages all computable category and single-proximity scores.
     Returns 0.0 if no numeric comparisons are possible (all fields None).
     """
     scores: list[float] = []
 
     for min_field, max_field in NUMERIC_RANGE_FIELDS:
-        a_min = _get_nested(features_a, min_field)
-        a_max = _get_nested(features_a, max_field)
-        b_min = _get_nested(features_b, min_field)
-        b_max = _get_nested(features_b, max_field)
+        a_min = _parse_numeric(_get_nested(features_a, min_field))
+        a_max = _parse_numeric(_get_nested(features_a, max_field))
+        b_min = _parse_numeric(_get_nested(features_b, min_field))
+        b_max = _parse_numeric(_get_nested(features_b, max_field))
 
-        # Parse in case values are strings
-        a_min = _parse_numeric(a_min)
-        a_max = _parse_numeric(a_max)
-        b_min = _parse_numeric(b_min)
-        b_max = _parse_numeric(b_max)
+        bins = _SIZE_BINS[min_field]
+        cat_a = range_to_category(a_min, a_max, bins)
+        cat_b = range_to_category(b_min, b_max, bins)
 
-        score = range_overlap(a_min, a_max, b_min, b_max)
+        score = category_similarity(cat_a, cat_b, bins)
         if score is not None:
             scores.append(score)
 

@@ -6,6 +6,7 @@ import pytest
 from fastapi.testclient import TestClient
 
 from api.main import app
+from ingestion.rubric import EMBEDDING_GROUPS
 
 
 @pytest.fixture
@@ -143,12 +144,7 @@ def test_find_lookalikes_success(client):
         "scientific_name": "Amanita muscaria",
         "common_names": ["Fly agaric"],
         "edibility": "toxic",
-        "similarity_macro_visual": 0.80,
-        "similarity_structural": 0.75,
-        "similarity_flesh_sensory": 0.60,
-        "similarity_microscopic_lab": 0.50,
-        "similarity_ecological": 0.70,
-        "similarity_taxonomic": 0.90,
+        **{f"similarity_{g}": 0.75 for g in EMBEDDING_GROUPS},
         "similarity_numeric": 0.65,
         "similarity_overall": 0.82,
         "features_json": {},
@@ -223,12 +219,7 @@ def test_find_lookalikes_explanation_failure_is_non_fatal(client):
         "scientific_name": "Amanita muscaria",
         "common_names": [],
         "edibility": "toxic",
-        "similarity_macro_visual": 0.80,
-        "similarity_structural": 0.75,
-        "similarity_flesh_sensory": 0.60,
-        "similarity_microscopic_lab": 0.50,
-        "similarity_ecological": 0.70,
-        "similarity_taxonomic": 0.90,
+        **{f"similarity_{g}": 0.75 for g in EMBEDDING_GROUPS},
         "similarity_numeric": 0.65,
         "similarity_overall": 0.82,
         "features_json": {},

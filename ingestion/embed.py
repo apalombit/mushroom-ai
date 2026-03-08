@@ -20,7 +20,7 @@ from sqlalchemy.orm import Session
 
 from config import settings
 from db.models import ReconciledSpecies
-from ingestion.rubric import EMBEDDING_GROUPS, _get_nested, features_to_text
+from ingestion.rubric import EMBEDDING_GROUPS, _get_nested, features_to_text, get_active_profile
 
 logger = logging.getLogger(__name__)
 
@@ -64,6 +64,8 @@ def embed_all(session: Session) -> tuple[int, int]:
 
     Returns (embedded_count, skipped_count).
     """
+    logger.info("Embedding with profile: %s", get_active_profile())
+
     pending = (
         session.query(ReconciledSpecies)
         .filter(

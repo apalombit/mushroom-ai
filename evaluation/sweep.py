@@ -12,10 +12,12 @@ import numpy as np
 from sqlalchemy.orm import Session
 
 from db.models import GroundTruthPair, ReconciledSpecies
-from ingestion.rubric import _get_nested
+from ingestion.rubric import EMBEDDING_GROUPS, _get_nested
 from similarity.numeric import compute_numeric_similarity
 from similarity.search import _GROUP_COLUMN, search_by_group
 from similarity.weights import WEIGHT_FIELDS
+
+_first_embed_col = f"embedding_{next(iter(EMBEDDING_GROUPS))}"
 
 logger = logging.getLogger(__name__)
 
@@ -90,7 +92,7 @@ def precompute_scores(
             )
             continue
 
-        if query_species.embedding_macro_visual is None:
+        if getattr(query_species, _first_embed_col) is None:
             cache.append(
                 QueryCache(
                     query_name=query_name,

@@ -16,6 +16,7 @@ from api.schemas import (
 )
 from db.connection import get_session
 from db.models import GroundTruthPair, ReconciledSpecies, SourceObservation
+from ingestion.rubric import EMBEDDING_GROUPS
 from similarity.explain import generate_explanation
 from similarity.search import build_comparison_table, search_lookalikes
 from similarity.weights import SimilarityWeights
@@ -39,12 +40,7 @@ async def find_lookalikes(request: LookalikeRequest):
     """
     start = time.monotonic()
     weights = SimilarityWeights(
-        macro_visual=request.weight_macro_visual,
-        structural=request.weight_structural,
-        flesh_sensory=request.weight_flesh_sensory,
-        microscopic_lab=request.weight_microscopic_lab,
-        ecological=request.weight_ecological,
-        taxonomic=request.weight_taxonomic,
+        weights=request.weights,
         numeric=request.weight_numeric,
         body_form_filter=request.body_form_filter,
     )
@@ -83,17 +79,13 @@ async def find_lookalikes(request: LookalikeRequest):
         response_candidates = []
         for cand in comparison_table:
             feature_comps = [FeatureComparison(**fc) for fc in cand.get("feature_comparisons", [])]
+            group_sims = {g: cand[f"similarity_{g}"] for g in EMBEDDING_GROUPS}
             response_candidates.append(
                 LookalikeCandidate(
                     scientific_name=cand["scientific_name"],
                     common_names=cand.get("common_names") or [],
                     edibility=cand.get("edibility"),
-                    similarity_macro_visual=cand["similarity_macro_visual"],
-                    similarity_structural=cand["similarity_structural"],
-                    similarity_flesh_sensory=cand["similarity_flesh_sensory"],
-                    similarity_microscopic_lab=cand["similarity_microscopic_lab"],
-                    similarity_ecological=cand["similarity_ecological"],
-                    similarity_taxonomic=cand["similarity_taxonomic"],
+                    group_similarities=group_sims,
                     similarity_numeric=cand["similarity_numeric"],
                     similarity_overall=cand["similarity_overall"],
                     feature_comparisons=feature_comps,

@@ -12,52 +12,36 @@ from dataclasses import dataclass, field
 from sqlalchemy.orm import Session
 
 from db.models import GroundTruthPair, ReconciledSpecies
+from ingestion.rubric import EMBEDDING_GROUPS
 from similarity.search import search_lookalikes
 from similarity.weights import SimilarityWeights
+
+_first_embed_col = f"embedding_{next(iter(EMBEDDING_GROUPS))}"
 
 logger = logging.getLogger(__name__)
 
 # Named weight configs for benchmark sweeps
 BENCHMARK_CONFIGS: dict[str, dict] = {
-    "default": {
-        "macro_visual": 0.69,
-        "structural": 0.12,
-        "flesh_sensory": 0.07,
-        "microscopic_lab": 0.02,
-        "ecological": 0.01,
-        "taxonomic": 0.01,
-        "numeric": 0.10,
-        "body_form_filter": False,
+    "sweep-best": {
+        "global": 0.0120, "cap_shape": 0.0137, "cap_top": 0.0310, "cap_margin": 0.0242,
+        "cap_viz": 0.0895, "hymenium": 0.0297, "gills_arrange": 0.1121,
+        "gills_distrib": 0.0683, "gills_viz": 0.0189, "pores": 0.0185,
+        "stem": 0.0481, "stem_surf": 0.0582, "stem_viz": 0.0265, "veil": 0.0005,
+        "volva": 0.0382, "flesh_visual": 0.0589, "flesh_inner": 0.0053,
+        "uniformity": 0.0545, "latex": 0.0155, "flesh_perceptive": 0.0126,
+        "spore_vis": 0.0274, "spore": 0.0485, "microscopic": 0.0170,
+        "chemical": 0.0193, "ecological": 0.0310, "taxonomic": 0.1090,
+        "numeric": 0.0118, "body_form_filter": False,
     },
     "visual-heavy": {
-        "macro_visual": 0.50,
-        "structural": 0.20,
-        "flesh_sensory": 0.02,
-        "microscopic_lab": 0.01,
-        "ecological": 0.10,
-        "taxonomic": 0.02,
-        "numeric": 0.10,
+        "cap_viz": 0.20, "gills_arrange": 0.15, "gills_distrib": 0.10,
+        "stem": 0.10, "volva": 0.10, "veil": 0.05, "spore_vis": 0.05,
+        "ecological": 0.05, "taxonomic": 0.05, "numeric": 0.05,
         "body_form_filter": True,
     },
-    "balanced": {
-        "macro_visual": 0.15,
-        "structural": 0.15,
-        "flesh_sensory": 0.10,
-        "microscopic_lab": 0.10,
-        "ecological": 0.15,
-        "taxonomic": 0.10,
-        "numeric": 0.15,
-        "body_form_filter": False,
-    },
-    "no-filter": {
-        "macro_visual": 0.30,
-        "structural": 0.15,
-        "flesh_sensory": 0.05,
-        "microscopic_lab": 0.03,
-        "ecological": 0.15,
-        "taxonomic": 0.05,
-        "numeric": 0.12,
-        "body_form_filter": False,
+    "uniform": {
+        # No explicit group weights → SimilarityWeights distributes evenly
+        "numeric": 0.05, "body_form_filter": False,
     },
 }
 
@@ -70,13 +54,8 @@ class PairResult:
     target: str
     rank: int | None  # 1-based rank if found, None if miss
     sim_overall: float | None = None
-    sim_macro_visual: float | None = None
-    sim_structural: float | None = None
-    sim_flesh_sensory: float | None = None
-    sim_microscopic_lab: float | None = None
-    sim_ecological: float | None = None
-    sim_taxonomic: float | None = None
     sim_numeric: float | None = None
+    group_sims: dict = field(default_factory=dict)  # {group_name: score}
     error: str | None = None
 
 
@@ -165,18 +144,14 @@ def _evaluate_single(
     if target_name in names:
         rank = names.index(target_name) + 1
         cand = candidates[rank - 1]
+        group_sims = {g: cand.get(f"similarity_{g}") for g in EMBEDDING_GROUPS}
         return PairResult(
             query=query_name,
             target=target_name,
             rank=rank,
             sim_overall=cand.get("similarity_overall"),
-            sim_macro_visual=cand.get("similarity_macro_visual"),
-            sim_structural=cand.get("similarity_structural"),
-            sim_flesh_sensory=cand.get("similarity_flesh_sensory"),
-            sim_microscopic_lab=cand.get("similarity_microscopic_lab"),
-            sim_ecological=cand.get("similarity_ecological"),
-            sim_taxonomic=cand.get("similarity_taxonomic"),
             sim_numeric=cand.get("similarity_numeric"),
+            group_sims=group_sims,
         )
 
     return PairResult(query=query_name, target=target_name, rank=None)
@@ -187,7 +162,7 @@ def dataset_stats(session: Session) -> dict[str, int]:
     total = session.query(ReconciledSpecies).count()
     embedded = (
         session.query(ReconciledSpecies)
-        .filter(ReconciledSpecies.embedding_macro_visual.isnot(None))
+        .filter(getattr(ReconciledSpecies, _first_embed_col).isnot(None))
         .count()
     )
     gt_pairs = session.query(GroundTruthPair).count()

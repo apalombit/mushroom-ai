@@ -70,7 +70,7 @@ _VOCAB_TO_SECTION = {
     "flesh_texture": ("FLESH", "texture"),
     "flesh_hyphal_structure": ("FLESH", "hyphal_structure"),
     "flesh_cap_stem_consistency": ("FLESH", "cap_stem_consistency"),
-    "latex": ("FLESH", "latex"),
+    "latex": ("FLESH", "latex_presence"),
     "spore_print_color": ("SPORE PRINT", "spore_print_color"),
     "spore_shape": ("SPORES", "shape"),
     "spore_ornamentation": ("SPORES", "ornamentation"),
@@ -256,6 +256,8 @@ VEIL
 
 FLESH
 - quantity: insubstantial/thin | moderate | thick
+- latex_presence: true if latex (milk) is exuded when cut, false if absent
+- latex_color: color of latex e.g. white, white_to_yellow, blue, red, orange, clear/watery
 
 CHEMICAL REACTIONS (extract if present)
 - KOH_cap / KOH_flesh: yellow, orange, red, negative, blackening
@@ -288,7 +290,16 @@ HYMENIUM
 
 SAFETY
 - edibility_status: MUST be one of: edible, choice, conditionally edible, inedible, toxic, deadly
-- known_toxins: named toxins only e.g. ["amatoxins", "ibotenic acid", "muscimol", "gyromitrin"]"""
+- known_toxins: named toxins only e.g. ["amatoxins", "ibotenic acid", "muscimol", "gyromitrin"]
+
+VARIETIES
+- varieties: list named varieties/subspecies/forms ONLY when the source explicitly describes them.
+  - name: the variety designation (e.g. "var. alba", "f. guessowii", "subsp. flavivolvata")
+  - description: one or two sentences on what distinguishes this variety from the nominal form
+  - differing_features: dict of feature → value pairs that differ (e.g. {"cap_color": "white", "habitat": "boreal conifer forest"})
+  - geographic_notes: only if the variety has a distinct geographic range
+  - edibility_note: only if edibility differs from the species baseline
+  Leave varieties as [] if no distinct varieties are mentioned in the source."""
 
 _NOTES_GROUP_A = """
 
@@ -333,6 +344,8 @@ FIELD-SPECIFIC NOTES
 
 FLESH
 - quantity: insubstantial/thin | moderate | thick
+- latex_presence: true if latex (milk) is exuded when cut, false if absent
+- latex_color: color of latex e.g. white, white_to_yellow, blue, red, orange, clear/watery
 
 CHEMICAL REACTIONS (extract if present)
 - KOH_cap / KOH_flesh: yellow, orange, red, negative, blackening
@@ -425,6 +438,7 @@ def merge_extraction_results(
         edibility_status=pass1.edibility_status,
         known_toxins=pass1.known_toxins,
         known_lookalikes=pass1.known_lookalikes,
+        varieties=pass1.varieties,
         extraction_notes=pass1.extraction_notes,
         # Pass 1 → hymenium sub-model (flat str → nested)
         hymenium=ExtractedHymeniumFeatures(type=pass1.hymenium_type),

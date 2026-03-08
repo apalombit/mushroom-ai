@@ -363,10 +363,15 @@ class ExtractedFleshFeatures(BaseModel):
             "Examples: blue (Gyroporus cyanescens), red, none/unchanged"
         ),
     )
-    latex: str | None = Field(
+    latex_presence: bool | None = Field(
+        None,
+        description="True if mushroom exudes latex (milk) when cut or broken. False if absent.",
+    )
+    latex_color: str | None = Field(
         None,
         description=(
-            "Latex when cut. Examples: absent, white, white_to_yellow, blue, red, orange"
+            "Color of latex when present. "
+            "Examples: white, white_to_yellow (changing), blue, red, orange, clear/watery"
         ),
     )
     odor: str | None = Field(
@@ -405,6 +410,13 @@ class ExtractedFleshFeatures(BaseModel):
             "Examples: insubstantial/thin (e.g. small Mycena), moderate, thick"
         ),
     )
+
+    @model_validator(mode="before")
+    @classmethod
+    def coerce_bools(cls, data: dict) -> dict:
+        if isinstance(data, dict):
+            _coerce_bool_fields(data, ("latex_presence",))
+        return data
 
 
 class ExtractedSporeFeatures(BaseModel):
@@ -641,6 +653,32 @@ class ExtractedEcologicalFeatures(BaseModel):
 # ---------------------------------------------------------------------------
 
 
+class ExtractedVariety(BaseModel):
+    name: str = Field(
+        description="Variety/form name, e.g. 'var. alba', 'f. flavivolvata', 'subsp. muscaria'"
+    )
+    description: str | None = Field(
+        None,
+        description="Free-text summary of how this variety differs from the nominal form",
+    )
+    differing_features: dict[str, str] = Field(
+        default_factory=dict,
+        description=(
+            "Key features that differ from the species baseline. "
+            "Keys are descriptive names (e.g. 'cap_color', 'habitat'), "
+            "values are the variety-specific value."
+        ),
+    )
+    geographic_notes: str | None = Field(
+        None,
+        description="Geographic range of this variety if different from species",
+    )
+    edibility_note: str | None = Field(
+        None,
+        description="Only if edibility differs from the nominal species",
+    )
+
+
 class Pass1IdentityFeatures(BaseModel):
     """Pass 1 — identity, taxonomy, body plan, safety (~18 fields)."""
 
@@ -660,13 +698,26 @@ class Pass1IdentityFeatures(BaseModel):
     edibility_status: str | None = None
     known_toxins: list[str] = Field(default_factory=list)
     known_lookalikes: list[str] = Field(default_factory=list)
+    varieties: list[ExtractedVariety] = Field(
+        default_factory=list,
+        description=(
+            "Named varieties, subspecies, or forms with features differing from the nominal taxon. "
+            "Leave empty if the source text describes no distinct varieties."
+        ),
+    )
     extraction_notes: str | None = None
 
     @model_validator(mode="before")
     @classmethod
     def coerce_null_lists(cls, data: dict) -> dict:
         if isinstance(data, dict):
-            for field in ("common_names", "synonyms", "known_toxins", "known_lookalikes"):
+            for field in (
+                "common_names",
+                "synonyms",
+                "known_toxins",
+                "known_lookalikes",
+                "varieties",
+            ):
                 if data.get(field) is None:
                     data[field] = []
         return data
@@ -852,6 +903,13 @@ class ExtractedSpeciesFeatures(BaseModel):
         default_factory=list,
         description="Species mentioned as lookalikes in the source text. Use scientific names.",
     )
+    varieties: list[ExtractedVariety] = Field(
+        default_factory=list,
+        description=(
+            "Named varieties, subspecies, or forms with features differing from the nominal taxon. "
+            "Leave empty if the source text describes no distinct varieties."
+        ),
+    )
 
     extraction_notes: str | None = Field(
         None,
@@ -867,7 +925,13 @@ class ExtractedSpeciesFeatures(BaseModel):
         if not isinstance(data, dict):
             return data
         # Coerce null list fields to []
-        for field in ("common_names", "known_toxins", "known_lookalikes", "synonyms"):
+        for field in (
+            "common_names",
+            "known_toxins",
+            "known_lookalikes",
+            "synonyms",
+            "varieties",
+        ):
             if data.get(field) is None:
                 data[field] = []
         # Coerce null nested objects to {} so sub-models get their defaults

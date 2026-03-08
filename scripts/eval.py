@@ -78,6 +78,9 @@ def main() -> None:
             return
 
         stats = dataset_stats(session)
+        from ingestion.rubric import get_active_profile
+
+        print(f"Grouping profile: {get_active_profile()}")
         print(f"Evaluating {len(pairs)} pairs (x2 directions) with top_k={args.top_k}")
 
         if args.benchmark:
@@ -85,9 +88,10 @@ def main() -> None:
             results: dict[str, object] = {}
             for label, config in BENCHMARK_CONFIGS.items():
                 print(f"\n--- {label} ---")
-                bff = config.pop("body_form_filter", True)
-                weights = SimilarityWeights(**config, body_form_filter=bff)
-                config["body_form_filter"] = bff  # restore for next iteration
+                cfg = dict(config)  # copy to avoid mutating
+                bff = cfg.pop("body_form_filter", False)
+                numeric_w = cfg.pop("numeric", None)
+                weights = SimilarityWeights(weights=cfg, numeric=numeric_w, body_form_filter=bff)
                 result = _run_single(session, pairs, weights, args.top_k, label, stats)
                 results[label] = result
 

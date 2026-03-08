@@ -1,0 +1,123 @@
+# Grouping profile: default
+# Each key is a DB embedding slot (embedding_<key>).
+# Values are lists of dot-path feature fields to embed together.
+
+macro_visual:
+  - cap.shape
+  - cap.colors
+  - cap.color_faded
+  - cap.color_pattern
+  - cap.surface_texture
+  - cap.surface_moisture
+  - cap.scales_or_warts
+  - cap.margin_type
+  - cap.margin_lined_at_maturity
+  - cap.bruising_color
+  - cap.central_depression
+  - hymenium.type
+  - spore_print_color
+  - overall_size_class
+  - overall_body_form
+  - growth_habit
+  - edibility_status
+  - known_lookalikes
+
+structural:
+  # Gills
+  - gills.attachment
+  - gills.spacing
+  - gills.color
+  - gills.color_with_age
+  - gills.thickness
+  - gills.texture
+  - gills.edge_texture
+  # Pores (non-numeric)
+  - pores.color
+  - pores.color_with_age
+  - pores.bruising_color
+  # Stem (non-numeric)
+  - stem.color
+  - stem.color_with_age
+  - stem.surface_texture
+  - stem.reticulation
+  - stem.shape
+  - stem.attachment_position
+  - stem.consistency
+  - stem.hollow_or_solid
+  - stem.base_color
+  - stem.basal_mycelium_color
+  - stem.finger_stain_color
+  - stem.bruising_color
+  # Veil
+  - veil.present
+  - veil.type
+  - veil.cortina_present
+  - veil.shape
+  - veil.color
+  - veil.ring_position
+  - veil.ring_mobility
+  - veil.ring_persistence
+  # Volva
+  - volva.present
+  - volva.type
+  - volva.shape
+  - volva.color
+
+flesh_sensory:
+  - flesh.color
+  - flesh.bruising_color
+  - flesh.latex_presence
+  - flesh.latex_color
+  - flesh.odor
+  - flesh.taste
+  - flesh.texture
+  - flesh.hyphal_structure
+  - flesh.cap_stem_consistency
+  - flesh.quantity
+
+microscopic_lab:
+  # Spore (non-numeric)
+  - spore.shape
+  - spore.ornamentation
+  - spore.amyloidity
+  - spore.color_in_KOH
+  # Basidia
+  - microscopic.basidia_spore_count
+  # Cystidia
+  - microscopic.cheilocystidia_shape
+  - microscopic.cheilocystidia_dims_um
+  - microscopic.pleurocystidia_shape
+  - microscopic.pleurocystidia_dims_um
+  - microscopic.cystidia_color_in_KOH
+  # Pileipellis (non-numeric)
+  - microscopic.pileipellis_type
+  - microscopic.pileipellis_terminal_cell_shape
+  # Chemical reactions
+  - chemical.KOH_cap
+  - chemical.KOH_flesh
+  - chemical.NH4OH_cap
+  - chemical.NH4OH_flesh
+  - chemical.FeSO4_cap
+  - chemical.FeSO4_flesh
+
+ecological:
+  - ecology.trophic_mode
+  - ecology.habitat_types
+  - ecology.substrate
+  - ecology.associated_trees
+  - ecology.fruiting_seasons
+  - ecology.fruiting_months
+  - ecology.geographic_regions
+  - ecology.altitude_notes
+  - ecology.growth_position
+  - ecology.microhabitat_notes
+
+taxonomic:
+  - kingdom
+  - phylum
+  - order
+  - family
+  - genus
+  - species
+  - common_names
+  - synonyms

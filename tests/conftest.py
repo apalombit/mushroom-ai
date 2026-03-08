@@ -86,6 +86,10 @@ def sample_features_json():
             "taste": "not distinctive",
             "texture": "firm",
             "quantity": "moderate",
+            "hyphal_structure": "homoiomerous",
+            "cap_stem_consistency": "homogeneous",
+            "latex_presence": False,
+            "latex_color": None,
         },
         "spore_print_color": "white",
         "spore": {
@@ -112,7 +116,7 @@ def sample_features_json():
             "pileipellis_terminal_cell_shape": None,
         },
         "chemical": {
-            "KOH_cap": None,
+            "KOH_cap": "negative",
             "KOH_flesh": None,
             "NH4OH_cap": None,
             "NH4OH_flesh": None,

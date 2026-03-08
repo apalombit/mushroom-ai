@@ -4,15 +4,11 @@ import numpy as np
 
 from ingestion.rubric import (
     _NUMERIC_FIELD_PATHS,
-    ECOLOGICAL_FIELDS,
     EMBEDDING_GROUPS,
-    FLESH_SENSORY_FIELDS,
-    MACRO_VISUAL_FIELDS,
-    MICROSCOPIC_LAB_FIELDS,
+    GROUP_SLOTS,
     MORPHOLOGICAL_FIELDS,
     NUMERIC_FIELDS,
-    STRUCTURAL_FIELDS,
-    TAXONOMIC_FIELDS,
+    _load_profile,
     features_to_text,
 )
 
@@ -32,14 +28,14 @@ def test_features_to_text_contains_key_values(sample_features_json):
 
 def test_features_to_text_ecological(sample_features_json):
     """features_to_text works for ecological fields."""
-    text = features_to_text(sample_features_json, ECOLOGICAL_FIELDS)
+    text = features_to_text(sample_features_json, EMBEDDING_GROUPS["ecological"])
     assert len(text) > 0
     assert "forest" in text.lower() or "birch" in text.lower()
 
 
 def test_features_to_text_taxonomic(sample_features_json):
     """features_to_text works for taxonomic fields."""
-    text = features_to_text(sample_features_json, TAXONOMIC_FIELDS)
+    text = features_to_text(sample_features_json, EMBEDDING_GROUPS["taxonomic"])
     assert "Amanitaceae" in text or "Amanita" in text
 
 
@@ -103,9 +99,11 @@ def test_similarity_ordering():
         "spore_print_color": "olive-brown",
     }
 
-    text_m = features_to_text(muscaria, MACRO_VISUAL_FIELDS)
-    text_c = features_to_text(caesarea, MACRO_VISUAL_FIELDS)
-    text_e = features_to_text(edulis, MACRO_VISUAL_FIELDS)
+    # Use cap_viz group (colors) which distinguishes these species
+    cap_viz_fields = EMBEDDING_GROUPS["cap_viz"]
+    text_m = features_to_text(muscaria, cap_viz_fields)
+    text_c = features_to_text(caesarea, cap_viz_fields)
+    text_e = features_to_text(edulis, cap_viz_fields)
 
     emb_m = model.encode(text_m)
     emb_c = model.encode(text_c)
@@ -123,33 +121,27 @@ def test_similarity_ordering():
 
 
 # ---------------------------------------------------------------------------
-# Sub-group coverage tests (Stage 1)
+# Sub-group coverage tests
 # ---------------------------------------------------------------------------
-
-_MORPH_SUBGROUPS = [
-    MACRO_VISUAL_FIELDS,
-    STRUCTURAL_FIELDS,
-    FLESH_SENSORY_FIELDS,
-    MICROSCOPIC_LAB_FIELDS,
-]
 
 
 def test_subgroups_cover_all_morphological_fields():
-    """Union of 4 sub-groups + numeric paths == MORPHOLOGICAL_FIELDS."""
+    """Union of active profile groups + numeric paths == MORPHOLOGICAL_FIELDS."""
     union = set()
-    for group in _MORPH_SUBGROUPS:
-        union.update(group)
+    for fields in EMBEDDING_GROUPS.values():
+        union.update(fields)
     union.update(_NUMERIC_FIELD_PATHS)
     assert union == set(MORPHOLOGICAL_FIELDS)
 
 
 def test_subgroups_no_overlap():
-    """Sub-groups are mutually exclusive (no field in two groups)."""
+    """Profile groups are mutually exclusive (no field in two groups)."""
+    profile = _load_profile("default")
     seen: set[str] = set()
-    for group in _MORPH_SUBGROUPS:
-        overlap = seen & set(group)
+    for fields in profile.values():
+        overlap = seen & set(fields)
         assert not overlap, f"Overlapping fields: {overlap}"
-        seen.update(group)
+        seen.update(fields)
 
 
 def test_no_numeric_fields_in_embedding_groups():
@@ -160,23 +152,19 @@ def test_no_numeric_fields_in_embedding_groups():
         assert not overlap, f"Numeric fields in {name}: {overlap}"
 
 
-def test_embedding_groups_has_six_entries():
-    """EMBEDDING_GROUPS has exactly 6 entries (4 morph + eco + taxon)."""
-    assert len(EMBEDDING_GROUPS) == 6
-    expected_keys = {
-        "macro_visual",
-        "structural",
-        "flesh_sensory",
-        "microscopic_lab",
-        "ecological",
-        "taxonomic",
-    }
-    assert set(EMBEDDING_GROUPS.keys()) == expected_keys
+def test_embedding_groups_matches_group_slots():
+    """Active EMBEDDING_GROUPS keys match GROUP_SLOTS and has at least one entry."""
+    assert len(EMBEDDING_GROUPS) > 0
+    assert set(EMBEDDING_GROUPS.keys()) == set(GROUP_SLOTS)
 
 
 def test_each_subgroup_produces_nonempty_text(sample_features_json):
-    """Each morphological sub-group produces non-empty text for a complete features dict."""
+    """Non-bolete-specific sub-groups produce non-empty text for a gill species."""
+    # pores group is intentionally empty for gill-bearing species (Amanita fixture)
+    bolete_only = {"pores"}
     for name, fields in EMBEDDING_GROUPS.items():
+        if name in bolete_only or not fields:
+            continue
         text = features_to_text(sample_features_json, fields)
         assert len(text) > 0, f"Empty text for group '{name}'"
 
@@ -186,3 +174,20 @@ def test_numeric_fields_not_empty():
     assert len(NUMERIC_FIELDS) > 0
     # At least 5 range pairs + 5 single values
     assert len(NUMERIC_FIELDS) >= 10
+
+
+def test_default_profile_loads():
+    """The default profile YAML loads and has all 6 groups with non-empty fields."""
+    profile = _load_profile("default")
+    assert len(profile) == 6
+    for fields in profile.values():
+        assert len(fields) > 0, "Default profile should have no empty groups"
+
+
+def test_visual_merged_profile_loads():
+    """The visual_merged profile loads and has empty flesh_sensory/microscopic_lab."""
+    profile = _load_profile("visual_merged")
+    assert len(profile) == 6
+    assert len(profile["flesh_sensory"]) == 0
+    assert len(profile["microscopic_lab"]) == 0
+    assert len(profile["macro_visual"]) > 18  # merged with structural

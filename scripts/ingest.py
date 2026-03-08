@@ -24,9 +24,9 @@ from db.models import ReconciledSpecies, SourceObservation
 from ingestion.embed import embed_all
 from ingestion.extract import extract_features_from_text, save_extraction
 from ingestion.reconcile import reconcile_species
-from ingestion.sources import firstnature, funghiitaliani, mushroomexpert, ultimatemushroom, wikipedia
+from ingestion.sources import firstnature, funghiitaliani, mushroomexpert, ultimatemushroom
 
-FETCH_SOURCES = [wikipedia, firstnature, mushroomexpert, ultimatemushroom, funghiitaliani]
+FETCH_SOURCES = [firstnature, mushroomexpert, ultimatemushroom, funghiitaliani]
 
 logger = logging.getLogger(__name__)
 
