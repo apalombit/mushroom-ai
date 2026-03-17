@@ -456,7 +456,7 @@ if st.button("Find Lookalikes", type="primary", disabled=not species_name):
 # --- Species index expander ---
 with st.expander("📋 Species currently indexed in the database"):
     try:
-        r = requests.get(f"{API_BASE}/api/v1/species?limit=200", timeout=10)
+        r = requests.get(f"{API_BASE}/api/v1/species?limit=1000", timeout=10)
         if r.ok:
             species_list = r.json()
             st.caption(f"{len(species_list)} species in database")

@@ -93,6 +93,7 @@ def _build_reconciled_species(groups: dict) -> type:
         "common_names": Column(JSONB, default=list),  # list[str]
         "family": Column(String(128), nullable=True, index=True),
         "genus": Column(String(128), nullable=True, index=True),
+        "group": Column(String(128), nullable=True, index=True),
         # Full reconciled features as JSON
         "features_json": Column(JSONB, nullable=False),
         # Safety — explicit columns for fast filtering

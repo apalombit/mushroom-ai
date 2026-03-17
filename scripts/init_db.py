@@ -162,7 +162,19 @@ def load_ground_truth_pairs(path: str = GROUND_TRUTH_PATH) -> None:
 
 
 def main():
+    import argparse
+
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--reset", action="store_true", help="Drop all tables before recreating")
+    args = parser.parse_args()
+
     logging.basicConfig(level=logging.INFO)
+
+    if args.reset:
+        logger.warning("--reset: dropping all tables...")
+        Base.metadata.drop_all(engine)
+        logger.info("Tables dropped.")
+
     logger.info("Creating database tables...")
 
     # Enable pgvector

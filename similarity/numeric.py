@@ -6,6 +6,7 @@ for fields like cap diameter, stem height, spore dimensions, etc.
 """
 
 from ingestion.rubric import (
+    MONTH_OVERLAP_FIELD,
     NUMERIC_RANGE_FIELDS,
     NUMERIC_SINGLE_FIELDS,
     _get_nested,
@@ -95,6 +96,19 @@ def single_proximity(a: float, b: float, tolerance: float) -> float | None:
     return 1.0 - (distance / tolerance)
 
 
+def month_overlap(a: list[str], b: list[str]) -> float | None:
+    """
+    Jaccard similarity between two sets of month names.
+    Returns None if either list is empty.
+    """
+    if not a or not b:
+        return None
+    set_a, set_b = set(a), set(b)
+    intersection = len(set_a & set_b)
+    union = len(set_a | set_b)
+    return intersection / union
+
+
 def _parse_numeric(value) -> float | None:
     """Try to extract a single float from a value that may be a string like '1-2 per mm'."""
     if value is None:
@@ -146,6 +160,12 @@ def compute_numeric_similarity(features_a: dict, features_b: dict) -> float:
         score = single_proximity(a_val, b_val, tolerance)
         if score is not None:
             scores.append(score)
+
+    a_months = _get_nested(features_a, MONTH_OVERLAP_FIELD) or []
+    b_months = _get_nested(features_b, MONTH_OVERLAP_FIELD) or []
+    score = month_overlap(a_months, b_months)
+    if score is not None:
+        scores.append(score)
 
     if not scores:
         return 0.0

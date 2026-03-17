@@ -54,7 +54,6 @@ macro_visual:
   - veil.ring_persistence
   - volva.present
   - volva.type
-  - volva.shape
   - volva.color
 
 structural:
@@ -93,15 +92,11 @@ microscopic_lab: []
 
 ecological:
   - ecology.trophic_mode
-  - ecology.habitat_types
   - ecology.substrate
   - ecology.associated_trees
-  - ecology.fruiting_seasons
-  - ecology.fruiting_months
   - ecology.geographic_regions
   - ecology.altitude_notes
   - ecology.growth_position
-  - ecology.microhabitat_notes
 
 taxonomic:
   - kingdom

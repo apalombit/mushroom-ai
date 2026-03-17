@@ -73,7 +73,6 @@ veil:
 volva:
   - volva.present
   - volva.type
-  - volva.shape
   - volva.color
 
 flesh_visual:
@@ -123,10 +122,8 @@ chemical:
   - chemical.FeSO4_flesh
 
 ecological:
-  - ecology.habitat_types
   - ecology.substrate
   - ecology.associated_trees
-  - ecology.fruiting_months
 
 taxonomic:
   - phylum

@@ -43,10 +43,14 @@ NUMERIC_SINGLE_FIELDS: list[tuple[str, float]] = [
 # Combined list for iteration
 NUMERIC_FIELDS: list[tuple] = NUMERIC_RANGE_FIELDS + NUMERIC_SINGLE_FIELDS
 
+# Set-overlap field — Jaccard month similarity, not embedded
+MONTH_OVERLAP_FIELD: str = "ecology.fruiting_months"
+
 # All numeric field paths (flattened from range pairs + single values)
+# MONTH_OVERLAP_FIELD is included to prevent profiles from embedding it.
 _NUMERIC_FIELD_PATHS = [f for pair in NUMERIC_RANGE_FIELDS for f in pair] + [
     f for f, _ in NUMERIC_SINGLE_FIELDS
-]
+] + [MONTH_OVERLAP_FIELD]
 
 # ---------------------------------------------------------------------------
 # YAML profile loading

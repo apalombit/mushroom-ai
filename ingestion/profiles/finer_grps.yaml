@@ -1,33 +1,46 @@
 # Grouping profile: split_set
 
-global:
+size:
   - overall_size_class
+
+shape:
   - overall_body_form
-  - growth_habit
+
+cap_color:
+  - cap.colors
+
+stem_color:
+  - stem.color
 
 cap_shape:
   - cap.shape
+
+cap_depress:
   - cap.central_depression
 
-cap_top:
+cap_feel:
   - cap.surface_moisture
+
+cap_text:
   - cap.surface_texture
+
+cap_ornaments:
   - cap.scales_or_warts
 
 cap_margin:
   - cap.margin_type
-  - cap.margin_lined_at_maturity
 
 cap_viz:
-  - cap.colors
   - cap.color_faded
   - cap.color_pattern
+
+cap_bruise:
   - cap.bruising_color
 
 hymenium:
   - hymenium.type
 
-gills_arrange:
+gills_attach:
   - gills.attachment
 
 gills_distrib:
@@ -41,11 +54,17 @@ gills_viz:
 pores:
   - pores.color
   - pores.color_with_age
+
+pores_bruise:
   - pores.bruising_color
 
-stem:
+stem_shape:
   - stem.shape
+
+stem_attach:
   - stem.attachment_position
+
+stem:
   - stem.consistency
   - stem.hollow_or_solid
 
@@ -53,26 +72,45 @@ stem_surf:
   - stem.surface_texture
   - stem.reticulation
 
-stem_viz:
-  - stem.color
-  - stem.color_with_age
+stem_bruise:
   - stem.bruising_color
+
+stem_age:
+  - stem.color_with_age
+
+stem_basecol:
   - stem.base_color
-  - stem.finger_stain_color
 
 veil:
   - veil.present
   - veil.type
+
+cortina:
   - veil.cortina_present
-  - veil.shape
+
+veil_colour:
   - veil.color
+
+veil_shape:
+  - veil.shape
+
+ring_pos:
   - veil.ring_position
-  - veil.ring_mobility
+
+ring_pers:
   - veil.ring_persistence
+
+ring_mov:
+  - veil.ring_mobility
 
 volva:
   - volva.present
   - volva.type
+
+volva_shape:
+  - volva.shape
+
+volva_col:
   - volva.color
 
 flesh_visual:
@@ -97,33 +135,20 @@ flesh_perceptive:
 spore_vis:
   - spore_print_color
 
-spore:
-  - spore.shape
-  - spore.ornamentation
-  - spore.amyloidity
-  - spore.color_in_KOH
-
-microscopic:
-  - microscopic.basidia_spore_count
-  - microscopic.cheilocystidia_shape
-  - microscopic.cheilocystidia_dims_um
-  - microscopic.pleurocystidia_shape
-  - microscopic.pleurocystidia_dims_um
-  - microscopic.cystidia_color_in_KOH
-  - microscopic.pileipellis_type
-  - microscopic.pileipellis_terminal_cell_shape
-
-chemical:
-  - chemical.KOH_cap
-  - chemical.KOH_flesh
-  - chemical.NH4OH_cap
-  - chemical.NH4OH_flesh
-  - chemical.FeSO4_cap
-  - chemical.FeSO4_flesh
-
 ecological:
   - ecology.substrate
+
+habitat:
+  - ecology.trophic_mode
+  - ecology.growth_position
+  - ecology.geographic_regions
+  - ecology.altitude_notes
+
+trees:
   - ecology.associated_trees
+
+growth:
+  - growth_habit
 
 taxonomic:
   - phylum

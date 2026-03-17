@@ -22,22 +22,20 @@ logger = logging.getLogger(__name__)
 
 # Named weight configs for benchmark sweeps
 BENCHMARK_CONFIGS: dict[str, dict] = {
-    "sweep-best": {
-        "global": 0.0120, "cap_shape": 0.0137, "cap_top": 0.0310, "cap_margin": 0.0242,
-        "cap_viz": 0.0895, "hymenium": 0.0297, "gills_arrange": 0.1121,
-        "gills_distrib": 0.0683, "gills_viz": 0.0189, "pores": 0.0185,
-        "stem": 0.0481, "stem_surf": 0.0582, "stem_viz": 0.0265, "veil": 0.0005,
-        "volva": 0.0382, "flesh_visual": 0.0589, "flesh_inner": 0.0053,
-        "uniformity": 0.0545, "latex": 0.0155, "flesh_perceptive": 0.0126,
-        "spore_vis": 0.0274, "spore": 0.0485, "microscopic": 0.0170,
-        "chemical": 0.0193, "ecological": 0.0310, "taxonomic": 0.1090,
-        "numeric": 0.0118, "body_form_filter": False,
-    },
-    "visual-heavy": {
-        "cap_viz": 0.20, "gills_arrange": 0.15, "gills_distrib": 0.10,
-        "stem": 0.10, "volva": 0.10, "veil": 0.05, "spore_vis": 0.05,
-        "ecological": 0.05, "taxonomic": 0.05, "numeric": 0.05,
-        "body_form_filter": True,
+    # finer_grps sweep #2: R@1=9.7% R@3=16.1% R@5=24.2% (seed=42, n=10000, BFF=False)
+    "finer-sweep-best": {
+        "size": 0.0073, "shape": 0.0166, "cap_color": 0.0933, "stem_color": 0.0218,
+        "cap_shape": 0.0101, "cap_depress": 0.0035, "cap_feel": 0.0036, "cap_text": 0.0076,
+        "cap_ornaments": 0.0182, "cap_margin": 0.0014, "cap_viz": 0.0196, "cap_bruise": 0.0290,
+        "hymenium": 0.0284, "gills_attach": 0.1382, "gills_distrib": 0.0301, "gills_viz": 0.0096,
+        "pores": 0.0015, "pores_bruise": 0.0149, "stem_shape": 0.0030, "stem_attach": 0.0032,
+        "stem": 0.0063, "stem_surf": 0.0040, "stem_bruise": 0.0258, "stem_age": 0.0068,
+        "stem_basecol": 0.0099, "veil": 0.0257, "cortina": 0.0571, "veil_colour": 0.0255,
+        "veil_shape": 0.0194, "ring_pos": 0.0027, "ring_pers": 0.0284, "ring_mov": 0.0109,
+        "volva": 0.0219, "volva_shape": 0.0209, "volva_col": 0.0014, "flesh_visual": 0.0076,
+        "flesh_inner": 0.0445, "uniformity": 0.0521, "latex": 0.0209, "flesh_perceptive": 0.0076,
+        "spore_vis": 0.0040, "ecological": 0.0107, "habitat": 0.0037, "trees": 0.0121,
+        "growth": 0.0191, "taxonomic": 0.0143, "numeric": 0.0759, "body_form_filter": False,
     },
     "uniform": {
         # No explicit group weights → SimilarityWeights distributes evenly

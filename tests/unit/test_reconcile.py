@@ -75,6 +75,42 @@ def test_no_observations_returns_none():
     session.add.assert_not_called()
 
 
+def test_single_source_normalizes_alias():
+    """Single-source reconciliation normalizes alias values in features_json."""
+    import copy
+
+    features = copy.deepcopy(
+        {
+            "scientific_name": "Amanita phalloides",
+            "species_epithet": "phalloides",
+            "common_names": [],
+            "synonyms": [],
+            "kingdom": "Fungi",
+            "phylum": "Basidiomycota",
+            "order": "Agaricales",
+            "family": "Amanitaceae",
+            "genus": "Amanita",
+            "ecology": {"trophic_mode": "saprophytic"},
+            "edibility_status": "deadly",
+            "known_toxins": ["amatoxins"],
+            "known_lookalikes": [],
+        }
+    )
+
+    obs = MagicMock(spec=SourceObservation)
+    obs.features_json = features
+    obs.extraction_timestamp = None
+
+    session = _make_session([obs])
+    added = []
+    session.add.side_effect = added.append
+
+    reconcile_species(session, "Amanita phalloides")
+
+    row = added[0]
+    assert row.features_json["ecology"]["trophic_mode"] == "saprotrophic"
+
+
 def test_incremental_skip_when_up_to_date(sample_features_json):
     """Skips reconciliation when reconciled_at >= newest extraction_timestamp."""
     from datetime import datetime

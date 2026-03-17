@@ -6,6 +6,7 @@ from similarity.numeric import (
     _SIZE_BINS,
     category_similarity,
     compute_numeric_similarity,
+    month_overlap,
     range_to_category,
     single_proximity,
 )
@@ -99,6 +100,33 @@ class TestSingleProximity:
     def test_none_returns_none(self):
         assert single_proximity(None, 5.0, 3.0) is None
         assert single_proximity(5.0, None, 3.0) is None
+
+
+# ---------------------------------------------------------------------------
+# month_overlap
+# ---------------------------------------------------------------------------
+
+
+class TestMonthOverlap:
+    def test_full_overlap(self):
+        months = ["July", "August", "September"]
+        assert month_overlap(months, months) == pytest.approx(1.0)
+
+    def test_no_overlap(self):
+        assert month_overlap(["January", "February"], ["July", "August"]) == pytest.approx(0.0)
+
+    def test_partial_overlap(self):
+        # intersection={August, September}, union={July, August, September, October}
+        a = ["July", "August", "September"]
+        b = ["August", "September", "October"]
+        assert month_overlap(a, b) == pytest.approx(2 / 4)
+
+    def test_one_empty_returns_none(self):
+        assert month_overlap([], ["July", "August"]) is None
+        assert month_overlap(["July"], []) is None
+
+    def test_both_empty_returns_none(self):
+        assert month_overlap([], []) is None
 
 
 # ---------------------------------------------------------------------------

@@ -1,66 +1,54 @@
-# Grouping profile: split_set
+# Grouping profile: default
+# Each key is a DB embedding slot (embedding_<key>).
+# Values are lists of dot-path feature fields to embed together.
 
-global:
-  - overall_size_class
-  - overall_body_form
-  - growth_habit
-
-cap_shape:
+macro_visual:
   - cap.shape
-  - cap.central_depression
-
-cap_top:
-  - cap.surface_moisture
-  - cap.surface_texture
-  - cap.scales_or_warts
-
-cap_margin:
-  - cap.margin_type
-  - cap.margin_lined_at_maturity
-
-cap_viz:
   - cap.colors
   - cap.color_faded
   - cap.color_pattern
+  - cap.surface_texture
+  - cap.surface_moisture
+  - cap.scales_or_warts
+  - cap.margin_type
+  - cap.margin_lined_at_maturity
   - cap.bruising_color
-
-hymenium:
+  - cap.central_depression
   - hymenium.type
+  - spore_print_color
+  - overall_size_class
+  - overall_body_form
+  - growth_habit
+  - edibility_status
+  - known_lookalikes
 
-gills_arrange:
+structural:
+  # Gills
   - gills.attachment
-
-gills_distrib:
   - gills.spacing
-  - gills.thickness
-
-gills_viz:
   - gills.color
   - gills.color_with_age
-
-pores:
+  - gills.thickness
+  - gills.texture
+  - gills.edge_texture
+  # Pores (non-numeric)
   - pores.color
   - pores.color_with_age
   - pores.bruising_color
-
-stem:
+  # Stem (non-numeric)
+  - stem.color
+  - stem.color_with_age
+  - stem.surface_texture
+  - stem.reticulation
   - stem.shape
   - stem.attachment_position
   - stem.consistency
   - stem.hollow_or_solid
-
-stem_surf:
-  - stem.surface_texture
-  - stem.reticulation
-
-stem_viz:
-  - stem.color
-  - stem.color_with_age
-  - stem.bruising_color
   - stem.base_color
+  - stem.basal_mycelium_color
   - stem.finger_stain_color
-
-veil:
+  - stem.bruising_color
+  # Veil
   - veil.present
   - veil.type
   - veil.cortina_present
@@ -69,51 +57,41 @@ veil:
   - veil.ring_position
   - veil.ring_mobility
   - veil.ring_persistence
-
-volva:
+  # Volva
   - volva.present
   - volva.type
   - volva.color
 
-flesh_visual:
+flesh_sensory:
   - flesh.color
   - flesh.bruising_color
-
-flesh_inner:
-  - flesh.hyphal_structure
-
-uniformity:
-  - flesh.cap_stem_consistency
-
-latex:
   - flesh.latex_presence
   - flesh.latex_color
-
-flesh_perceptive:
   - flesh.odor
   - flesh.taste
   - flesh.texture
+  - flesh.hyphal_structure
+  - flesh.cap_stem_consistency
+  - flesh.quantity
 
-spore_vis:
-  - spore_print_color
-
-spore:
+microscopic_lab:
+  # Spore (non-numeric)
   - spore.shape
   - spore.ornamentation
   - spore.amyloidity
   - spore.color_in_KOH
-
-microscopic:
+  # Basidia
   - microscopic.basidia_spore_count
+  # Cystidia
   - microscopic.cheilocystidia_shape
   - microscopic.cheilocystidia_dims_um
   - microscopic.pleurocystidia_shape
   - microscopic.pleurocystidia_dims_um
   - microscopic.cystidia_color_in_KOH
+  # Pileipellis (non-numeric)
   - microscopic.pileipellis_type
   - microscopic.pileipellis_terminal_cell_shape
-
-chemical:
+  # Chemical reactions
   - chemical.KOH_cap
   - chemical.KOH_flesh
   - chemical.NH4OH_cap
@@ -122,11 +100,19 @@ chemical:
   - chemical.FeSO4_flesh
 
 ecological:
+  - ecology.trophic_mode
   - ecology.substrate
   - ecology.associated_trees
+  - ecology.geographic_regions
+  - ecology.altitude_notes
+  - ecology.growth_position
 
 taxonomic:
+  - kingdom
   - phylum
   - order
   - family
   - genus
+  - species
+  - common_names
+  - synonyms

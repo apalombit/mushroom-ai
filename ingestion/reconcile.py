@@ -19,6 +19,8 @@ from datetime import datetime
 from sqlalchemy.orm import Session
 
 from db.models import ReconciledSpecies, SourceObservation
+from ingestion.extract import _build_vocab_guidance
+from ingestion.normalize import normalize_features, pre_merge_list_fields, pre_merge_numeric_ranges
 from llm.client import structured_completion
 from llm.schemas import ReconciliationResult
 
@@ -36,7 +38,9 @@ _EDIBILITY_PRIORITY = {
 }
 
 
-def _fallback_edibility(observations: list[SourceObservation], llm_value: str | None) -> str | None:
+def _fallback_edibility(
+    observations: list[SourceObservation], llm_value: str | None
+) -> str | None:
     """
     If the LLM returned null for edibility_status, deterministically pick the
     most conservative (safety-first) value from the source observations.
@@ -55,7 +59,8 @@ def _fallback_edibility(observations: list[SourceObservation], llm_value: str | 
         key=lambda v: _EDIBILITY_PRIORITY.get((v or "").lower(), 99),
     )
 
-SYSTEM_PROMPT = """\
+SYSTEM_PROMPT = (
+    """\
 You are a mycologist reconciling multiple source descriptions of the same mushroom species.
 
 Rules:
@@ -65,10 +70,14 @@ Rules:
 - Set needs_review=True if any critical safety fields (edibility, known_toxins) conflict.
 - Preserve all common_names, known_toxins, known_lookalikes from all sources.
 - scientific_name must match the queried species exactly.
+- PRE-MERGED fields listed in the prompt are already resolved — use them exactly as given.
 """
+    + "\nCANONICAL VALUES (output must use these exact terms):"
+    + _build_vocab_guidance()
+)
 
 
-def reconcile_species(session: Session, scientific_name: str) -> ReconciledSpecies | None:
+def reconcile_species(session: Session, scientific_name: str, group: str | None = None) -> ReconciledSpecies | None:
     """
     Reconcile all Layer 1 observations for a species into a Layer 2 canonical profile.
 
@@ -100,9 +109,9 @@ def reconcile_species(session: Session, scientific_name: str) -> ReconciledSpeci
             logger.debug("Already reconciled (up-to-date): %s", scientific_name)
             return existing
 
-    # Single-source: copy directly with full confidence
+    # Single-source: normalize aliases and copy with full confidence
     if len(observations) == 1:
-        features = observations[0].features_json
+        features = normalize_features(observations[0].features_json)
         confidence = 1.0
         conflicts: list[str] = []
         needs_review = False
@@ -110,21 +119,45 @@ def reconcile_species(session: Session, scientific_name: str) -> ReconciledSpeci
     else:
         # Multi-source: LLM reconciliation. Full features_json for every source —
         # gemma3:27b has a 128K context window so ~5K tokens of source data is trivial.
+
+        # Step 1: normalize each source's features
+        normalized = [normalize_features(obs.features_json) for obs in observations]
+
+        # Step 2: deterministic pre-merges
+        numeric_pre = pre_merge_numeric_ranges(normalized)
+        list_pre = pre_merge_list_fields(normalized)
+
+        # Step 3: build pre-merge hint block for the prompt
+        hint_lines = []
+        for parent, fields in {**list_pre, **numeric_pre}.items():
+            if isinstance(fields, dict):
+                for field, val in fields.items():
+                    hint_lines.append(f"- {parent}.{field}: {val!r}")
+            else:
+                hint_lines.append(f"- {parent}: {fields!r}")
+
+        pre_merge_hint = (
+            "\n\nPRE-MERGED FIELDS (deterministic — use these exact values, do not override):\n"
+            + "\n".join(hint_lines)
+        ) if hint_lines else ""
+
+        # Step 4: build sources text from normalized features
         sources_text = "\n\n".join(
             f"Source {i + 1} ({obs.source_name}):\n"
-            + _json.dumps(obs.features_json, ensure_ascii=False, separators=(",", ":"))
-            for i, obs in enumerate(observations)
+            + _json.dumps(norm, ensure_ascii=False, separators=(",", ":"))
+            for i, (obs, norm) in enumerate(zip(observations, normalized))
         )
+
         prompt = (
             f"Reconcile the following {len(observations)} source descriptions "
-            f"for '{scientific_name}':\n\n{sources_text}"
+            f"for '{scientific_name}':{pre_merge_hint}\n\n{sources_text}"
         )
         result: ReconciliationResult = structured_completion(
             prompt=prompt,
             response_model=ReconciliationResult,
             system=SYSTEM_PROMPT,
             temperature=0.1,
-            max_tokens=4096,
+            max_tokens=16384,
             max_retries=4,
         )
         features = result.reconciled_features.model_dump()
@@ -151,6 +184,7 @@ def reconcile_species(session: Session, scientific_name: str) -> ReconciledSpeci
         existing.reconciliation_confidence = confidence
         existing.needs_review = needs_review
         existing.review_notes = review_notes
+        existing.group = group
         existing.reconciled_at = now
         existing.source_count = len(observations)
         row = existing
@@ -160,6 +194,7 @@ def reconcile_species(session: Session, scientific_name: str) -> ReconciledSpeci
             common_names=features.get("common_names", []),
             family=features.get("family"),
             genus=features.get("genus"),
+            group=group,
             features_json=features,
             edibility=features.get("edibility_status"),
             known_toxins=features.get("known_toxins", []),

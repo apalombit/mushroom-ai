@@ -88,7 +88,7 @@ def run_fetch(species_list: list[dict]) -> None:
     )
 
 
-def run_extract(species_list: list[dict]) -> None:
+def run_extract(species_list: list[dict], force: bool = False) -> None:
     """Stage 3: Extract structured features from all sources → Layer 1 (incremental)."""
     logger.info("Extracting features for %d species × %d sources...",
                 len(species_list), len(FETCH_SOURCES))
@@ -96,16 +96,19 @@ def run_extract(species_list: list[dict]) -> None:
     ok, skipped_existing, failed = 0, 0, []
 
     # Pre-load set of (scientific_name, source_name) already in Layer 1
-    session = get_session()
-    try:
-        already_done = {
-            (row[0], row[1])
-            for row in session.query(
-                SourceObservation.scientific_name, SourceObservation.source_name
-            ).all()
-        }
-    finally:
-        session.close()
+    if force:
+        already_done: set[tuple[str, str]] = set()
+    else:
+        session = get_session()
+        try:
+            already_done = {
+                (row[0], row[1])
+                for row in session.query(
+                    SourceObservation.scientific_name, SourceObservation.source_name
+                ).all()
+            }
+        finally:
+            session.close()
 
     for entry in species_list:
         name = entry["scientific_name"]
@@ -144,7 +147,7 @@ def run_extract(species_list: list[dict]) -> None:
     )
 
 
-def run_reconcile() -> None:
+def run_reconcile(species_list: list[dict]) -> None:
     """Stage 4: Reconcile Layer 1 → Layer 2."""
     session = get_session()
     try:
@@ -159,6 +162,8 @@ def run_reconcile() -> None:
         print("No Layer 1 data found — run --extract first.")
         return
 
+    group_map = {entry["scientific_name"]: entry.get("group") for entry in species_list}
+
     logger.info("Reconciling %d species...", len(names))
     start = time.monotonic()
     ok, failed = 0, []
@@ -166,7 +171,7 @@ def run_reconcile() -> None:
     for name in names:
         s = get_session()
         try:
-            result = reconcile_species(s, name)
+            result = reconcile_species(s, name, group=group_map.get(name))
             if result:
                 ok += 1
                 logger.info("Reconciled: %s", name)
@@ -225,6 +230,9 @@ def main() -> None:
     parser.add_argument("--extract", action="store_true", help="Extract to Layer 1")
     parser.add_argument("--reconcile", action="store_true", help="Reconcile to Layer 2")
     parser.add_argument("--embed", action="store_true", help="Embed to Layer 3")
+    parser.add_argument("--limit", type=int, default=None, help="Process only first N species")
+    parser.add_argument("--force-reextract", action="store_true",
+                        help="Re-extract even if Layer 1 row already exists")
     args = parser.parse_args()
 
     logging.basicConfig(level=getattr(logging, settings.log_level))
@@ -232,19 +240,22 @@ def main() -> None:
     species_list = load_seed_species()
     logger.info("Loaded %d species from seed list", len(species_list))
 
+    if args.limit:
+        species_list = species_list[: args.limit]
+
     if args.fetch_only:
         run_fetch(species_list)
     elif args.extract:
-        run_extract(species_list)
+        run_extract(species_list, force=args.force_reextract)
     elif args.reconcile:
-        run_reconcile()
+        run_reconcile(species_list)
     elif args.embed:
         run_embed()
     else:
         # No flag: run full pipeline in order
         run_fetch(species_list)
         run_extract(species_list)
-        run_reconcile()
+        run_reconcile(species_list)
         run_embed()
         logger.info("Ingestion pipeline complete.")
 

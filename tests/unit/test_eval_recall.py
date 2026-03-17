@@ -136,8 +136,8 @@ def test_pair_result_dataclass():
 
 
 def test_benchmark_configs():
-    """BENCHMARK_CONFIGS has >= 3 entries, each has body_form_filter and float weights."""
-    assert len(BENCHMARK_CONFIGS) >= 3
+    """BENCHMARK_CONFIGS has >= 2 entries, each has body_form_filter and float weights."""
+    assert len(BENCHMARK_CONFIGS) >= 2
     for label, config in BENCHMARK_CONFIGS.items():
         assert isinstance(label, str)
         assert "body_form_filter" in config, f"{label} missing body_form_filter"

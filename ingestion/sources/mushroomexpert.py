@@ -126,7 +126,7 @@ def fetch_species_page(scientific_name: str, aliases: list[str] | None = None) -
         return None
 
     html, final_url = page
-    soup = BeautifulSoup(html, "html.parser")
+    soup = BeautifulSoup(html, "lxml")
 
     # mushroomexpert uses <td width="380"> as the left content column
     content_td = soup.find("td", {"width": "380"})

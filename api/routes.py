@@ -127,7 +127,7 @@ async def get_species(name: str):
 
 
 @router.get("/species", response_model=list[SpeciesProfile])
-async def list_species(limit: int = 100, offset: int = 0):
+async def list_species(limit: int = 1000, offset: int = 0):
     """List all species in the database (paginated)."""
     session = get_session()
     try:

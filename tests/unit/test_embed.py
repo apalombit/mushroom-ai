@@ -30,7 +30,7 @@ def test_features_to_text_ecological(sample_features_json):
     """features_to_text works for ecological fields."""
     text = features_to_text(sample_features_json, EMBEDDING_GROUPS["ecological"])
     assert len(text) > 0
-    assert "forest" in text.lower() or "birch" in text.lower()
+    assert "substrate" in text.lower() or "soil" in text.lower()
 
 
 def test_features_to_text_taxonomic(sample_features_json):
@@ -99,8 +99,8 @@ def test_similarity_ordering():
         "spore_print_color": "olive-brown",
     }
 
-    # Use cap_viz group (colors) which distinguishes these species
-    cap_viz_fields = EMBEDDING_GROUPS["cap_viz"]
+    # Use cap_color group (colors) which distinguishes these species
+    cap_viz_fields = EMBEDDING_GROUPS["cap_color"]
     text_m = features_to_text(muscaria, cap_viz_fields)
     text_c = features_to_text(caesarea, cap_viz_fields)
     text_e = features_to_text(edulis, cap_viz_fields)
@@ -160,10 +160,11 @@ def test_embedding_groups_matches_group_slots():
 
 def test_each_subgroup_produces_nonempty_text(sample_features_json):
     """Non-bolete-specific sub-groups produce non-empty text for a gill species."""
-    # pores group is intentionally empty for gill-bearing species (Amanita fixture)
-    bolete_only = {"pores"}
+    # pores/pores_bruise: intentionally empty for gill-bearing species (Amanita fixture)
+    # cap_bruise/stem_bruise: Amanita muscaria does not exhibit bruising reactions
+    skip = {"pores", "pores_bruise", "cap_bruise", "stem_bruise"}
     for name, fields in EMBEDDING_GROUPS.items():
-        if name in bolete_only or not fields:
+        if name in skip or not fields:
             continue
         text = features_to_text(sample_features_json, fields)
         assert len(text) > 0, f"Empty text for group '{name}'"
@@ -177,9 +178,9 @@ def test_numeric_fields_not_empty():
 
 
 def test_default_profile_loads():
-    """The default profile YAML loads and has all 6 groups with non-empty fields."""
+    """The default profile YAML loads and has all 26 fine-grained groups with non-empty fields."""
     profile = _load_profile("default")
-    assert len(profile) == 6
+    assert len(profile) == 26
     for fields in profile.values():
         assert len(fields) > 0, "Default profile should have no empty groups"
 
