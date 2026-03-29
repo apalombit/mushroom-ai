@@ -1,0 +1,234 @@
+# Italian UI strings for Mushroom Lookalikes Finder
+
+# Page chrome
+page_title: "Trova Sosia Fungini"
+page_subtitle: "Trova specie dall'aspetto simile — e impara a distinguerle."
+
+# Tabs
+tab_search: "Trova Sosia"
+tab_index: "Indice Specie"
+
+# Search form
+input_species_label: "Nome del fungo (scientifico o comune)"
+input_species_placeholder: "es. Amanita caesarea"
+input_region_label: "Regione (opzionale)"
+input_region_placeholder: "es. Italia settentrionale"
+input_season_label: "Stagione (opzionale)"
+try_example: "Prova un esempio:"
+btn_find: "Trova Sosia"
+searching: "Ricerca in corso..."
+
+# Seasons
+season_spring: "primavera"
+season_summer: "estate"
+season_autumn: "autunno"
+season_winter: "inverno"
+
+# Toggle
+toggle_dangerous: "Solo sosia pericolosi"
+toggle_dangerous_help: "Mostra solo sosia con commestibilità opposta (sicuro vs pericoloso)."
+
+# Weights expander
+weights_title: "Pesi di similarità (avanzato)"
+weights_caption: "I pesi vengono inviati così come sono; l'API li normalizza a somma 1."
+weight_numeric_label: "Numerico (dimensioni/misure)"
+weights_blend_title: "Blend Embedding / Jaccard"
+weights_alpha_help: "1.0 = solo embedding, 0.0 = solo Jaccard, 0.5 = blend paritario"
+weights_filters_title: "Filtri e pool candidati"
+filter_body_form: "Filtro morfologia"
+filter_body_form_help: "Escludi specie con morfologia incompatibile"
+filter_hymenium: "Filtro imenio"
+filter_hymenium_help: "Escludi specie con tipo di imenio incompatibile"
+filter_size_class: "Filtro taglia"
+filter_size_class_help: "Escludi specie con taglia incompatibile"
+filter_morpho_pool: "Pool morfologico richiesto"
+filter_morpho_pool_help: "I candidati devono apparire in almeno un gruppo di embedding morfologico"
+filter_morphotype: "Prefiltro morfotipo"
+filter_morphotype_help: "Prefiltra i candidati per corrispondenza della firma morfotipica"
+aggregation_strategy: "Strategia di aggregazione"
+agg_weighted_avg: "Media Ponderata"
+agg_rrf: "RRF"
+agg_contrastive_gate: "Contrastivo + Gate"
+agg_learned_ranker: "GBDT Ranker"
+z_threshold_label: "Soglia z-score gate"
+z_threshold_help: "I gruppi sotto questo z-score vengono esclusi dal punteggio. 0.0 = solo sopra la media."
+
+# Results
+safety_warning_prefix: "Avvertenza di sicurezza:"
+key_confusions: "Confusioni principali:"
+results_found: "{count}{mode} sosia trovati"
+results_compared: "{count} specie confrontate nel database"
+similarity_label: "Similarità"
+key_differences: "Differenze principali:"
+show_breakdown: "Mostra dettaglio punteggi"
+full_comparison: "Confronto completo delle caratteristiche:"
+no_edibility_warning: "Nessun dato di commestibilità per questa specie — il filtro non ha avuto effetto."
+
+# Metadata
+meta_order: "Ordine"
+meta_family: "Famiglia"
+meta_genus: "Genere"
+meta_sources: "Fonti"
+meta_confidence: "Affidabilità"
+meta_synonyms: "Sinonimi"
+
+# Section headers
+section_morphological: "Morfologiche"
+section_ecological: "Ecologiche"
+section_safety: "Sicurezza"
+
+# Morphological sections
+section_cap: "Cappello"
+section_hymenium_type: "Tipo di imenio"
+section_gills: "Lamelle"
+section_pores: "Pori"
+section_tubes: "Tubuli"
+section_stem: "Gambo"
+section_veil: "Velo / anello"
+section_volva: "Volva"
+section_flesh: "Carne"
+section_spore_print: "Colore della sporata"
+section_overall_size: "Dimensioni generali"
+section_spores: "Spore (microscopiche)"
+section_microscopic: "Anatomia microscopica"
+section_chemical: "Reazioni chimiche"
+
+# Cap fields
+field_shape: "Forma"
+field_colors: "Colori"
+field_color_faded: "Colore (sbiadito)"
+field_surface_moisture: "Umidità superficie"
+field_pattern: "Disegno"
+field_surface: "Superficie"
+field_scales_warts: "Squame / verruche"
+field_margin: "Margine"
+field_margin_lined: "Margine striato a maturità"
+field_central_depression: "Depressione centrale"
+field_diam_min: "Diam. min (cm)"
+field_diam_max: "Diam. max (cm)"
+
+# Gill fields
+field_attachment: "Inserzione"
+field_spacing: "Spaziatura"
+field_color: "Colore"
+field_color_age: "Colore con l'età"
+field_thickness: "Spessore"
+field_texture: "Consistenza"
+
+# Pore fields
+field_bruising: "Viraggio al tocco"
+field_density: "Densità (per mm)"
+
+# Tube fields
+field_depth: "Profondità (mm)"
+
+# Stem fields
+field_reticulation: "Reticolo"
+field_consistency: "Consistenza"
+field_hollow_solid: "Cavo / pieno"
+field_base_color: "Colore della base"
+field_basal_mycelium: "Micelio basale"
+field_finger_stain: "Macchia al tocco"
+field_height_min: "Altezza min (cm)"
+field_height_max: "Altezza max (cm)"
+
+# Veil / volva fields
+field_present: "Presente"
+field_type: "Tipo"
+field_cortina: "Cortina"
+
+# Flesh fields
+field_odor: "Odore"
+field_taste: "Sapore"
+field_quantity: "Quantità"
+
+# Spore fields
+field_length_min: "Lunghezza min (µm)"
+field_length_max: "Lunghezza max (µm)"
+field_width_min: "Larghezza min (µm)"
+field_width_max: "Larghezza max (µm)"
+field_ornamentation: "Ornamentazione"
+field_spine_length: "Lunghezza aculei (µm)"
+field_spine_base_width: "Larghezza base aculei (µm)"
+field_amyloidity: "Amiloidità"
+field_color_koh: "Colore in KOH"
+
+# Microscopic fields
+field_basidia: "Basidi"
+field_cheilocystidia_shape: "Forma cheilocistidi"
+field_cheilocystidia_dims: "Dimensioni cheilocistidi (µm)"
+field_pleurocystidia_shape: "Forma pleurocistidi"
+field_pleurocystidia_dims: "Dimensioni pleurocistidi (µm)"
+field_cystidia_koh: "Cistidi in KOH"
+field_pileipellis_type: "Tipo pileipellis"
+field_pileipellis_width: "Larghezza pileipellis (µm)"
+field_terminal_cell: "Forma cellula terminale"
+
+# Chemical fields
+field_koh_cap: "KOH (cappello)"
+field_koh_flesh: "KOH (carne)"
+field_nh4oh_cap: "NH₄OH (cappello)"
+field_nh4oh_flesh: "NH₄OH (carne)"
+field_feso4_cap: "FeSO₄ (cappello)"
+field_feso4_flesh: "FeSO₄ (carne)"
+
+# Ecological fields
+field_trophic_mode: "Modalità trofica"
+field_habitat: "Habitat"
+field_substrate: "Substrato"
+field_associated_trees: "Alberi associati"
+field_fruiting_seasons: "Stagioni di fruttificazione"
+field_fruiting_months: "Mesi di fruttificazione"
+field_regions: "Regioni"
+field_growth_habit: "Habitus di crescita"
+field_growth_position: "Posizione di crescita"
+field_altitude: "Altitudine"
+field_microhabitat: "Microhabitat"
+
+# Safety section
+field_edibility: "Commestibilità"
+field_toxins: "Tossine"
+field_known_lookalikes: "Sosia noti"
+field_extraction_notes: "Note di estrazione"
+
+# Edibility labels
+edibility_edible: "commestibile"
+edibility_choice: "ottimo commestibile"
+edibility_conditionally_edible: "commestibile con riserva"
+edibility_inedible: "non commestibile"
+edibility_toxic: "tossico"
+edibility_deadly: "mortale"
+edibility_unknown: "sconosciuto"
+
+# Species index
+index_title: "Indice Specie"
+index_search_placeholder: "es. Amanita o Porcino"
+index_showing: "{count} specie visualizzate"
+index_select: "Seleziona una specie per il profilo completo"
+index_loading: "Caricamento profilo per {name}..."
+no_features: "Nessuna caratteristica strutturata disponibile per questa specie."
+
+# Table headers
+col_species: "Specie"
+col_common_names: "Nomi comuni"
+col_edibility: "Commestibilità"
+col_group: "Gruppo"
+col_score: "Punteggio"
+col_feature: "Caratteristica"
+col_similar: "Simile"
+
+# Errors
+error_not_found: "Specie non trovata"
+error_no_connection: "Impossibile connettersi al backend. Esegui: `make serve`"
+error_api: "Errore API: {error}"
+error_load_species: "Impossibile caricare la lista delle specie."
+error_load_profile: "Impossibile caricare il profilo completo."
+error_no_connection_index: "Impossibile caricare la lista delle specie — l'API è in esecuzione?"
+error_unexpected: "Impossibile caricare la lista delle specie — errore imprevisto."
+
+# Boolean display
+bool_yes: "sì"
+bool_no: "no"
+
+# Footer
+footer_warning: "Questo strumento è solo a scopo didattico. Non consumare mai funghi selvatici basandosi esclusivamente su un'identificazione automatizzata."

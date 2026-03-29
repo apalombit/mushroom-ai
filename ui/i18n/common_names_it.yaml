@@ -1,0 +1,394 @@
+# Italian common names (nomi volgari) for species in the database
+# Format: scientific_name: [list of Italian names]
+# Sources: AMB (Associazione Micologica Bresadola), Checklist dei Funghi Italiani,
+# "I Funghi dal vero" (Bruno Cetto), regional mycological traditions
+
+# --- Boletales ---
+Boletus edulis:
+  - Porcino
+  - Brisa
+  - Fungo di macchia
+Boletus pinophilus:
+  - Porcino dei pini
+  - Porcino rosso
+Boletus reticulatus:
+  - Porcino estivo
+  - Porcino reticolato
+Boletus aereus:
+  - Porcino nero
+  - Porcino bronzino
+Boletus regius:
+  - Porcino reale
+Neoboletus luridiformis:
+  - Boleto a gambo rosso
+Neoboletus erythropus:
+  - Boleto dal gambo punteggiato
+Caloboletus calopus:
+  - Boleto dal bel piede
+Butyriboletus appendiculatus:
+  - Boleto appendicolato
+Tylopilus felleus:
+  - Porcino di fiele
+  - Boleto amaro
+Imleria badia:
+  - Boleto baio
+  - Marroncino
+Xerocomellus chrysenteron:
+  - Boleto crisenterone
+  - Boleto screpolato
+Xerocomus subtomentosus:
+  - Boleto subtomentoso
+Suillus luteus:
+  - Pinarolo
+  - Boleto giallo
+Suillus granulatus:
+  - Pinarello granuloso
+Suillus grevillei:
+  - Boleto elegante
+  - Laricino
+Suillus bovinus:
+  - Boleto bovino
+Suillus variegatus:
+  - Boleto variegato
+Leccinum scabrum:
+  - Porcinello grigio
+  - Betullino
+Leccinum versipelle:
+  - Porcinello rosso
+  - Porcinello arancione
+Leccinum aurantiacum:
+  - Porcinello rosso del pioppo
+Leccinum duriusculum:
+  - Porcinello duro
+Chalciporus piperatus:
+  - Boleto peperino
+
+# --- Amanita ---
+Amanita caesarea:
+  - Ovolo buono
+  - Fungo reale
+  - Cocco
+Amanita phalloides:
+  - Tignosa verdognola
+  - Angelo della morte
+Amanita muscaria:
+  - Ovolo malefico
+  - Amanita muscaria
+Amanita pantherina:
+  - Tignosa bruna
+  - Agarico panterino
+Amanita rubescens:
+  - Tignosa vinata
+  - Amanita arrossante
+Amanita vaginata:
+  - Bubbolina
+  - Ovolo grigio
+Amanita crocea:
+  - Bubbolina dorata
+Amanita fulva:
+  - Bubbolina fulva
+Amanita citrina:
+  - Tignosa paglierina
+Amanita virosa:
+  - Angelo distruttore
+  - Ovolo bastardo
+Amanita verna:
+  - Tignosa bianca
+Amanita proxima:
+  - Tignosa simile
+Amanita gemmata:
+  - Amanita gemmata
+Amanita excelsa:
+  - Tignosa grigia
+Amanita ovoidea:
+  - Ovolo bianco
+  - Farinaccio
+
+# --- Agaricus ---
+Agaricus campestris:
+  - Prataiolo
+  - Champignon dei prati
+Agaricus arvensis:
+  - Prataiolo maggiore
+Agaricus bisporus:
+  - Champignon coltivato
+  - Prataiolo coltivato
+Agaricus xanthodermus:
+  - Prataiolo malefico
+  - Agarico ingiallente
+Agaricus augustus:
+  - Agarico augusto
+Agaricus silvicola:
+  - Prataiolo dei boschi
+Agaricus bernardii:
+  - Prataiolo di Bernard
+
+# --- Armillaria ---
+Armillaria mellea:
+  - Chiodino
+  - Famigliola buona
+Armillaria ostoyae:
+  - Chiodino scuro
+Armillaria gallica:
+  - Chiodino bulboso
+
+# --- Macrolepiota ---
+Macrolepiota procera:
+  - Mazza di tamburo
+  - Parasole
+  - Bubbola maggiore
+Macrolepiota mastoidea:
+  - Mazza di tamburo mammellonata
+Chlorophyllum rhacodes:
+  - Mazza di tamburo arrossante
+Chlorophyllum molybdites:
+  - Mazza di tamburo a spore verdi
+Lepiota cristata:
+  - Lepiota crestata
+Lepiota clypeolaria:
+  - Lepiota con scudo
+
+# --- Lactarius ---
+Lactarius deliciosus:
+  - Sanguinello
+  - Fungo del sangue
+  - Lactario delizioso
+Lactarius sanguifluus:
+  - Sanguinello vinoso
+  - Lactario sanguifluus
+Lactarius deterrimus:
+  - Sanguinello dell'abete
+Lactarius volemus:
+  - Lattario volemus
+  - Lattario dolce
+Lactarius piperatus:
+  - Peveraccio
+  - Lattario pepato
+Lactarius torminosus:
+  - Lattario tormentoso
+  - Peveraccio a zone
+Lactarius rufus:
+  - Lattario rosso
+Lactarius chrysorrheus:
+  - Lattario giallo-rosso
+Lactarius controversus:
+  - Lattario controverso
+
+# --- Russula ---
+Russula cyanoxantha:
+  - Colombina maggiore
+  - Russola
+Russula virescens:
+  - Colombina verde
+  - Verdone
+Russula vesca:
+  - Colombina commestibile
+  - Russola rossa
+Russula aurea:
+  - Colombina dorata
+Russula emetica:
+  - Colombina rossa
+  - Russola emetica
+Russula foetens:
+  - Colombina fetida
+Russula olivacea:
+  - Colombina olivacea
+
+# --- Cantharellus ---
+Cantharellus cibarius:
+  - Gallinaccio
+  - Finferlo
+  - Galletto
+Cantharellus pallens:
+  - Gallinaccio pallido
+Craterellus tubaeformis:
+  - Finferla
+  - Cantarello a tromba
+Craterellus cornucopioides:
+  - Trombetta dei morti
+  - Cornucopia
+
+# --- Tricholoma ---
+Tricholoma equestre:
+  - Agarico equestre
+  - Fungo del cavaliere
+Tricholoma portentosum:
+  - Cicalotto
+  - Moretta
+Tricholoma terreum:
+  - Moretta
+  - Agarico terreo
+Tricholoma columbetta:
+  - Colombetta
+Tricholoma pardinum:
+  - Agarico tigrato
+  - Tricholoma velenoso
+Calocybe gambosa:
+  - Prugnolo
+  - Fungo di San Giorgio
+Lepista nuda:
+  - Agarico violetto
+  - Fungo nudo
+Lepista sordida:
+  - Agarico sordido
+
+# --- Pleurotus ---
+Pleurotus ostreatus:
+  - Orecchione
+  - Gelone
+  - Fungo ostrica
+Pleurotus eryngii:
+  - Cardoncello
+  - Fungo della ferula
+Pleurotus pulmonarius:
+  - Orecchietta
+  - Gelone chiaro
+Pleurotus cornucopiae:
+  - Orecchione a cornucopia
+
+# --- Cyclocybe / Agrocybe ---
+Cyclocybe aegerita:
+  - Pioppino
+  - Piopparello
+  - Fungo del pioppo
+
+# --- Morchella ---
+Morchella esculenta:
+  - Spugnola
+  - Spugnola rotonda
+Morchella elata:
+  - Spugnola nera
+Morchella semilibera:
+  - Spugnola semi-libera
+
+# --- Gyromitra ---
+Gyromitra esculenta:
+  - Falsa spugnola
+  - Spugnola falsa
+
+# --- Tuber ---
+Tuber magnatum:
+  - Tartufo bianco d'Alba
+  - Tartufo bianco pregiato
+Tuber melanosporum:
+  - Tartufo nero pregiato
+  - Tartufo nero di Norcia
+Tuber brumale:
+  - Tartufo nero invernale
+Tuber borchii:
+  - Tartufo bianchetto
+  - Marzolino
+
+# --- Hygrocybe / Hygrophorus ---
+Hygrocybe conica:
+  - Igrocibe conico
+Hygrophorus marzuolus:
+  - Marzuolo
+  - Dormiente
+Hygrophorus russula:
+  - Igroforo russulato
+
+# --- Coprinus / Coprinopsis ---
+Coprinus comatus:
+  - Fungo dell'inchiostro
+  - Coprino chiomato
+  - Agarico chiomato
+Coprinopsis atramentaria:
+  - Coprino atramentario
+  - Fungo dell'inchiostro comune
+Coprinellus micaceus:
+  - Coprino micaceo
+
+# --- Omphalotus ---
+Omphalotus olearius:
+  - Fungo dell'olivo
+  - Agarico oleario
+
+# --- Clitocybe ---
+Clitocybe nebularis:
+  - Agarico nebbioso
+  - Cimballo
+Clitocybe dealbata:
+  - Clitocibe sbiancata
+Clitocybe rivulosa:
+  - Clitocibe dei prati
+Infundibulicybe geotropa:
+  - Agarico geotropo
+  - Cimballo
+
+# --- Cortinarius ---
+Cortinarius orellanus:
+  - Cortinario orellano
+Cortinarius rubellus:
+  - Cortinario splendido
+  - Cortinario rosso
+
+# --- Entoloma ---
+Entoloma sinuatum:
+  - Entoloma livido
+  - Agarico livido
+
+# --- Pholiota / Kuehneromyces ---
+Kuehneromyces mutabilis:
+  - Fungo chiodino di ceppo
+  - Pholiota mutabile
+Galerina marginata:
+  - Galerina marginata
+  - Fungo autunnale velenoso
+
+# --- Paxillus ---
+Paxillus involutus:
+  - Paxillo involto
+  - Tapinella
+
+# --- Hydnum ---
+Hydnum repandum:
+  - Steccherino dorato
+  - Dentino
+Hydnum rufescens:
+  - Steccherino arrossante
+
+# --- Hericium ---
+Hericium erinaceus:
+  - Fungo criniera di leone
+  - Hydne riccio
+
+# --- Laetiporus ---
+Laetiporus sulphureus:
+  - Poliporo sulfureo
+  - Fungo pollo
+
+# --- Fistulina ---
+Fistulina hepatica:
+  - Lingua di bue
+  - Fistulina epatica
+
+# --- Grifola ---
+Grifola frondosa:
+  - Grifola dai molti cappelli
+  - Fungo signorina
+
+# --- Lycoperdon / Calvatia ---
+Lycoperdon perlatum:
+  - Vescia gemmata
+  - Vescia perlata
+Calvatia gigantea:
+  - Vescia gigante
+  - Vesscia maggiore
+
+# --- Agarics misc ---
+Marasmius oreades:
+  - Gambesecche
+  - Fungo dei prati
+Mycena pura:
+  - Micena pura
+
+# --- Auricularia ---
+Auricularia auricula-judae:
+  - Orecchio di Giuda
+  - Fungo orecchia
+
+# --- Ramaria ---
+Ramaria botrytis:
+  - Ditola rosa
+  - Manina

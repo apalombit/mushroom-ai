@@ -1,0 +1,234 @@
+# English UI strings for Mushroom Lookalikes Finder
+
+# Page chrome
+page_title: "Mushroom Lookalikes Finder"
+page_subtitle: "Find species that look similar — and learn how to tell them apart."
+
+# Tabs
+tab_search: "Find Lookalikes"
+tab_index: "Species Index"
+
+# Search form
+input_species_label: "Mushroom name (scientific or common)"
+input_species_placeholder: "e.g. Amanita caesarea"
+input_region_label: "Region (optional)"
+input_region_placeholder: "e.g. Northern Italy"
+input_season_label: "Season (optional)"
+try_example: "Try an example:"
+btn_find: "Find Lookalikes"
+searching: "Searching..."
+
+# Seasons
+season_spring: "spring"
+season_summer: "summer"
+season_autumn: "autumn"
+season_winter: "winter"
+
+# Toggle
+toggle_dangerous: "Dangerous lookalikes only"
+toggle_dangerous_help: "Show only lookalikes with opposite edibility (safe vs dangerous)."
+
+# Weights expander
+weights_title: "Similarity weights (advanced)"
+weights_caption: "Weights are sent as-is; the API normalizes them to sum to 1."
+weight_numeric_label: "Numeric (size/measurements)"
+weights_blend_title: "Embedding / Jaccard blend"
+weights_alpha_help: "1.0 = pure embedding, 0.0 = pure Jaccard, 0.5 = equal blend"
+weights_filters_title: "Filters & candidate pool"
+filter_body_form: "Body-form filter"
+filter_body_form_help: "Exclude species with incompatible body form"
+filter_hymenium: "Hymenium filter"
+filter_hymenium_help: "Exclude species with incompatible hymenium type"
+filter_size_class: "Size class filter"
+filter_size_class_help: "Exclude species with incompatible size class"
+filter_morpho_pool: "Morpho pool required"
+filter_morpho_pool_help: "Candidates must appear in at least one morphological embedding group"
+filter_morphotype: "Morphotype prefilter"
+filter_morphotype_help: "Pre-filter candidates by morphotype signature match"
+aggregation_strategy: "Aggregation strategy"
+agg_weighted_avg: "Weighted Average"
+agg_rrf: "RRF"
+agg_contrastive_gate: "Contrastive + Gate"
+agg_learned_ranker: "GBDT Ranker"
+z_threshold_label: "Z-score gate threshold"
+z_threshold_help: "Groups below this z-score are excluded from scoring. 0.0 = above-average only."
+
+# Results
+safety_warning_prefix: "Safety Warning:"
+key_confusions: "Key confusions:"
+results_found: "{count}{mode} lookalikes found"
+results_compared: "compared {count} species in database"
+similarity_label: "Similarity"
+key_differences: "Key differences:"
+show_breakdown: "Show detailed breakdown"
+full_comparison: "Full feature comparison:"
+no_edibility_warning: "No edibility data for this species — filter had no effect."
+
+# Metadata
+meta_order: "Order"
+meta_family: "Family"
+meta_genus: "Genus"
+meta_sources: "Sources"
+meta_confidence: "Confidence"
+meta_synonyms: "Synonyms"
+
+# Section headers
+section_morphological: "Morphological"
+section_ecological: "Ecological"
+section_safety: "Safety"
+
+# Morphological sections
+section_cap: "Cap"
+section_hymenium_type: "Hymenium type"
+section_gills: "Gills"
+section_pores: "Pores"
+section_tubes: "Tubes"
+section_stem: "Stem"
+section_veil: "Veil / ring"
+section_volva: "Volva"
+section_flesh: "Flesh"
+section_spore_print: "Spore print color"
+section_overall_size: "Overall size"
+section_spores: "Spores (microscopic)"
+section_microscopic: "Microscopic anatomy"
+section_chemical: "Chemical reactions"
+
+# Cap fields
+field_shape: "Shape"
+field_colors: "Colors"
+field_color_faded: "Color (faded)"
+field_surface_moisture: "Surface moisture"
+field_pattern: "Pattern"
+field_surface: "Surface"
+field_scales_warts: "Scales / warts"
+field_margin: "Margin"
+field_margin_lined: "Margin lined at maturity"
+field_central_depression: "Central depression"
+field_diam_min: "Diam. min (cm)"
+field_diam_max: "Diam. max (cm)"
+
+# Gill fields
+field_attachment: "Attachment"
+field_spacing: "Spacing"
+field_color: "Color"
+field_color_age: "Color with age"
+field_thickness: "Thickness"
+field_texture: "Texture"
+
+# Pore fields
+field_bruising: "Bruising"
+field_density: "Density (per mm)"
+
+# Tube fields
+field_depth: "Depth (mm)"
+
+# Stem fields
+field_reticulation: "Reticulation"
+field_consistency: "Consistency"
+field_hollow_solid: "Hollow / solid"
+field_base_color: "Base color"
+field_basal_mycelium: "Basal mycelium"
+field_finger_stain: "Finger stain"
+field_height_min: "Height min (cm)"
+field_height_max: "Height max (cm)"
+
+# Veil / volva fields
+field_present: "Present"
+field_type: "Type"
+field_cortina: "Cortina"
+
+# Flesh fields
+field_odor: "Odor"
+field_taste: "Taste"
+field_quantity: "Quantity"
+
+# Spore fields
+field_length_min: "Length min (µm)"
+field_length_max: "Length max (µm)"
+field_width_min: "Width min (µm)"
+field_width_max: "Width max (µm)"
+field_ornamentation: "Ornamentation"
+field_spine_length: "Spine length (µm)"
+field_spine_base_width: "Spine base width (µm)"
+field_amyloidity: "Amyloidity"
+field_color_koh: "Color in KOH"
+
+# Microscopic fields
+field_basidia: "Basidia"
+field_cheilocystidia_shape: "Cheilocystidia shape"
+field_cheilocystidia_dims: "Cheilocystidia dims (µm)"
+field_pleurocystidia_shape: "Pleurocystidia shape"
+field_pleurocystidia_dims: "Pleurocystidia dims (µm)"
+field_cystidia_koh: "Cystidia in KOH"
+field_pileipellis_type: "Pileipellis type"
+field_pileipellis_width: "Pileipellis width (µm)"
+field_terminal_cell: "Terminal cell shape"
+
+# Chemical fields
+field_koh_cap: "KOH (cap)"
+field_koh_flesh: "KOH (flesh)"
+field_nh4oh_cap: "NH₄OH (cap)"
+field_nh4oh_flesh: "NH₄OH (flesh)"
+field_feso4_cap: "FeSO₄ (cap)"
+field_feso4_flesh: "FeSO₄ (flesh)"
+
+# Ecological fields
+field_trophic_mode: "Trophic mode"
+field_habitat: "Habitat"
+field_substrate: "Substrate"
+field_associated_trees: "Associated trees"
+field_fruiting_seasons: "Fruiting seasons"
+field_fruiting_months: "Fruiting months"
+field_regions: "Regions"
+field_growth_habit: "Growth habit"
+field_growth_position: "Growth position"
+field_altitude: "Altitude"
+field_microhabitat: "Microhabitat"
+
+# Safety section
+field_edibility: "Edibility"
+field_toxins: "Toxins"
+field_known_lookalikes: "Known lookalikes"
+field_extraction_notes: "Extraction notes"
+
+# Edibility labels
+edibility_edible: "edible"
+edibility_choice: "choice"
+edibility_conditionally_edible: "conditionally edible"
+edibility_inedible: "inedible"
+edibility_toxic: "toxic"
+edibility_deadly: "deadly"
+edibility_unknown: "unknown"
+
+# Species index
+index_title: "Species Index"
+index_search_placeholder: "e.g. Amanita or Caesar"
+index_showing: "Showing {count} species"
+index_select: "Select a species for full profile"
+index_loading: "Loading profile for {name}..."
+no_features: "No structured features available for this species."
+
+# Table headers
+col_species: "Species"
+col_common_names: "Common names"
+col_edibility: "Edibility"
+col_group: "Group"
+col_score: "Score"
+col_feature: "Feature"
+col_similar: "Similar"
+
+# Errors
+error_not_found: "Species not found"
+error_no_connection: "Cannot connect to backend. Run: `make serve`"
+error_api: "API error: {error}"
+error_load_species: "Could not load species list."
+error_load_profile: "Could not load full profile."
+error_no_connection_index: "Could not load species list — is the API running?"
+error_unexpected: "Could not load species list — unexpected error."
+
+# Boolean display
+bool_yes: "yes"
+bool_no: "no"
+
+# Footer
+footer_warning: "This tool is for educational purposes only. Never eat wild mushrooms based solely on automated identification."
