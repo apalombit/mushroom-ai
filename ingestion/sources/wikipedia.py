@@ -47,6 +47,39 @@ def _save_cache(scientific_name: str, data: dict) -> None:
         json.dump(data, f, ensure_ascii=False, indent=2)
 
 
+def _fetch_page_images(title: str, max_images: int = 3) -> list[str]:
+    """Fetch image URLs for a Wikipedia page via the pageimages + images API."""
+    params = {
+        "action": "query",
+        "format": "json",
+        "titles": title,
+        "prop": "pageimages",
+        "piprop": "original",
+        "pilimit": str(max_images),
+        "redirects": 1,
+    }
+    try:
+        time.sleep(RATE_LIMIT_SECONDS)
+        resp = requests.get(
+            BASE_URL,
+            params=params,
+            headers={"User-Agent": "mushroom-ai/1.0 (educational project)"},
+            timeout=15,
+        )
+        resp.raise_for_status()
+        pages = resp.json().get("query", {}).get("pages", {})
+        urls = []
+        for page in pages.values():
+            original = page.get("original", {})
+            src = original.get("source")
+            if src and not src.lower().endswith(".svg"):
+                urls.append(src)
+        return urls[:max_images]
+    except Exception as e:
+        logger.warning("Failed to fetch Wikipedia images for %s: %s", title, e)
+        return []
+
+
 def fetch_species_page(scientific_name: str, aliases: list[str] | None = None) -> dict | None:
     """
     Fetch the Wikipedia page for a species by scientific name.
@@ -106,6 +139,7 @@ def fetch_species_page(scientific_name: str, aliases: list[str] | None = None) -
         return None
 
     url = page.get("fullurl", f"https://en.wikipedia.org/wiki/{scientific_name.replace(' ', '_')}")
-    result = {"text": text, "url": url}
+    image_urls = _fetch_page_images(query_title)
+    result = {"text": text, "url": url, "image_urls": image_urls}
     _save_cache(scientific_name, result)
     return result

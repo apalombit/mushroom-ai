@@ -114,6 +114,23 @@ overall_body_form:
     "corticioid-tremelloid": 0.2
 
 # =============================================================================
+#  OVERALL SIZE CLASS
+# =============================================================================
+overall_size_class:
+  canonical_values:
+    small: "Cap typically under 5 cm; e.g. Mycena, Marasmius"
+    medium: "Cap typically 5–15 cm; majority of agarics"
+    large: "Cap typically over 15 cm; e.g. Boletus edulis, Amanita phalloides"
+  aliases:
+    tiny: small
+    large to very large: large
+    massive: large
+  similarity_matrix:
+    "small-medium": 0.5
+    "medium-large": 0.5
+    "small-large": 0.0
+
+# =============================================================================
 #  CAP SHAPE
 # =============================================================================
 cap_shape:
@@ -156,6 +173,7 @@ cap_shape:
     "bullet-shaped": "ovoid"
     "narrowly parabolic": "parabolic"
     "broadly parabolic": "parabolic"
+    "convex to broadly convex, then flat": "convex"
   similarity_matrix:
     "convex-flat": 0.7
     "convex-campanulate": 0.5
@@ -434,6 +452,10 @@ gill_spacing:
     "close to crowded": "crowded"
     "nearly distant": "subdistant"
     "sparse": "distant"
+    "moderately spaced": "subdistant"
+    "spaced": "distant"
+    "moderately crowded": "close"
+    "widely spaced": "distant"
   similarity_matrix:
     "crowded-close": 0.8
     "close-subdistant": 0.7
@@ -474,6 +496,38 @@ gill_edge_texture:
     "smooth-serrate": 0.2
 
 # =============================================================================
+#  GILL THICKNESS
+# =============================================================================
+gill_thickness:
+  canonical_values:
+    thin: "Narrow blade-like gills — standard for most agarics"
+    thick: "Broad, stout gills — diagnostic for Laccaria, Hygrocybe"
+  aliases:
+    broad: thick
+    narrow: thin
+    blade-like: thin
+  similarity_matrix:
+    "thin-thick": 0.0
+
+# =============================================================================
+#  GILL TEXTURE
+# =============================================================================
+gill_texture:
+  canonical_values:
+    waxy: "Gills feel greasy when rubbed — diagnostic for Hygrocybe and waxcaps"
+    brittle: "Gills snap cleanly, no fibrous stretching — diagnostic for Russula, Lactarius"
+    normal: "Ordinary flexible gills, neither waxy nor brittle"
+  aliases:
+    soft: normal
+    flexible: normal
+    waxen: waxy
+    fragile: brittle
+  similarity_matrix:
+    "waxy-normal": 0.3
+    "brittle-normal": 0.3
+    "waxy-brittle": 0.0
+
+# =============================================================================
 #  STEM SHAPE
 # =============================================================================
 stem_shape:
@@ -504,6 +558,7 @@ stem_shape:
     "equal to tapering": "equal"
     "slightly swollen at the base": "bulbous"
     "abruptly bulbous": "bulbous"
+    "equal, with bulbous base": "bulbous"
     "inverted cone": "obclavate"
     "flattened stipe": "compressed"
     "radicated": "rooting"
@@ -550,6 +605,8 @@ cap_surface_moisture:
     "changing color with moisture": "hygrophanous"
     "fading on drying": "hygrophanous"
     "water-soaked": "hygrophanous"
+    "viscous": "viscid"
+    "greasy": "subviscid"
   similarity_matrix:
     "dry-moist": 0.5
     "moist-subviscid": 0.6
@@ -611,6 +668,9 @@ surface_texture:
     "pulverulent": "pruinose"
     "cracked": "areolate"
     "rugose": "wrinkled"
+    "fibrous": "fibrillose"
+    "woolly": "tomentose"
+    "mealy": "pruinose"
   similarity_matrix:
     "smooth-silky": 0.7
     "smooth-velvety": 0.4
@@ -624,6 +684,46 @@ surface_texture:
     "pruinose-velvety": 0.4
     "areolate-wrinkled": 0.3
     "pitted-areolate": 0.3
+
+# =============================================================================
+#  SCALES OR WARTS (cap surface adornments)
+# =============================================================================
+scales_or_warts:
+  description: >
+    Adornments present on the cap surface derived from scales (fibrous plate-like
+    structures) or warts (universal veil remnants). Constrained to three values to
+    avoid free-text noise.
+  canonical_values:
+    scales: "Flat, overlapping fibrous plates on cap surface (e.g. Amanita rubescens)"
+    warts: "Pointed or conical universal veil remnants (e.g. Amanita muscaria)"
+    both: "Both scales and wart-like structures present"
+  aliases:
+    patches: scales
+    squamules: scales
+    squamose: scales
+    fibrils: scales
+    fibrous scales: scales
+    verrucose: warts
+    granules: warts
+    pyramidal warts: warts
+    veil remnants: warts
+
+# =============================================================================
+#  CAP COLOR PATTERN
+# =============================================================================
+cap_color_pattern:
+  canonical_values:
+    uniform: "Single color across entire cap"
+    darker at center: "Disc noticeably darker than margin — common in Amanita, Inocybe"
+    two-toned: "Two distinct color zones visible"
+    mottled: "Irregular contrasting patches, blotched"
+    streaked: "Radial fibrous lines of contrasting color"
+  aliases:
+    spotted: mottled
+    blotched: mottled
+    radially streaked: streaked
+    fibrillose: streaked
+    zonate: two-toned
 
 # =============================================================================
 #  CAP MARGIN
@@ -660,6 +760,7 @@ cap_margin:
     "smooth margin": "entire"
     "translucent-striate": "striate"
     "pellucid-striate": "striate"
+    "striate at maturity": "striate"
     "ragged": "split"
     "frayed": "fringed"
     "ciliate": "fringed"
@@ -694,6 +795,7 @@ stem_interior:
     "solid to stuffed": "stuffed"
     "solid or pithy-hollow": "stuffed"
     "stuffed then hollow": "stuffed"
+    "stuffed becoming hollow": "stuffed"
     "pithy": "stuffed"
     "spongy inside": "stuffed"
   similarity_matrix:
@@ -728,6 +830,49 @@ stipe_attachment_position:
     "central-eccentric": 0.5
     "eccentric-lateral": 0.5
     "central-lateral": 0.1
+
+# =============================================================================
+#  STEM RETICULATION
+# =============================================================================
+stem_reticulation:
+  canonical_values:
+    none: "Smooth stem, no net pattern"
+    partial: "Net pattern restricted to upper third/half — e.g. many boletes"
+    full: "Net pattern covering entire stem length — e.g. Boletus edulis, B. aereus"
+  aliases:
+    reticulate: full
+    net-like: full
+    slightly reticulate: partial
+  similarity_matrix:
+    "none-partial": 0.5
+    "partial-full": 0.5
+    "none-full": 0.0
+
+# =============================================================================
+#  STEM CONSISTENCY
+# =============================================================================
+stem_consistency:
+  canonical_values:
+    firm: "Hard, solid, resists pressure — e.g. Boletus, large Amanita"
+    fibrous: "Composed of longitudinal fibers that pull apart — e.g. Pleurotus"
+    spongy: "Soft, compressible, foam-like — e.g. some Leccinum, older boletes"
+    brittle: "Snaps cleanly when bent — e.g. some Marasmius"
+    cartilaginous: "Firm but flexible, rubbery rind — e.g. Marasmius, Collybia"
+  aliases:
+    tough: firm
+    woody: firm
+    stringy: fibrous
+    rubbery: cartilaginous
+    elastic: cartilaginous
+    cottony: spongy
+    pithy: spongy
+    fragile: brittle
+    soft: spongy
+  similarity_matrix:
+    "firm-cartilaginous": 0.5
+    "firm-fibrous": 0.4
+    "spongy-fibrous": 0.4
+    "brittle-cartilaginous": 0.3
 
 # =============================================================================
 #  FLESH ODOR
@@ -774,6 +919,10 @@ flesh_odor:
     "alliaceous": "garlic"
     "onion-like": "garlic"
     "turnip-like": "raphanoid"
+    "radish": "raphanoid"
+    "sweetish": "sweet"
+    "not significant": "none"
+    "faint": "none"
     "resinous": "turpentine"
     "medicinal": "iodine"
     "bleach-like": "chlorine"
@@ -928,6 +1077,47 @@ flesh_cap_stem_consistency:
     "homogeneous-heterogeneous": 0.0
 
 # =============================================================================
+#  FLESH QUANTITY
+# =============================================================================
+flesh_quantity:
+  canonical_values:
+    insubstantial: "Very thin, almost translucent — e.g. Mycena, Marasmius"
+    thin: "Thin but visible flesh layer"
+    moderate: "Average thickness for an agaric or bolete"
+    thick: "Meaty, deep flesh — e.g. Boletus edulis, large Amanita"
+  aliases:
+    scanty: insubstantial
+    sparse: insubstantial
+    meaty: thick
+    substantial: thick
+  similarity_matrix:
+    "insubstantial-thin": 0.6
+    "thin-moderate": 0.6
+    "moderate-thick": 0.6
+    "insubstantial-moderate": 0.2
+    "thin-thick": 0.2
+    "insubstantial-thick": 0.0
+
+# =============================================================================
+#  FLESH LATEX COLOR
+# =============================================================================
+flesh_latex_color:
+  canonical_values:
+    white: "Milk-white — most common Lactarius latex"
+    white to yellow: "Starts white, stains yellow — e.g. Lactarius chrysorrheus"
+    blue: "Turns blue on exposure — e.g. Lactarius indigo"
+    red: "Red or reddish — e.g. Lactarius sanguifluus"
+    orange: "Orange — e.g. Lactarius deliciosus"
+    yellow: "Bright yellow — e.g. Lactarius scrobiculatus"
+    clear: "Watery, transparent — e.g. Lactarius serifluus"
+  aliases:
+    watery: clear
+    transparent: clear
+    colourless: clear
+    colorless: clear
+    "white_to_yellow": "white to yellow"
+
+# =============================================================================
 #  SPORE PRINT COLOR  [new feature]
 # =============================================================================
 spore_print_color:
@@ -1016,6 +1206,12 @@ spore_shape:
     "sausage-shaped": "allantoid"
     "curved-cylindric": "allantoid"
     "banana-shaped": "allantoid"
+    "globose to broadly ellipsoid": "broadly_ellipsoid"
+    "subfusiform": "fusiform"
+    "subfusoid": "fusiform"
+    "spindle-shaped": "fusiform"
+    "cylindric-ellipsoid": "ellipsoid"
+    "boletoid-fusiform": "fusiform"
   similarity_matrix:
     "globose-subglobose": 0.9
     "subglobose-broadly_ellipsoid": 0.8
@@ -1141,6 +1337,7 @@ volva_type:
     "rings of scales": "friable"
     "concentric rings": "zoned"
     "patches on bulb": "friable"
+    "friable remnants": "friable"
     "turnip-shaped bulb": "napiform"
     "bulbous with adhering scales": "napiform"
   similarity_matrix:
@@ -1174,6 +1371,7 @@ ring_shape:
     absent: "No ring present"
   aliases:
     "skirt-like": "pendant"
+    "pendant, skirt-like": "pendant"
     "superior ring": "pendant"
     "membranous and pendant": "pendant"
     "membranous": "pendant"
@@ -1292,12 +1490,97 @@ growth_habit:
     "tufted": "caespitose"
     "fasciculate": "caespitose"
     "fused at base": "connate"
+    "cespitose": "caespitose"
   similarity_matrix:
     "scattered-gregarious": 0.6
     "gregarious-caespitose": 0.5
     "caespitose-connate": 0.7
     "solitary-scattered": 0.4
     "gregarious-solitary": 0.2
+
+# =============================================================================
+#  TROPHIC MODE
+# =============================================================================
+trophic_mode:
+  canonical_values:
+    mycorrhizal: "Mutualistic root partner — obligate associate of specific trees"
+    saprotrophic: "Decomposes dead organic matter (wood, litter, soil)"
+    parasitic: "Obtains nutrients from living organisms — often kills the host"
+  aliases:
+    ectomycorrhizal: mycorrhizal
+    saprophytic: saprotrophic
+    wood decomposer: saprotrophic
+    pathogenic: parasitic
+    necrotrophic: parasitic
+
+# =============================================================================
+#  SUBSTRATE
+# =============================================================================
+substrate:
+  canonical_values:
+    soil: "Grows from soil or humus, no specific wood attachment"
+    dead wood: "On fallen logs, stumps, or buried decaying wood"
+    living tree: "On bark or roots of living trees — often parasitic"
+    dung: "Coprophilous — on animal dung or manure"
+    leaf litter: "Among decomposing leaves and forest floor debris"
+    woody debris: "On smaller woody material — twigs, bark chips"
+  aliases:
+    humus: soil
+    ground: soil
+    decayed wood: dead wood
+    decaying wood: dead wood
+    rotten wood: dead wood
+    log: dead wood
+    stump: dead wood
+    manure: dung
+    forest floor: leaf litter
+    litter: leaf litter
+    wood chips: woody debris
+
+# =============================================================================
+#  ALTITUDE ZONE
+# =============================================================================
+altitude_zone:
+  canonical_values:
+    sea-level: "Coastal zones below 100 m"
+    lowland: "Low terrain 100–500 m — most common fruiting zone"
+    montane: "Mountain slopes 500–1600 m — beech and conifer forests"
+    subalpine: "Upper mountain 1600–2400 m — sparse conifers, dwarf shrubs"
+    alpine: "Above treeline, 2400+ m — open heathland"
+  aliases:
+    coastal: sea-level
+    plain: lowland
+    valley: lowland
+    hill: montane
+    mountain: montane
+    highland: subalpine
+    high altitude: alpine
+  similarity_matrix:
+    "sea-level-lowland": 0.7
+    "lowland-montane": 0.6
+    "montane-subalpine": 0.6
+    "subalpine-alpine": 0.6
+    "sea-level-montane": 0.3
+    "lowland-subalpine": 0.3
+    "montane-alpine": 0.3
+    "sea-level-subalpine": 0.1
+    "lowland-alpine": 0.1
+    "sea-level-alpine": 0.0
+
+# =============================================================================
+#  GROWTH POSITION
+# =============================================================================
+growth_position:
+  canonical_values:
+    terrestrial: "Grows from soil or ground substrate"
+    lignicolous: "Grows on wood — logs, stumps, buried roots"
+    coprophilous: "Grows on animal dung"
+  aliases:
+    ground-growing: terrestrial
+    on soil: terrestrial
+    on wood: lignicolous
+    on logs: lignicolous
+    on dung: coprophilous
 
 # =============================================================================
 #  LATEX  [new feature]
@@ -1344,6 +1627,48 @@ latex:
     "white-absent": 0.0
 
 # =============================================================================
+#  CHEMICAL KOH REACTION
+# =============================================================================
+chemical_KOH:
+  canonical_values:
+    yellow: "Turns bright yellow — common positive reaction in boletes"
+    orange: "Turns orange"
+    red: "Turns red or deep reddish"
+    negative: "No color change"
+    blackening: "Turns black — e.g. Phellodon, some Marasmius"
+  aliases:
+    no reaction: negative
+    no change: negative
+    unchanged: negative
+    yellowing: yellow
+    "black": "blackening"
+    "brownish": "negative"
+
+# =============================================================================
+#  CHEMICAL FeSO4 REACTION
+# =============================================================================
+chemical_FeSO4:
+  canonical_values:
+    blue-green: "Turns blue-green — diagnostic for some Russula"
+    pink: "Turns pink"
+    grey-green: "Turns grey-green"
+    negative: "No color change"
+  aliases:
+    no reaction: negative
+    no change: negative
+
+# =============================================================================
+#  CHEMICAL NH4OH REACTION
+# =============================================================================
+chemical_NH4OH:
+  canonical_values:
+    yellow: "Turns yellow"
+    green: "Turns green"
+    negative: "No color change"
+  aliases:
+    no reaction: negative
+
+# =============================================================================
 #  PILEIPELLIS TYPE (microscopic)
 # =============================================================================
 pileipellis_type:
@@ -1370,3 +1695,102 @@ pileipellis_type:
     "trichoderm-ixotrichoderm": 0.7
     "cutis-trichoderm": 0.3
     "hymeniderm-epithelium": 0.5
+
+# =============================================================================
+#  BASIDIA SPORE COUNT (microscopic)
+# =============================================================================
+basidia_spore_count:
+  canonical_values:
+    4-spored: "Each basidium bears 4 sterigmata — standard for most Basidiomycota"
+    2-spored: "Each basidium bears 2 sterigmata — e.g. Agaricus bisporus, some Cortinarius"
+    mixed: "Both 2- and 4-spored basidia in the same hymenium"
+  aliases:
+    bisporic: 2-spored
+    bispored: 2-spored
+    tetrasporic: 4-spored
+    tetraspored: 4-spored
+    4-sterigmate: 4-spored
+    2-sterigmate: 2-spored
+
+# =============================================================================
+#  CHEILOCYSTIDIA SHAPE (microscopic)
+# =============================================================================
+cheilocystidia_shape:
+  canonical_values:
+    narrowly cylindric: "Long, thin tube-like cells without a swollen apex"
+    subclavate: "Slightly club-shaped — gently widened toward the apex"
+    capitate: "With a distinct rounded head at the apex — e.g. many Mycena"
+    fusoid: "Spindle-shaped — widest near the middle, tapering at both ends"
+    absent: "No cheilocystidia present on the gill edge"
+  aliases:
+    cylindric: narrowly cylindric
+    cylindrical: narrowly cylindric
+    clavate: subclavate
+    club-shaped: subclavate
+    headed: capitate
+    spindle-shaped: fusoid
+    fusiform: fusoid
+
+# =============================================================================
+#  PLEUROCYSTIDIA SHAPE (microscopic)
+# =============================================================================
+pleurocystidia_shape:
+  canonical_values:
+    fusoid-ventricose: "Spindle-shaped with a swollen mid-section — common in many agarics"
+    metuloid: "Thick-walled with encrusted apex — diagnostic for Pleurotus, some Tricholoma"
+    absent: "No pleurocystidia on the gill faces"
+  aliases:
+    fusiform: fusoid-ventricose
+    ventricose-fusoid: fusoid-ventricose
+    thick-walled: metuloid
+    encrusted: metuloid
+
+# =============================================================================
+#  PILEIPELLIS TERMINAL CELL SHAPE (microscopic)
+# =============================================================================
+pileipellis_terminal_cell_shape:
+  canonical_values:
+    subclavate: "Slightly club-shaped terminal cells"
+    capitate: "Terminal cells with a distinct rounded head"
+    rounded: "Broadly rounded terminal cells without a distinct head"
+    cylindric: "Elongated, tube-like terminal cells"
+  aliases:
+    club-shaped: subclavate
+    headed: capitate
+    blunt: rounded
+    cylindrical: cylindric
+
+# =============================================================================
+#  CYSTIDIA COLOR IN KOH (microscopic)
+# =============================================================================
+cystidia_color_in_KOH:
+  canonical_values:
+    hyaline: "Colorless / transparent — the default for most species"
+    pale yellow: "Faintly yellowish in KOH"
+    yellow: "Distinctly yellow in KOH"
+    brown: "Brownish in KOH — e.g. some Cortinarius"
+  aliases:
+    colourless: hyaline
+    colorless: hyaline
+    transparent: hyaline
+    yellowish: pale yellow
+
+# =============================================================================
+#  SPORE COLOR IN KOH
+# =============================================================================
+spore_color_in_KOH:
+  canonical_values:
+    hyaline: "Colorless / transparent — spore wall unpigmented"
+    pale yellow: "Faintly yellowish spore wall"
+    brownish: "Light brown — e.g. some Cortinarius"
+  aliases:
+    colourless: hyaline
+    colorless: hyaline
+    transparent: hyaline
+    yellowish: pale yellow
+    "white": "hyaline"
+    "cream": "pale yellow"
+    "yellow": "pale yellow"
+    "brown": "brownish"
+    "rusty brown": "brownish"
+    "dark brown": "brownish"

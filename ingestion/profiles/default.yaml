@@ -1,0 +1,132 @@
+# Grouping profile: split_set
+
+global:
+  - overall_size_class
+  - overall_body_form
+  - growth_habit
+
+cap_shape:
+  - cap.shape
+  - cap.central_depression
+
+cap_top:
+  - cap.surface_moisture
+  - cap.surface_texture
+  - cap.scales_or_warts
+
+cap_margin:
+  - cap.margin_type
+  - cap.margin_lined_at_maturity
+
+cap_viz:
+  - cap.colors
+  - cap.color_faded
+  - cap.color_pattern
+  - cap.bruising_color
+
+hymenium:
+  - hymenium.type
+
+gills_arrange:
+  - gills.attachment
+
+gills_distrib:
+  - gills.spacing
+  - gills.thickness
+
+gills_viz:
+  - gills.color
+  - gills.color_with_age
+
+pores:
+  - pores.color
+  - pores.color_with_age
+  - pores.bruising_color
+
+stem:
+  - stem.shape
+  - stem.attachment_position
+  - stem.consistency
+  - stem.hollow_or_solid
+
+stem_surf:
+  - stem.surface_texture
+  - stem.reticulation
+
+stem_viz:
+  - stem.color
+  - stem.color_with_age
+  - stem.bruising_color
+  - stem.base_color
+  - stem.finger_stain_color
+
+veil:
+  - veil.present
+  - veil.type
+  - veil.cortina_present
+  - veil.shape
+  - veil.color
+  - veil.ring_position
+  - veil.ring_mobility
+  - veil.ring_persistence
+
+volva:
+  - volva.present
+  - volva.type
+  - volva.color
+
+flesh_visual:
+  - flesh.color
+  - flesh.bruising_color
+
+flesh_inner:
+  - flesh.hyphal_structure
+
+uniformity:
+  - flesh.cap_stem_consistency
+
+latex:
+  - flesh.latex_presence
+  - flesh.latex_color
+
+flesh_perceptive:
+  - flesh.odor
+  - flesh.taste
+  - flesh.texture
+
+spore_vis:
+  - spore_print_color
+
+spore:
+  - spore.shape
+  - spore.ornamentation
+  - spore.amyloidity
+  - spore.color_in_KOH
+
+microscopic:
+  - microscopic.basidia_spore_count
+  - microscopic.cheilocystidia_shape
+  - microscopic.cheilocystidia_dims_um
+  - microscopic.pleurocystidia_shape
+  - microscopic.pleurocystidia_dims_um
+  - microscopic.cystidia_color_in_KOH
+  - microscopic.pileipellis_type
+  - microscopic.pileipellis_terminal_cell_shape
+
+chemical:
+  - chemical.KOH_cap
+  - chemical.KOH_flesh
+  - chemical.NH4OH_cap
+  - chemical.NH4OH_flesh
+  - chemical.FeSO4_cap
+  - chemical.FeSO4_flesh
+
+ecological:
+  - ecology.substrate
+  - ecology.associated_trees
+
+taxonomic:
+  - phylum
+  - order
+  - family
+  - genus

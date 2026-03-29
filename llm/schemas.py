@@ -45,6 +45,17 @@ def _coerce_bool_fields(data: dict, fields: tuple) -> dict:
     return data
 
 
+def _coerce_string_nulls(data):
+    """Recursively convert string "null"/"none" → Python None (LLM output artefact)."""
+    if isinstance(data, dict):
+        return {k: _coerce_string_nulls(v) for k, v in data.items()}
+    if isinstance(data, list):
+        return [_coerce_string_nulls(v) for v in data]
+    if isinstance(data, str) and data.strip().lower() in ("null", "none"):
+        return None
+    return data
+
+
 # ---------------------------------------------------------------------------
 # 1. Feature extraction schemas (ingestion time)
 # ---------------------------------------------------------------------------
@@ -90,8 +101,9 @@ class ExtractedCapFeatures(BaseModel):
     scales_or_warts: str | None = Field(
         None,
         description=(
-            "Scales or wart-like patches on cap. "
-            "Examples: 'white universal veil remnants', 'absent', 'fibrous grey-brown scales'"
+            "Adornments on cap surface. "
+            "One of: scales (flat overlapping fibrous plates), warts (pointed veil remnants), "
+            "both. Use null if absent or if description is ambiguous."
         ),
     )
     margin_type: str | None = Field(
@@ -161,8 +173,8 @@ class ExtractedGillFeatures(BaseModel):
     color_with_age: str | None = Field(
         None,
         description=(
-            "Gill color change as mushroom ages. "
-            "Examples: 'white to pink then brown', 'yellow becoming rusty'"
+            "Gill color change with age — use palette terms. "
+            "E.g. 'white to pink', 'yellow to rusty brown'"
         ),
     )
     thickness: str | None = Field(
@@ -188,7 +200,7 @@ class ExtractedPoreFeatures(BaseModel):
     )
     color_with_age: str | None = Field(
         None,
-        description="Pore color change with age. Examples: 'white to olive-brown', 'reddish'",
+        description="Pore color change with age — use palette terms. E.g. 'white to olive-brown'",
     )
     bruising_color: str | None = Field(
         None,
@@ -217,7 +229,8 @@ class ExtractedStemFeatures(BaseModel):
     color_with_age: str | None = Field(
         None,
         description=(
-            "Color change as stem ages. Examples: 'white becoming brownish at base', 'yellowing'"
+            "Stem color change with age — use palette terms. "
+            "E.g. 'white becoming brownish at base'"
         ),
     )
     surface_texture: str | None = Field(
@@ -337,13 +350,6 @@ class ExtractedVolvaFeatures(BaseModel):
             "friable (rings of scales)"
         ),
     )
-    shape: str | None = Field(
-        None,
-        description=(
-            "Volva shape. "
-            "Examples: cup-shaped, bag-like (saccate), ridged collar, rings of scales around bulb"
-        ),
-    )
     color: str | None = None
 
     @model_validator(mode="before")
@@ -363,10 +369,15 @@ class ExtractedFleshFeatures(BaseModel):
             "Examples: blue (Gyroporus cyanescens), red, none/unchanged"
         ),
     )
-    latex: str | None = Field(
+    latex_presence: bool | None = Field(
+        None,
+        description="True if mushroom exudes latex (milk) when cut or broken. False if absent.",
+    )
+    latex_color: str | None = Field(
         None,
         description=(
-            "Latex when cut. Examples: absent, white, white_to_yellow, blue, red, orange"
+            "Color of latex when present. "
+            "Examples: white, white_to_yellow (changing), blue, red, orange, clear/watery"
         ),
     )
     odor: str | None = Field(
@@ -405,6 +416,13 @@ class ExtractedFleshFeatures(BaseModel):
             "Examples: insubstantial/thin (e.g. small Mycena), moderate, thick"
         ),
     )
+
+    @model_validator(mode="before")
+    @classmethod
+    def coerce_bools(cls, data: dict) -> dict:
+        if isinstance(data, dict):
+            _coerce_bool_fields(data, ("latex_presence",))
+        return data
 
 
 class ExtractedSporeFeatures(BaseModel):
@@ -557,18 +575,11 @@ class ExtractedEcologicalFeatures(BaseModel):
         None,
         description="Nutritional strategy. Examples: mycorrhizal, saprotrophic, parasitic",
     )
-    habitat_types: list[str] = Field(
-        default_factory=list,
-        description=(
-            "Habitat types where found. "
-            "Examples: ['hardwood forest', 'conifer forest', 'grassland', 'heathland']"
-        ),
-    )
     substrate: str | None = Field(
         None,
         description=(
             "What it grows on. "
-            "Examples: soil, dead wood, living tree, dung, leaf litter, mossy ground"
+            "One of: soil, dead wood, living tree, dung, leaf litter, woody debris"
         ),
     )
     associated_trees: list[str] = Field(
@@ -578,18 +589,12 @@ class ExtractedEcologicalFeatures(BaseModel):
             "Examples: ['oak', 'beech', 'birch', 'pine', 'spruce']"
         ),
     )
-    fruiting_seasons: list[str] = Field(
+    fruiting_months: list[str] = Field(
         default_factory=list,
         description=(
-            "Season(s) when fruiting bodies appear. "
-            "Examples: ['spring'], ['summer', 'fall'], ['winter']"
-        ),
-    )
-    fruiting_months: str | None = Field(
-        None,
-        description=(
-            "More specific fruiting period. "
-            "Examples: 'July–September', 'late spring through summer', 'October–December'"
+            "Months when fruiting bodies appear — list each by name explicitly. "
+            "Examples: ['July', 'August', 'September', 'October']. "
+            "Translate ranges like 'July–October' to the full list of months."
         ),
     )
     geographic_regions: list[str] = Field(
@@ -602,8 +607,8 @@ class ExtractedEcologicalFeatures(BaseModel):
     altitude_notes: str | None = Field(
         None,
         description=(
-            "Altitude range or preference. "
-            "Examples: 'lowland to montane', 'alpine zones', 'below 1000m'"
+            "Altitude zone. One of: sea-level, lowland, montane, subalpine, alpine. "
+            "Use null if not mentioned."
         ),
     )
     growth_position: str | None = Field(
@@ -613,22 +618,13 @@ class ExtractedEcologicalFeatures(BaseModel):
             "Examples: terrestrial (ground), lignicolous (on wood), coprophilous (on dung)"
         ),
     )
-    microhabitat_notes: str | None = Field(
-        None,
-        description=(
-            "Specific microhabitat detail. "
-            "Examples: 'mossy ground near streams', 'disturbed soil', 'under bracken'"
-        ),
-    )
-
     @model_validator(mode="before")
     @classmethod
     def coerce_null_lists(cls, data: dict) -> dict:
         if isinstance(data, dict):
             for field in (
-                "habitat_types",
                 "associated_trees",
-                "fruiting_seasons",
+                "fruiting_months",
                 "geographic_regions",
             ):
                 if data.get(field) is None:
@@ -639,6 +635,32 @@ class ExtractedEcologicalFeatures(BaseModel):
 # ---------------------------------------------------------------------------
 # Grouped extraction schemas (2-pass pipeline)
 # ---------------------------------------------------------------------------
+
+
+class ExtractedVariety(BaseModel):
+    name: str = Field(
+        description="Variety/form name, e.g. 'var. alba', 'f. flavivolvata', 'subsp. muscaria'"
+    )
+    description: str | None = Field(
+        None,
+        description="Free-text summary of how this variety differs from the nominal form",
+    )
+    differing_features: dict[str, str] = Field(
+        default_factory=dict,
+        description=(
+            "Key features that differ from the species baseline. "
+            "Keys are descriptive names (e.g. 'cap_color', 'habitat'), "
+            "values are the variety-specific value."
+        ),
+    )
+    geographic_notes: str | None = Field(
+        None,
+        description="Geographic range of this variety if different from species",
+    )
+    edibility_note: str | None = Field(
+        None,
+        description="Only if edibility differs from the nominal species",
+    )
 
 
 class Pass1IdentityFeatures(BaseModel):
@@ -660,13 +682,26 @@ class Pass1IdentityFeatures(BaseModel):
     edibility_status: str | None = None
     known_toxins: list[str] = Field(default_factory=list)
     known_lookalikes: list[str] = Field(default_factory=list)
+    varieties: list[ExtractedVariety] = Field(
+        default_factory=list,
+        description=(
+            "Named varieties, subspecies, or forms differing from the nominal taxon. "
+            "Leave empty if the source text describes no distinct varieties."
+        ),
+    )
     extraction_notes: str | None = None
 
     @model_validator(mode="before")
     @classmethod
     def coerce_null_lists(cls, data: dict) -> dict:
         if isinstance(data, dict):
-            for field in ("common_names", "synonyms", "known_toxins", "known_lookalikes"):
+            for field in (
+                "common_names",
+                "synonyms",
+                "known_toxins",
+                "known_lookalikes",
+                "varieties",
+            ):
                 if data.get(field) is None:
                     data[field] = []
         return data
@@ -852,6 +887,13 @@ class ExtractedSpeciesFeatures(BaseModel):
         default_factory=list,
         description="Species mentioned as lookalikes in the source text. Use scientific names.",
     )
+    varieties: list[ExtractedVariety] = Field(
+        default_factory=list,
+        description=(
+            "Named varieties, subspecies, or forms differing from the nominal taxon. "
+            "Leave empty if the source text describes no distinct varieties."
+        ),
+    )
 
     extraction_notes: str | None = Field(
         None,
@@ -866,8 +908,15 @@ class ExtractedSpeciesFeatures(BaseModel):
     def coerce_nulls(cls, data: dict) -> dict:
         if not isinstance(data, dict):
             return data
+        data = _coerce_string_nulls(data)
         # Coerce null list fields to []
-        for field in ("common_names", "known_toxins", "known_lookalikes", "synonyms"):
+        for field in (
+            "common_names",
+            "known_toxins",
+            "known_lookalikes",
+            "synonyms",
+            "varieties",
+        ):
             if data.get(field) is None:
                 data[field] = []
         # Coerce null nested objects to {} so sub-models get their defaults
@@ -923,6 +972,7 @@ class ReconciliationResult(BaseModel):
         return data
 
     needs_review: bool = Field(
+        default=False,
         description="True if any conflicts require human review",
     )
     review_notes: str | None = Field(

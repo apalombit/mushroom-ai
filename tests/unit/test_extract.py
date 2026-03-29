@@ -34,6 +34,7 @@ from llm.schemas import (
     ExtractedSporeFeatures,
     ExtractedStemFeatures,
     ExtractedTubeFeatures,
+    ExtractedVariety,
     ExtractedVeilFeatures,
     ExtractedVolvaFeatures,
     Pass1IdentityFeatures,
@@ -83,7 +84,8 @@ def test_system_prompt_has_new_fields():
         "growth_habit",
         "overall_body_form",
         "surface_moisture",
-        "latex",
+        "latex_presence",
+        "latex_color",
         "bruising_color",
         "edge_texture",
         "attachment_position",
@@ -147,6 +149,7 @@ _PASS1_FIELD_PATHS = {
     "edibility_status",
     "known_toxins",
     "known_lookalikes",
+    "varieties",
     "extraction_notes",
 }
 
@@ -411,3 +414,39 @@ def test_alias_format_matches_expected_pattern():
     # Terms without aliases should appear bare (no parentheses)
     assert "smooth" in guidance
     assert "smooth (=" not in guidance
+
+
+# ---------------------------------------------------------------------------
+# Variety tests
+# ---------------------------------------------------------------------------
+
+
+def test_extracted_variety_validates():
+    v = ExtractedVariety(
+        name="var. alba",
+        description="White-capped form; otherwise identical to nominal",
+        differing_features={"cap_color": "white"},
+    )
+    assert v.name == "var. alba"
+    assert v.differing_features["cap_color"] == "white"
+    assert v.geographic_notes is None
+
+
+def test_merge_correctness_includes_varieties():
+    """varieties from Pass 1 appear in the merged ExtractedSpeciesFeatures."""
+    pass1 = Pass1IdentityFeatures(
+        scientific_name="Amanita muscaria",
+        varieties=[
+            ExtractedVariety(name="var. alba", differing_features={"cap_color": "white"}),
+        ],
+    )
+    cap = Pass2CapFeatures()
+    hymenium = Pass2HymeniumFeatures()
+    stem_veil = Pass2StemVeilFeatures()
+    flesh_chem = Pass2FleshChemFeatures()
+    spore_eco = Pass2SporeEcoFeatures()
+
+    merged = merge_extraction_results(pass1, cap, hymenium, stem_veil, flesh_chem, spore_eco)
+    assert len(merged.varieties) == 1
+    assert merged.varieties[0].name == "var. alba"
+    assert merged.varieties[0].differing_features["cap_color"] == "white"

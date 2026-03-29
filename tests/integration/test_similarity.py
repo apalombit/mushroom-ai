@@ -14,7 +14,7 @@ from similarity.weights import SimilarityWeights
 def _count_embedded(session) -> int:
     return (
         session.query(ReconciledSpecies)
-        .filter(ReconciledSpecies.embedding_morphological.isnot(None))
+        .filter(ReconciledSpecies.embedding_macro_visual.isnot(None))
         .count()
     )
 
@@ -40,7 +40,7 @@ def test_gt_pairs_in_top10():
         embedded_names = {
             row.scientific_name
             for row in s.query(ReconciledSpecies)
-            .filter(ReconciledSpecies.embedding_morphological.isnot(None))
+            .filter(ReconciledSpecies.embedding_macro_visual.isnot(None))
             .all()
         }
     finally:

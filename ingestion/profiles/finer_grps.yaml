@@ -1,0 +1,157 @@
+# Grouping profile: split_set
+
+size:
+  - overall_size_class
+
+shape:
+  - overall_body_form
+
+cap_color:
+  - cap.colors
+
+stem_color:
+  - stem.color
+
+cap_shape:
+  - cap.shape
+
+cap_depress:
+  - cap.central_depression
+
+cap_feel:
+  - cap.surface_moisture
+
+cap_text:
+  - cap.surface_texture
+
+cap_ornaments:
+  - cap.scales_or_warts
+
+cap_margin:
+  - cap.margin_type
+
+cap_viz:
+  - cap.color_faded
+  - cap.color_pattern
+
+cap_bruise:
+  - cap.bruising_color
+
+hymenium:
+  - hymenium.type
+
+gills_attach:
+  - gills.attachment
+
+gills_distrib:
+  - gills.spacing
+  - gills.thickness
+
+gills_viz:
+  - gills.color
+  - gills.color_with_age
+
+pores:
+  - pores.color
+  - pores.color_with_age
+
+pores_bruise:
+  - pores.bruising_color
+
+stem_shape:
+  - stem.shape
+
+stem_attach:
+  - stem.attachment_position
+
+stem:
+  - stem.consistency
+  - stem.hollow_or_solid
+
+stem_surf:
+  - stem.surface_texture
+  - stem.reticulation
+
+stem_bruise:
+  - stem.bruising_color
+
+stem_age:
+  - stem.color_with_age
+
+stem_basecol:
+  - stem.base_color
+
+veil:
+  - veil.present
+  - veil.type
+
+cortina:
+  - veil.cortina_present
+
+veil_colour:
+  - veil.color
+
+veil_shape:
+  - veil.shape
+
+ring_pos:
+  - veil.ring_position
+
+ring_pers:
+  - veil.ring_persistence
+
+ring_mov:
+  - veil.ring_mobility
+
+volva:
+  - volva.present
+  - volva.type
+
+volva_shape:
+  - volva.shape
+
+volva_col:
+  - volva.color
+
+flesh_visual:
+  - flesh.color
+  - flesh.bruising_color
+
+flesh_inner:
+  - flesh.hyphal_structure
+
+uniformity:
+  - flesh.cap_stem_consistency
+
+latex:
+  - flesh.latex_presence
+  - flesh.latex_color
+
+flesh_perceptive:
+  - flesh.odor
+  - flesh.taste
+  - flesh.texture
+
+spore_vis:
+  - spore_print_color
+
+ecological:
+  - ecology.substrate
+
+habitat:
+  - ecology.trophic_mode
+  - ecology.growth_position
+  - ecology.geographic_regions
+  - ecology.altitude_notes
+
+trees:
+  - ecology.associated_trees
+
+growth:
+  - growth_habit
+
+taxonomic:
+  - phylum
+  - order
+  - family
+  - genus

@@ -50,6 +50,7 @@ _VOCAB_TO_SECTION = {
     "overall_body_form": ("OVERALL", "overall_body_form"),
     "cap_shape": ("CAP", "shape"),
     "cap_surface_moisture": ("CAP", "surface_moisture"),
+    "scales_or_warts": ("CAP", "scales_or_warts"),
     "surface_texture": ("CAP / STEM", "surface_texture"),
     "cap_margin": ("CAP", "margin_type"),
     "bruising_color": ("BRUISING", "bruising_color"),
@@ -70,7 +71,7 @@ _VOCAB_TO_SECTION = {
     "flesh_texture": ("FLESH", "texture"),
     "flesh_hyphal_structure": ("FLESH", "hyphal_structure"),
     "flesh_cap_stem_consistency": ("FLESH", "cap_stem_consistency"),
-    "latex": ("FLESH", "latex"),
+    "latex": ("FLESH", "latex_presence"),
     "spore_print_color": ("SPORE PRINT", "spore_print_color"),
     "spore_shape": ("SPORES", "shape"),
     "spore_ornamentation": ("SPORES", "ornamentation"),
@@ -78,6 +79,27 @@ _VOCAB_TO_SECTION = {
     "color_palette": ("COLORS", "all color fields"),
     "growth_habit": ("ECOLOGY", "growth_habit"),
     "pileipellis_type": ("MICROSCOPIC", "pileipellis_type"),
+    "cap_color_pattern": ("CAP", "color_pattern"),
+    "overall_size_class": ("OVERALL", "overall_size_class"),
+    "gill_thickness": ("GILLS", "thickness"),
+    "gill_texture": ("GILLS", "texture"),
+    "stem_reticulation": ("STEM", "reticulation"),
+    "stem_consistency": ("STEM", "consistency"),
+    "flesh_quantity": ("FLESH", "quantity"),
+    "flesh_latex_color": ("FLESH", "latex_color"),
+    "trophic_mode": ("ECOLOGY", "trophic_mode"),
+    "substrate": ("ECOLOGY", "substrate"),
+    "altitude_zone": ("ECOLOGY", "altitude_notes"),
+    "growth_position": ("ECOLOGY", "growth_position"),
+    "chemical_KOH": ("CHEMICAL", "KOH_cap / KOH_flesh"),
+    "chemical_FeSO4": ("CHEMICAL", "FeSO4_cap / FeSO4_flesh"),
+    "chemical_NH4OH": ("CHEMICAL", "NH4OH_cap / NH4OH_flesh"),
+    "basidia_spore_count": ("MICROSCOPIC", "basidia_spore_count"),
+    "cheilocystidia_shape": ("MICROSCOPIC", "cheilocystidia_shape"),
+    "pleurocystidia_shape": ("MICROSCOPIC", "pleurocystidia_shape"),
+    "pileipellis_terminal_cell_shape": ("MICROSCOPIC", "pileipellis_terminal_cell_shape"),
+    "cystidia_color_in_KOH": ("MICROSCOPIC", "cystidia_color_in_KOH"),
+    "spore_color_in_KOH": ("SPORES", "color_in_KOH"),
 }
 
 
@@ -132,15 +154,17 @@ def _build_vocab_guidance(feature_keys: set[str] | None = None) -> str:
 
 # ── Per-group vocabulary key sets ─────────────────────────────────────────────
 
-_PASS1_VOCAB_KEYS = {"hymenium_type", "overall_body_form", "growth_habit"}
+_PASS1_VOCAB_KEYS = {"hymenium_type", "overall_body_form", "growth_habit", "overall_size_class"}
 
 _GROUP_A_VOCAB_KEYS = {
     "cap_shape",
     "cap_surface_moisture",
+    "scales_or_warts",
     "surface_texture",
     "cap_margin",
     "bruising_color",
     "color_palette",
+    "cap_color_pattern",
 }
 _GROUP_B_VOCAB_KEYS = {
     "hymenium_type",
@@ -150,6 +174,8 @@ _GROUP_B_VOCAB_KEYS = {
     "bruising_color",
     "spore_print_color",
     "color_palette",
+    "gill_thickness",
+    "gill_texture",
 }
 _GROUP_C_VOCAB_KEYS = {
     "stem_shape",
@@ -164,6 +190,8 @@ _GROUP_C_VOCAB_KEYS = {
     "volva_type",
     "bruising_color",
     "color_palette",
+    "stem_reticulation",
+    "stem_consistency",
 }
 _GROUP_D_VOCAB_KEYS = {
     "flesh_odor",
@@ -174,6 +202,11 @@ _GROUP_D_VOCAB_KEYS = {
     "latex",
     "bruising_color",
     "color_palette",
+    "flesh_quantity",
+    "flesh_latex_color",
+    "chemical_KOH",
+    "chemical_FeSO4",
+    "chemical_NH4OH",
 }
 _GROUP_E_VOCAB_KEYS = {
     "spore_shape",
@@ -181,6 +214,16 @@ _GROUP_E_VOCAB_KEYS = {
     "spore_amyloidity",
     "pileipellis_type",
     "growth_habit",
+    "trophic_mode",
+    "substrate",
+    "altitude_zone",
+    "growth_position",
+    "basidia_spore_count",
+    "cheilocystidia_shape",
+    "pleurocystidia_shape",
+    "pileipellis_terminal_cell_shape",
+    "cystidia_color_in_KOH",
+    "spore_color_in_KOH",
 }
 
 
@@ -230,12 +273,10 @@ HYMENIUM
   cornucopioides interior, puffballs).
 
 GILLS — only populate gills fields when hymenium.type == "gills"
-- color_with_age: e.g. "white to pink then brown", "yellow becoming rusty"
-- thickness: thin | thick (thick gills are diagnostic e.g. for Laccaria)
-- texture: waxy (Hygrocybe), brittle (Russula/Lactarius), normal/soft
+- color_with_age: use palette terms — e.g. "white to pink", "yellow to rusty"
 
 PORES — only populate pores fields when hymenium.type == "pores"
-- color: pore surface color when fresh
+- color_with_age: describe color transition using palette terms — e.g. "white to olive-brown"
 - bruising_color: "blue" (bluing), "slowly orangish-brown", "none"
 - density_per_mm: e.g. "1-2 per mm", "3-4 per mm"
 
@@ -245,9 +286,10 @@ CAP
 - color_pattern: uniform | darker at center | two-toned | mottled | streaked
 - margin_lined_at_maturity: true if margin becomes striate with age
 - central_depression: true if cap becomes funnel-shaped or depressed at center
+- scales_or_warts: scales | warts | both — use null if absent or unclear/mixed description
 
 STEM
-- reticulation: none | partial (upper stem only) | full — key for boletes
+- color_with_age: use palette terms — e.g. "white becoming brownish"
 - basal_mycelium_color: color of mycelium at base — e.g. white, lilac (diagnostic Laccaria)
 - finger_stain_color: color left on fingers when rubbed — e.g. yellow (Retiboletus ornatipes)
 
@@ -255,18 +297,11 @@ VEIL
 - cortina_present: true if a cortina (cobweb partial veil) is present — key Cortinarius feature
 
 FLESH
-- quantity: insubstantial/thin | moderate | thick
-
-CHEMICAL REACTIONS (extract if present)
-- KOH_cap / KOH_flesh: yellow, orange, red, negative, blackening
-- FeSO4_cap / FeSO4_flesh: blue-green, pink, grey-green, negative
-
-MICROSCOPIC (extract if present in source)
-- basidia_spore_count: 4-spored | 2-spored | mixed
+- latex_presence: true if latex (milk) is exuded when cut, false if absent
 
 ECOLOGY
-- trophic_mode: mycorrhizal | saprotrophic | parasitic
-- growth_position: terrestrial | lignicolous (on wood) | coprophilous (on dung)
+- fruiting_months: list every month by name — e.g. ["July", "August", "September"];
+  convert ranges like "July–October" to ["July", "August", "September", "October"]
 
 SAFETY
 - edibility_status: MUST be one of: edible, choice, conditionally edible, inedible, toxic, deadly
@@ -288,7 +323,16 @@ HYMENIUM
 
 SAFETY
 - edibility_status: MUST be one of: edible, choice, conditionally edible, inedible, toxic, deadly
-- known_toxins: named toxins only e.g. ["amatoxins", "ibotenic acid", "muscimol", "gyromitrin"]"""
+- known_toxins: named toxins only e.g. ["amatoxins", "ibotenic acid", "muscimol", "gyromitrin"]
+
+VARIETIES
+- varieties: list named varieties/subspecies/forms ONLY when the source explicitly describes them.
+  - name: the variety designation (e.g. "var. alba", "f. guessowii", "subsp. flavivolvata")
+  - description: one or two sentences on what distinguishes this variety from the nominal form
+  - differing_features: dict of feature → value pairs that differ (e.g. {"cap_color": "white"})
+  - geographic_notes: only if the variety has a distinct geographic range
+  - edibility_note: only if edibility differs from the species baseline
+  Leave varieties as [] if no distinct varieties are mentioned in the source."""
 
 _NOTES_GROUP_A = """
 
@@ -299,19 +343,18 @@ CAP
 - color_faded: color when dry/faded IN ENGLISH
 - color_pattern: uniform | darker at center | two-toned | mottled | streaked
 - margin_lined_at_maturity: true if margin becomes striate with age
-- central_depression: true if cap becomes funnel-shaped or depressed at center"""
+- central_depression: true if cap becomes funnel-shaped or depressed at center
+- scales_or_warts: scales | warts | both — use null if absent or unclear/mixed description"""
 
 _NOTES_GROUP_B = """
 
 FIELD-SPECIFIC NOTES
 
 GILLS — only populate gills fields when hymenium_type == "gills"
-- color_with_age: e.g. "white to pink then brown", "yellow becoming rusty"
-- thickness: thin | thick (thick gills are diagnostic e.g. for Laccaria)
-- texture: waxy (Hygrocybe), brittle (Russula/Lactarius), normal/soft
+- color_with_age: use palette terms — e.g. "white to pink", "yellow to rusty"
 
 PORES — only populate pores fields when hymenium_type == "pores"
-- color: pore surface color when fresh
+- color_with_age: describe color transition using palette terms — e.g. "white to olive-brown"
 - bruising_color: "blue" (bluing), "slowly orangish-brown", "none"
 - density_per_mm: e.g. "1-2 per mm", "3-4 per mm" """
 
@@ -320,7 +363,7 @@ _NOTES_GROUP_C = """
 FIELD-SPECIFIC NOTES
 
 STEM
-- reticulation: none | partial (upper stem only) | full — key for boletes
+- color_with_age: use palette terms — e.g. "white becoming brownish"
 - basal_mycelium_color: color of mycelium at base — e.g. white, lilac (diagnostic Laccaria)
 - finger_stain_color: color left on fingers when rubbed — e.g. yellow (Retiboletus ornatipes)
 
@@ -332,22 +375,15 @@ _NOTES_GROUP_D = """
 FIELD-SPECIFIC NOTES
 
 FLESH
-- quantity: insubstantial/thin | moderate | thick
-
-CHEMICAL REACTIONS (extract if present)
-- KOH_cap / KOH_flesh: yellow, orange, red, negative, blackening
-- FeSO4_cap / FeSO4_flesh: blue-green, pink, grey-green, negative"""
+- latex_presence: true if latex (milk) is exuded when cut, false if absent"""
 
 _NOTES_GROUP_E = """
 
 FIELD-SPECIFIC NOTES
 
-MICROSCOPIC (extract if present in source)
-- basidia_spore_count: 4-spored | 2-spored | mixed
-
 ECOLOGY
-- trophic_mode: mycorrhizal | saprotrophic | parasitic
-- growth_position: terrestrial | lignicolous (on wood) | coprophilous (on dung)"""
+- fruiting_months: list every month by name — e.g. ["July", "August", "September"];
+  convert ranges like "July–October" to ["July", "August", "September", "October"]"""
 
 
 # ── Helper: build a complete system prompt for a group ────────────────────
@@ -425,6 +461,7 @@ def merge_extraction_results(
         edibility_status=pass1.edibility_status,
         known_toxins=pass1.known_toxins,
         known_lookalikes=pass1.known_lookalikes,
+        varieties=pass1.varieties,
         extraction_notes=pass1.extraction_notes,
         # Pass 1 → hymenium sub-model (flat str → nested)
         hymenium=ExtractedHymeniumFeatures(type=pass1.hymenium_type),
@@ -557,6 +594,7 @@ def save_extraction(
     source_url: str,
     source_text: str,
     source_name: str,
+    image_urls: list[str] | None = None,
 ) -> SourceObservation:
     """
     Upsert extraction result into source_observations (Layer 1).
@@ -581,6 +619,8 @@ def save_extraction(
             existing.source_text_hash = text_hash
             existing.extraction_model = model_string
             existing.extraction_notes = features.extraction_notes
+            if image_urls is not None:
+                existing.image_urls = image_urls
             obs = existing
         else:
             obs = SourceObservation(
@@ -591,6 +631,7 @@ def save_extraction(
                 features_json=features_dict,
                 extraction_model=model_string,
                 extraction_notes=features.extraction_notes,
+                image_urls=image_urls or [],
             )
             session.add(obs)
         session.commit()

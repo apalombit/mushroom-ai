@@ -1,0 +1,347 @@
+# Feature Usage Map
+# Tracks which features are used at each step of the search/scoring pipeline.
+# Source of truth for understanding the role of each field.
+#
+# THREE SCORING METHODS:
+#   1. Embedding similarity — text→vector cosine similarity (pgvector)
+#   2. Soft-Jaccard — discrete value comparison via similarity matrices
+#   3. Numeric similarity — structural comparison of measurements
+#
+# Final score = alpha * embedding_score + (1-alpha) * jaccard_score + numeric + boosts
+
+# =============================================================================
+# GATE FEATURES (hard pre-filters — reject candidates that don't match)
+# Gate flags are in SimilarityWeights and config.py (weight_*_filter).
+# All gates default to OFF (hurt recall by 1-3pp when enabled).
+# =============================================================================
+gate_features:
+  overall_body_form:
+    config_flag: weight_body_form_filter
+    default: false
+    db_column: overall_body_form  # denormalized on reconciled_species
+    notes: "Rejects candidates with different body form (agaricoid, boletoid, etc)"
+
+  hymenium.type:
+    config_flag: weight_hymenium_filter
+    default: false
+    db_column: hymenium_type
+    notes: "Rejects candidates with different hymenium type (gills, pores, ridges, teeth, smooth)"
+
+  overall_size_class:
+    config_flag: weight_size_class_filter
+    default: false
+    db_column: overall_size_class
+    similarity_matrix: true  # small-medium: 0.5, medium-large: 0.5, small-large: 0.0
+    notes: "Rejects candidates with different size class (small, medium, large)"
+
+# =============================================================================
+# MORPHOTYPE SIGNATURE (coarse pre-filter using 5 diagnostic fields)
+# Pipe-delimited string: body_form|hymenium|size|cap_shape|gills_attachment
+# Config: weight_morphotype_prefilter (default: false), morphotype_min_match (default: 0.6)
+# Source: similarity/morphotype.py
+# =============================================================================
+morphotype_signature_fields:
+  - overall_body_form
+  - hymenium.type
+  - overall_size_class
+  - cap.shape
+  - gills.attachment
+
+# =============================================================================
+# GROUP FILTER
+# Filters by taxonomic group (e.g., agarics only match agarics).
+# Config: group_filter in SimilarityWeights (default: true).
+# DB column: reconciled_species.group
+# =============================================================================
+group_filter:
+  field: group
+  default: true
+  notes: "Only return candidates from the same taxonomic group"
+
+# =============================================================================
+# MORPHO POOL PRIORITY
+# After embedding retrieval, candidates from morphological groups get priority
+# over candidates found only in ecological/taxonomic groups.
+# Config: weight_morpho_pool_required (default: true)
+# =============================================================================
+morpho_pool_priority:
+  default: true
+  notes: "Candidates must appear in at least one morphological embedding group's results"
+
+# =============================================================================
+# EMBEDDING GROUPS (per-group pgvector cosine similarity)
+# Each group: features → text (rubric.features_to_text) → 768-dim vector
+# Per-group weights set via config.py weight_<group_name> or .env
+# Weights optimizable via scripts/eval.py --sweep
+# Active profile: finer_grps (46 groups)
+# =============================================================================
+embedding_groups:
+  source: "ingestion/profiles/finer_grps.yaml"
+  model: "all-mpnet-base-v2 (768-dim)"
+  aggregation_strategies:
+    - weighted_avg       # default — linear weighted sum
+    - rrf                # reciprocal rank fusion (rank-based, scale-invariant)
+    - contrastive_gate   # z-score gating + weighted avg
+
+  # --- Morphological groups (per-field or small clusters) ---
+  size:            [overall_size_class]
+  shape:           [overall_body_form]
+  cap_color:       [cap.colors]
+  stem_color:      [stem.color]
+  cap_shape:       [cap.shape]
+  cap_depress:     [cap.central_depression]
+  cap_feel:        [cap.surface_moisture]
+  cap_text:        [cap.surface_texture]
+  cap_ornaments:   [cap.scales_or_warts]
+  cap_margin:      [cap.margin_type]
+  cap_viz:         [cap.color_faded, cap.color_pattern]
+  cap_bruise:      [cap.bruising_color]
+  hymenium:        [hymenium.type]
+  gills_attach:    [gills.attachment]
+  gills_distrib:   [gills.spacing, gills.thickness]
+  gills_viz:       [gills.color, gills.color_with_age]
+  pores:           [pores.color, pores.color_with_age]
+  pores_bruise:    [pores.bruising_color]
+  stem_shape:      [stem.shape]
+  stem_attach:     [stem.attachment_position]
+  stem:            [stem.consistency, stem.hollow_or_solid]
+  stem_surf:       [stem.surface_texture, stem.reticulation]
+  stem_bruise:     [stem.bruising_color]
+  stem_age:        [stem.color_with_age]
+  stem_basecol:    [stem.base_color]
+  veil:            [veil.present, veil.type]
+  cortina:         [veil.cortina_present]
+  veil_colour:     [veil.color]
+  veil_shape:      [veil.shape]
+  ring_pos:        [veil.ring_position]
+  ring_pers:       [veil.ring_persistence]
+  ring_mov:        [veil.ring_mobility]
+  volva:           [volva.present, volva.type]
+  volva_shape:     [volva.shape]
+  volva_col:       [volva.color]
+  flesh_visual:    [flesh.color, flesh.bruising_color]
+  flesh_inner:     [flesh.hyphal_structure]
+  uniformity:      [flesh.cap_stem_consistency]
+  latex:           [flesh.latex_presence, flesh.latex_color]
+  flesh_perceptive: [flesh.odor, flesh.taste, flesh.texture]
+  spore_vis:       [spore_print_color]
+
+  # --- Ecological/taxonomic groups ---
+  ecological:      [ecology.substrate]
+  habitat:         [ecology.trophic_mode, ecology.growth_position, ecology.geographic_regions, ecology.altitude_notes]
+  trees:           [ecology.associated_trees]
+  growth:          [growth_habit]
+  taxonomic:       [phylum, order, family, genus]
+
+# =============================================================================
+# SOFT-JACCARD FIELDS (similarity/jaccard.py)
+# Compared using similarity matrices from morphological_vocabulary.yaml.
+# Blended with embedding score via alpha parameter.
+# Per-field weights optimizable via scripts/optimize_jaccard.py.
+# =============================================================================
+jaccard_fields:
+  vocabulary_scalars:  # use similarity_matrix lookup from vocabulary
+    - hymenium.type
+    - overall_body_form
+    - overall_size_class
+    - growth_habit
+    - spore_print_color
+    - cap.shape
+    - cap.surface_moisture
+    - cap.scales_or_warts
+    - cap.surface_texture
+    - cap.margin_type
+    - cap.color_pattern
+    - gills.attachment
+    - gills.spacing
+    - gills.edge_texture
+    - gills.thickness
+    - gills.texture
+    - stem.surface_texture
+    - stem.shape
+    - stem.attachment_position
+    - stem.hollow_or_solid
+    - stem.reticulation
+    - stem.consistency
+    - veil.type
+    - veil.shape
+    - veil.ring_position
+    - veil.ring_mobility
+    - veil.ring_persistence
+    - volva.type
+    - flesh.odor
+    - flesh.taste
+    - flesh.texture
+    - flesh.hyphal_structure
+    - flesh.cap_stem_consistency
+    - flesh.quantity
+
+  color_fields:  # use color_palette similarity matrix + alias normalization
+    - cap.colors
+    - gills.color
+    - stem.color
+    - flesh.color
+    - pores.color
+    - cap.bruising_color
+    - flesh.bruising_color
+    - stem.bruising_color
+    - pores.bruising_color
+
+  boolean_fields:  # exact match: 1.0 if same, 0.0 if different
+    - veil.present
+    - volva.present
+    - flesh.latex_presence
+    - cap.central_depression
+    - cap.margin_lined_at_maturity
+    - veil.cortina_present
+
+# =============================================================================
+# NUMERIC SIMILARITY FIELDS (similarity/numeric.py)
+# Compared structurally, NOT embedded. Contribute via 'numeric' weight.
+# =============================================================================
+numeric_fields:
+  range_fields:  # converted to size category (small/medium/large), scored: same=1.0, adjacent=0.5
+    - ["cap.diameter_min_cm", "cap.diameter_max_cm"]
+    - ["stem.height_min_cm", "stem.height_max_cm"]
+    - ["stem.diameter_min_cm", "stem.diameter_max_cm"]
+    - ["spore.length_min_um", "spore.length_max_um"]
+    - ["spore.width_min_um", "spore.width_max_um"]
+
+  single_fields:  # proximity scoring (linear decay to 0.0 at tolerance)
+    - field: pores.density_per_mm
+      tolerance: 3.0
+    - field: tubes.depth_mm
+      tolerance: 15.0
+    - field: spore.spine_length_um
+      tolerance: 2.0
+    - field: spore.spine_base_width_um
+      tolerance: 1.0
+    - field: microscopic.pileipellis_element_width_um
+      tolerance: 5.0
+
+  month_overlap:  # Jaccard similarity of fruiting month sets
+    - ecology.fruiting_months
+
+# =============================================================================
+# FEATURE COVERAGE CROSS-REFERENCE
+# Shows which features are exclusive to each scoring method.
+# Most morphological features are used by BOTH embedding and Jaccard.
+# =============================================================================
+coverage:
+  # Features used by embedding groups but NOT by Jaccard
+  embedding_only:
+    - cap.color_faded           # cap_viz group
+    - gills.color_with_age      # gills_viz group
+    - pores.color_with_age      # pores group
+    - stem.color_with_age       # stem_age group
+    - stem.base_color           # stem_basecol group
+    - veil.color                # veil_colour group
+    - volva.shape               # volva_shape group
+    - volva.color               # volva_col group
+    - flesh.latex_color         # latex group
+    - ecology.substrate         # ecological group
+    - ecology.trophic_mode      # habitat group
+    - ecology.growth_position   # habitat group
+    - ecology.geographic_regions  # habitat group
+    - ecology.altitude_notes    # habitat group
+    - ecology.associated_trees  # trees group
+    - phylum                    # taxonomic group
+    - order                     # taxonomic group
+    - family                    # taxonomic group
+    - genus                     # taxonomic group
+
+  # Features used by Jaccard but NOT by any embedding group
+  jaccard_only:
+    - gills.edge_texture        # vocabulary scalar
+    - gills.texture             # vocabulary scalar
+    - flesh.quantity            # vocabulary scalar
+    - cap.margin_lined_at_maturity  # boolean field
+
+  # Features used by BOTH embedding and Jaccard (the overlap)
+  shared_embedding_jaccard:
+    - hymenium.type
+    - overall_body_form
+    - overall_size_class
+    - growth_habit
+    - spore_print_color
+    - cap.shape
+    - cap.surface_moisture
+    - cap.scales_or_warts
+    - cap.surface_texture
+    - cap.margin_type
+    - cap.color_pattern
+    - cap.colors
+    - cap.bruising_color
+    - cap.central_depression
+    - gills.attachment
+    - gills.spacing
+    - gills.thickness
+    - gills.color
+    - stem.shape
+    - stem.attachment_position
+    - stem.consistency
+    - stem.hollow_or_solid
+    - stem.surface_texture
+    - stem.reticulation
+    - stem.color
+    - stem.bruising_color
+    - pores.color
+    - pores.bruising_color
+    - veil.present
+    - veil.type
+    - veil.shape
+    - veil.ring_position
+    - veil.ring_persistence
+    - veil.ring_mobility
+    - veil.cortina_present
+    - volva.present
+    - volva.type
+    - flesh.color
+    - flesh.bruising_color
+    - flesh.odor
+    - flesh.taste
+    - flesh.texture
+    - flesh.hyphal_structure
+    - flesh.cap_stem_consistency
+    - flesh.latex_presence
+
+  # Features only used by numeric similarity (never embedded or Jaccard)
+  numeric_only:
+    - cap.diameter_min_cm
+    - cap.diameter_max_cm
+    - stem.height_min_cm
+    - stem.height_max_cm
+    - stem.diameter_min_cm
+    - stem.diameter_max_cm
+    - spore.length_min_um
+    - spore.length_max_um
+    - spore.width_min_um
+    - spore.width_max_um
+    - pores.density_per_mm
+    - tubes.depth_mm
+    - spore.spine_length_um
+    - spore.spine_base_width_um
+    - microscopic.pileipellis_element_width_um
+    - ecology.fruiting_months
+
+# =============================================================================
+# BLENDING (alpha parameter)
+# Controls the mix between embedding score and Jaccard score.
+# alpha=1.0 → pure embedding, alpha=0.0 → pure Jaccard
+# Default: 0.5. Tunable in config.py or per-request.
+# Optimized jointly with embedding weights via scripts/eval.py --sweep
+# =============================================================================
+blending:
+  parameter: alpha
+  default: 0.5
+  range: [0.0, 1.0]
+  formula: "final_score = alpha * embedding_score + (1-alpha) * jaccard_score"
+
+# =============================================================================
+# CONTEXT BOOSTS (applied last, after scoring)
+# Small additive boosts for region/season match.
+# =============================================================================
+context_boosts:
+  region_match: 0.02
+  season_match: 0.02
+  notes: "Applied after all scoring/blending as additive bonus"

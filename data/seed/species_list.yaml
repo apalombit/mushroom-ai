@@ -1,206 +1,5031 @@
-# Seed species list for initial ingestion.
+# ============================================================
+# Mushroom Species of Northern Italy, Alps, Austria & Slovenia
+# ============================================================
+# Compiled from: FungiAtlas, First-Nature, MushroomExpert,
+# GBIF/iNaturalist observation data, "Pilze der Schweiz"
+# (Breitenbach & Kränzlin), Italian Mycological Society (AMB),
+# Checklist of Italian Fungi (Onofri 2005), Bern Convention
+# ECCF species data, Monaco Nature Encyclopedia, and expert
+# mycological knowledge of Alpine macrofungi.
 #
-# Focus: species commonly found in Northern Italy / Mediterranean Europe,
-# plus globally important species with known dangerous lookalike relationships.
+# Regions covered: Trentino-Alto Adige, Veneto (Dolomites),
+# Friuli-Venezia Giulia, Lombardy (Bergamo/Brescia Alps),
+# Piedmont (Val d'Aosta border), Austrian Tyrol, Carinthia,
+# Styria, Slovenia (Julian Alps, Karawanken).
 #
-# Format: scientific_name, common_name (English), edibility
-# This list will be read by the ingestion pipeline to know which species to fetch.
+# Edibility codes:
+#   "Edible"               = choice/good edible
+#   "Conditionally edible" = requires cooking or caution
+#   "Inedible"             = no food value / unpalatable
+#   "Toxic"                = causes illness
+#   "Deadly toxic"         = potentially fatal
+#   "Psychoactive"         = contains psilocybin/psilocin
+#   "Unknown"              = insufficient data
 #
-# Expand this list as needed. The ingestion pipeline handles new additions incrementally.
+# Tag: group = taxonomic family or order
+# ============================================================
 
 species:
-  # --- Amanita (critical: contains both choice edibles and deadly species) ---
-  - scientific_name: "Amanita caesarea"
-    common_name: "Caesar's mushroom"
-    edibility: "edible"
-  - scientific_name: "Amanita phalloides"
-    common_name: "Death cap"
-    edibility: "deadly"
-  - scientific_name: "Amanita muscaria"
-    common_name: "Fly agaric"
-    edibility: "toxic"
-  - scientific_name: "Amanita pantherina"
-    common_name: "Panther cap"
-    edibility: "toxic"
-  - scientific_name: "Amanita rubescens"
-    common_name: "Blusher"
-    edibility: "conditionally edible"
-  - scientific_name: "Amanita verna"
-    common_name: "Fool's mushroom"
-    edibility: "deadly"
-  - scientific_name: "Amanita virosa"
-    common_name: "Destroying angel"
-    edibility: "deadly"
-
-  # --- Boletus / Porcini group ---
-  - scientific_name: "Boletus edulis"
-    common_name: "Porcini / King bolete"
-    edibility: "edible"
-  - scientific_name: "Tylopilus felleus"
-    common_name: "Bitter bolete"
-    edibility: "inedible"
-  - scientific_name: "Boletus satanas"
-    aliases: ["Rubroboletus satanas"]
-    common_name: "Satan's bolete"
-    edibility: "toxic"
-
-  # --- Agaricus (field mushrooms) ---
-  - scientific_name: "Agaricus campestris"
-    common_name: "Field mushroom"
-    edibility: "edible"
-  - scientific_name: "Agaricus xanthodermus"
-    common_name: "Yellow-staining mushroom"
-    edibility: "toxic"
-  - scientific_name: "Agaricus arvensis"
-    common_name: "Horse mushroom"
-    edibility: "edible"
-
-  # --- Chanterelles ---
-  - scientific_name: "Cantharellus cibarius"
-    common_name: "Chanterelle"
-    edibility: "edible"
-  - scientific_name: "Omphalotus olearius"
-    common_name: "Jack-o'-lantern mushroom"
-    edibility: "toxic"
-  - scientific_name: "Hygrophoropsis aurantiaca"
-    common_name: "False chanterelle"
-    edibility: "inedible"
-
-  # --- Macrolepiota (parasol mushrooms) ---
-  - scientific_name: "Macrolepiota procera"
-    common_name: "Parasol mushroom"
-    edibility: "edible"
-  - scientific_name: "Chlorophyllum molybdites"
-    common_name: "Green-spored parasol"
-    edibility: "toxic"
-  - scientific_name: "Chlorophyllum rhacodes"
-    common_name: "Shaggy parasol"
-    edibility: "conditionally edible"
-
-  # --- Russula ---
-  - scientific_name: "Russula virescens"
-    common_name: "Green-cracking russula"
-    edibility: "edible"
-  - scientific_name: "Russula emetica"
-    common_name: "The sickener"
-    edibility: "toxic"
-
-  # --- Other important species ---
-  - scientific_name: "Armillaria mellea"
-    common_name: "Honey fungus"
-    edibility: "conditionally edible"
-  - scientific_name: "Galerina marginata"
-    common_name: "Funeral bell"
-    edibility: "deadly"
-  - scientific_name: "Kuehneromyces mutabilis"
-    common_name: "Sheathed woodtuft"
-    edibility: "edible"
-  - scientific_name: "Morchella esculenta"
-    common_name: "Morel"
-    edibility: "edible"
-  - scientific_name: "Gyromitra esculenta"
-    common_name: "False morel"
-    edibility: "toxic"
-  - scientific_name: "Coprinus comatus"
-    common_name: "Shaggy ink cap"
-    edibility: "edible"
-  - scientific_name: "Coprinopsis atramentaria"
-    common_name: "Common ink cap"
-    edibility: "conditionally edible"
-  - scientific_name: "Lactarius deliciosus"
-    common_name: "Saffron milk cap"
-    edibility: "edible"
-  - scientific_name: "Lactarius torminosus"
-    common_name: "Woolly milkcap"
-    edibility: "toxic"
-  - scientific_name: "Pleurotus ostreatus"
-    common_name: "Oyster Mushroom"
-    edibility: "Edible"
-  - scientific_name: "Lentinula edodes"
-    aliases: ["Lentinus edodes"]
-    common_name: "Shiitake"
-    edibility: "Edible"
-  - scientific_name: "Agaricus bisporus"
-    common_name: "Button Mushroom / Cremini / Portobello"
-    edibility: "Edible"
-  - scientific_name: "Flammulina velutipes"
-    common_name: "Enoki / Velvet Shank"
-    edibility: "Edible"
-  - scientific_name: "Pleurotus eryngii"
-    common_name: "King Oyster Mushroom / Royal Trumpet Mushroom"
-    edibility: "Edible"
-  - scientific_name: "Hericium erinaceus"
-    common_name: "Lion's Mane"
-    edibility: "Edible"
-  - scientific_name: "Lycoperdon perlatum"
-    common_name: "Common Puffball / Gem-studded Puffball"
-    edibility: "Edible when young (flesh must be pure white inside)"
-  - scientific_name: "Craterellus cornucopioides"
-    common_name: "Horn of Plenty / Black Trumpet"
-    edibility: "Edible"
-  - scientific_name: "Hydnum repandum"
-    common_name: "Hedgehog Mushroom / Sweet Tooth"
-    edibility: "Edible"
-  - scientific_name: "Russula cyanoxantha"
-    common_name: "Charcoal Burner"
-    edibility: "Edible"
-  - scientific_name: "Cortinarius caperatus"
-    common_name: "Gypsy Mushroom / Wrinkled Cort"
-    edibility: "Edible (choice; one of the few safe Cortinarius species)"
-  - scientific_name: "Amanita citrina"
-    common_name: "False Death Cap / Citron Amanita"
-    edibility: "Inedible (unpleasant odour; not deadly but not recommended for consumption)"
-  - scientific_name: "Amanita ocreata"
-    common_name: "Western Destroying Angel / Spring Destroying Angel"
-    edibility: "Deadly toxic (contains amatoxins)"
-  - scientific_name: "Macrolepiota rhacodes"
-    aliases: ["Chlorophyllum rhacodes", "Lepiota rhacodes"]
-    common_name: "Shaggy Parasol"
-    edibility: "Edible with caution (can cause gastrointestinal upset in sensitive individuals; must be well cooked)"
-  - scientific_name: "Lepiota"
-    common_name: "Dapperling (genus)"
-    edibility: "Variable — many species deadly toxic (contain amatoxins); entire genus should be avoided by non-experts"
-  - scientific_name: "Morchella conica"
-    common_name: "Conical Morel / Black Morel"
-    edibility: "Edible (must be thoroughly cooked; toxic when raw)"
-  - scientific_name: "Morchella punctipes"
-    common_name: "Half-free Morel"
-    edibility: "Edible (must be thoroughly cooked; toxic when raw)"
-  - scientific_name: "Calvatia gigantea"
-    common_name: "Giant Puffball"
-    edibility: "Edible when young (flesh must be pure white and homogeneous inside)"
-  - scientific_name: "Volvariella volvacea"
-    common_name: "Paddy Straw Mushroom / Straw Mushroom"
-    edibility: "Edible (widely cultivated in Asia; caution: volva may resemble deadly Amanita buttons)"
-  - scientific_name: "Hypholoma fasciculare"
-    common_name: "Sulphur Tuft"
-    edibility: "Toxic (causes gastrointestinal distress; suspected neurotoxic compounds)"
-  - scientific_name: "Hypholoma sublateritium"
-    common_name: "Brick Cap / Brick-red Hypholoma"
-    edibility: "Edible with caution (edible when thoroughly cooked; bitter raw; some mild toxicity reported)"
-  - scientific_name: "Psilocybe cubensis"
-    common_name: "Golden Teacher / Magic Mushroom"
-    edibility: "Psychoactive (contains psilocybin and psilocin; controlled substance in most jurisdictions)"
-  - scientific_name: "Clitocybe dealbata"
-    common_name: "Ivory Funnel / Fool's Funnel"
-    edibility: "Toxic (contains muscarine; causes muscarinic poisoning syndrome)"
-  - scientific_name: "Clitocybe gibba"
-    common_name: "Common Funnel / Funnel Cap"
-    edibility: "Edible with caution (some mild toxicity reported; easily confused with toxic lookalikes such as Clitocybe dealbata)"
-  - scientific_name: "Hypholoma capnoides"
-    common_name: "Conifer Tuft / Smoky-gilled Woodlover"
-    edibility: "Edible (safe when cooked; distinguished from toxic Sulphur Tuft by smoky-grey gills and lack of bitterness)"
-  - scientific_name: "Laccaria amethystina"
-    common_name: "Amethyst Deceiver"
-    edibility: "Edible (must be thoroughly cooked; can bioaccumulate arsenic in contaminated soils)"
-  - scientific_name: "Cortinarius violaceus"
-    common_name: "Violet Webcap / Violet Cort"
-    edibility: "Not recommended (sometimes listed as edible but not choice; risk of confusion with toxic Cortinarius species)"
-  - scientific_name: "Cortinarius seriocybe"
-    common_name: "Seriocybe Webcap (subgenus / species group)"
-    edibility: "Not recommended (a subgenus grouping including species of uncertain or questionable edibility; avoid)"
-  - scientific_name: "Russula vesca"
-    common_name: "Bare-toothed Russula / The Flirt"
-    edibility: "Edible (mild flavour; one of the better edible Russula species)"
-
-# Add more species as needed — the ingestion pipeline handles new additions.
+- scientific_name: Boletus edulis
+  known_varieties: edulis, citrinus, albus, grandedulis
+  common_name: Penny Bun / King Bolete / Porcino
+  edibility: Edible (choice; one of the finest edible fungi in the world)
+  group: Boletales
+- scientific_name: Boletus pinophilus
+  known_varieties: ''
+  common_name: Pine Bolete / Porcino dei pini
+  edibility: Edible (choice; reddish-brown cap, found under pine & spruce)
+  group: Boletales
+- scientific_name: Boletus reticulatus
+  known_varieties: ''
+  common_name: Summer Cep / Porcino estivo
+  edibility: Edible (choice; appears earlier than B. edulis, under deciduous trees)
+  group: Boletales
+- scientific_name: Boletus aereus
+  known_varieties: ''
+  common_name: Bronze Bolete / Porcino nero
+  edibility: Edible (choice; dark bronze cap, prized in Italy)
+  group: Boletales
+- scientific_name: Boletus regius
+  known_varieties: ''
+  common_name: Royal Bolete
+  edibility: Edible (good; pink to red cap, white pores)
+  group: Boletales
+- scientific_name: Neoboletus luridiformis
+  known_varieties: ''
+  common_name: Scarletina Bolete / Schusterpilz
+  edibility: Conditionally edible (toxic raw; must be thoroughly cooked)
+  group: Boletales
+- scientific_name: Neoboletus erythropus
+  known_varieties: ''
+  common_name: Dotted-stalk Bolete
+  edibility: Conditionally edible (toxic raw; must be cooked)
+  group: Boletales
+- scientific_name: Caloboletus calopus
+  known_varieties: ''
+  common_name: Bitter Beech Bolete / Schönfuß-Röhrling
+  edibility: Toxic (intensely bitter; causes gastrointestinal upset)
+  group: Boletales
+- scientific_name: Butyriboletus appendiculatus
+  known_varieties: ''
+  common_name: Butter Bolete
+  edibility: Edible (good; yellow pores, yellow flesh)
+  group: Boletales
+- scientific_name: Butyriboletus fechtneri
+  known_varieties: ''
+  common_name: Fechter's Bolete
+  edibility: Edible (good; pale yellowish cap)
+  group: Boletales
+- scientific_name: Butyriboletus fuscoroseus
+  known_varieties: ''
+  common_name: False Regius Bolete
+  edibility: Edible (good; pink-tinged cap)
+  group: Boletales
+- scientific_name: Tylopilus felleus
+  known_varieties: ''
+  common_name: Bitter Bolete / Gallertäubling
+  edibility: Inedible (intensely bitter taste)
+  group: Boletales
+- scientific_name: Strobilomyces strobilaceus
+  known_varieties: ''
+  common_name: Old Man of the Woods / Zapfenröhrling
+  edibility: Edible (mediocre; distinctive shaggy appearance)
+  group: Boletales
+- scientific_name: Imleria badia
+  known_varieties: ''
+  common_name: Bay Bolete / Maronenröhrling
+  edibility: Edible (good; one of the more commonly collected edible boletes)
+  group: Boletales
+- scientific_name: Xerocomellus chrysenteron
+  known_varieties: ''
+  common_name: Red Cracking Bolete
+  edibility: Edible (mediocre; flesh cracks to show red beneath)
+  group: Boletales
+- scientific_name: Xerocomellus pruinatus
+  known_varieties: ''
+  common_name: Matt Bolete
+  edibility: Edible (mediocre)
+  group: Boletales
+- scientific_name: Xerocomellus cisalpinus
+  known_varieties: ''
+  common_name: Cisalpine Bolete
+  edibility: Edible (mediocre; common in northern Italy)
+  group: Boletales
+- scientific_name: Xerocomus subtomentosus
+  known_varieties: ''
+  common_name: Suede Bolete / Ziegenlippe
+  edibility: Edible (mediocre; velvety olive-brown cap)
+  group: Boletales
+- scientific_name: Leccinum scabrum
+  known_varieties: ''
+  common_name: Brown Birch Bolete / Birken-Rotkappe
+  edibility: Conditionally edible (requires thorough cooking)
+  group: Boletales
+- scientific_name: Leccinum versipelle
+  known_varieties: ''
+  common_name: Orange Birch Bolete
+  edibility: Conditionally edible (requires thorough cooking; flesh blackens)
+  group: Boletales
+- scientific_name: Leccinum aurantiacum
+  known_varieties: ''
+  common_name: Red-capped Bolete / Espen-Rotkappe
+  edibility: Conditionally edible (flesh blackens on cooking; edible when well cooked)
+  group: Boletales
+- scientific_name: Leccinum vulpinum
+  known_varieties: ''
+  common_name: Foxy Bolete
+  edibility: Conditionally edible (can cause illness if undercooked)
+  group: Boletales
+- scientific_name: Leccinum holopus
+  known_varieties: ''
+  common_name: Ghost Bolete
+  edibility: Conditionally edible
+  group: Boletales
+- scientific_name: Suillus grevillei
+  known_varieties: ''
+  common_name: Larch Bolete / Goldröhrling
+  edibility: Edible (good; strictly associated with larch)
+  group: Boletales
+- scientific_name: Suillus luteus
+  known_varieties: ''
+  common_name: Slippery Jack / Butterröhrling
+  edibility: Edible (mediocre; slimy cap, peel skin before use)
+  group: Boletales
+- scientific_name: Suillus variegatus
+  known_varieties: ''
+  common_name: Variegated Bolete / Sandröhrling
+  edibility: Edible (mediocre)
+  group: Boletales
+- scientific_name: Suillus bovinus
+  known_varieties: ''
+  common_name: Bovine Bolete / Kuhröhrling
+  edibility: Edible (mediocre; often with pink-gilled Gomphidius roseus)
+  group: Boletales
+- scientific_name: Suillus collinitus
+  known_varieties: ''
+  common_name: Pine Milky Bolete
+  edibility: Edible (mediocre)
+  group: Boletales
+- scientific_name: Suillus granulatus
+  known_varieties: ''
+  common_name: Weeping Bolete / Körnchen-Röhrling
+  edibility: Edible (mediocre; milky droplets on young pores)
+  group: Boletales
+- scientific_name: Suillus viscidus
+  known_varieties: ''
+  common_name: Grey Larch Bolete
+  edibility: Edible (mediocre; under larch)
+  group: Boletales
+- scientific_name: Suillus flavidus
+  known_varieties: ''
+  common_name: Sphagnum Bolete
+  edibility: Unknown
+  group: Boletales
+- scientific_name: Suillus tridentinus
+  known_varieties: ''
+  common_name: Tridentine Bolete
+  edibility: Edible (found specifically in Alpine larch-stone pine zones)
+  group: Boletales
+- scientific_name: Suillus plorans
+  known_varieties: ''
+  common_name: Weeping Larch Bolete
+  edibility: Edible (mediocre; under Pinus cembra)
+  group: Boletales
+- scientific_name: Paxillus involutus
+  known_varieties: ''
+  common_name: Brown Roll-Rim / Kahler Krempling
+  edibility: Deadly toxic (causes immune haemolytic anaemia; formerly eaten)
+  group: Boletales
+- scientific_name: Paxillus rubicundulus
+  known_varieties: ''
+  common_name: Alder Roll-Rim
+  edibility: Toxic
+  group: Boletales
+- scientific_name: Gomphidius roseus
+  known_varieties: ''
+  common_name: Rosy Spike / Rosafarbener Schmierling
+  edibility: Edible (mediocre; often parasitic on Suillus bovinus)
+  group: Boletales
+- scientific_name: Gomphidius glutinosus
+  known_varieties: ''
+  common_name: Slimy Spike / Großer Schmierling
+  edibility: Edible (mediocre; very slimy cap)
+  group: Boletales
+- scientific_name: Chroogomphus rutilus
+  known_varieties: ''
+  common_name: Copper Spike / Rotbrauner Schmierling
+  edibility: Edible (mediocre; under conifers)
+  group: Boletales
+- scientific_name: Tapinella atrotomentosa
+  known_varieties: ''
+  common_name: Velvet Roll-Rim
+  edibility: Inedible
+  group: Boletales
+- scientific_name: Hygrophoropsis aurantiaca
+  known_varieties: ''
+  common_name: False Chanterelle / Falscher Pfifferling
+  edibility: Toxic (causes hallucinations and gastrointestinal upsets)
+  group: Boletales
+- scientific_name: Pisolithus arhizus
+  known_varieties: ''
+  common_name: Dyeball / Dead Man's Foot
+  edibility: Inedible (used as dye fungus)
+  group: Boletales
+- scientific_name: Scleroderma citrinum
+  known_varieties: ''
+  common_name: Common Earthball / Gewöhnlicher Kartoffelbovist
+  edibility: Toxic
+  group: Boletales
+- scientific_name: Scleroderma verrucosum
+  known_varieties: ''
+  common_name: Scaly Earthball
+  edibility: Toxic
+  group: Boletales
+- scientific_name: Rhizopogon luteolus
+  known_varieties: ''
+  common_name: Yellow False Truffle
+  edibility: Unknown
+  group: Boletales
+- scientific_name: Rhizopogon roseolus
+  known_varieties: ''
+  common_name: Rosy False Truffle
+  edibility: Edible (poor quality)
+  group: Boletales
+- scientific_name: Amanita muscaria
+  known_varieties: muscaria, formosa, inzengae, flavivolvata
+  common_name: Fly Agaric / Fliegenpilz
+  edibility: Toxic (psychoactive and potentially deadly; classic red cap with white
+    spots)
+  group: Amanitaceae
+- scientific_name: Amanita pantherina
+  known_varieties: ''
+  common_name: Panther Cap / Pantherpilz
+  edibility: Deadly toxic (neurotoxic; more dangerous than Fly Agaric)
+  group: Amanitaceae
+- scientific_name: Amanita caesarea
+  known_varieties: ''
+  common_name: Caesar's Mushroom / Ovolo / Fungo reale
+  edibility: Edible (choice; the 'King of mushrooms' in Italian tradition)
+  group: Amanitaceae
+- scientific_name: Amanita phalloides
+  known_varieties: phalloides, alba
+  common_name: Death Cap / Knollenblätterpilz
+  edibility: Deadly toxic (responsible for most fatal mushroom poisonings worldwide)
+  group: Amanitaceae
+- scientific_name: Amanita virosa
+  known_varieties: ''
+  common_name: Destroying Angel / Weißer Knollenblätterpilz
+  edibility: Deadly toxic (amatoxins; pure white, all stages)
+  group: Amanitaceae
+- scientific_name: Amanita verna
+  known_varieties: ''
+  common_name: Spring Destroying Angel
+  edibility: Deadly toxic
+  group: Amanitaceae
+- scientific_name: Amanita citrina
+  known_varieties: citrina, alba
+  common_name: False Death Cap / Citronengelber Knollenblätterpilz
+  edibility: Inedible (raw potato smell; not recommended)
+  group: Amanitaceae
+- scientific_name: Amanita porphyria
+  known_varieties: ''
+  common_name: Grey-veiled Amanita
+  edibility: Toxic
+  group: Amanitaceae
+- scientific_name: Amanita rubescens
+  known_varieties: rubescens, annulosulphurea
+  common_name: Blusher / Perlpilz
+  edibility: Conditionally edible (toxic raw; edible when cooked)
+  group: Amanitaceae
+- scientific_name: Amanita excelsa
+  known_varieties: spissa
+  common_name: False Panther / Grauer Wulstling
+  edibility: Conditionally edible (can be confused with Panther Cap; caution)
+  group: Amanitaceae
+- scientific_name: Amanita strobiliformis
+  known_varieties: ''
+  common_name: Warted Amanita
+  edibility: Edible (rarely consumed; large, with warty patches)
+  group: Amanitaceae
+- scientific_name: Amanita gemmata
+  known_varieties: ''
+  common_name: Gemmed Amanita / Narzissengelber Wulstling
+  edibility: Toxic
+  group: Amanitaceae
+- scientific_name: Amanita francheti
+  known_varieties: ''
+  common_name: Franchets's Amanita
+  edibility: Toxic
+  group: Amanitaceae
+- scientific_name: Amanita vaginata
+  known_varieties: vaginata, plumbea
+  common_name: Grisette / Grauer Scheidenstreifling
+  edibility: Conditionally edible (edible when cooked; no ring)
+  group: Amanitaceae
+- scientific_name: Amanita fulva
+  known_varieties: ''
+  common_name: Tawny Grisette / Fuchsiger Scheidenstreifling
+  edibility: Conditionally edible (edible when cooked)
+  group: Amanitaceae
+- scientific_name: Amanita crocea
+  known_varieties: ''
+  common_name: Orange Grisette / Safrangelber Scheidenstreifling
+  edibility: Conditionally edible (edible when cooked)
+  group: Amanitaceae
+- scientific_name: Amanita battarrae
+  known_varieties: ''
+  common_name: Battarra's Amanita
+  edibility: Conditionally edible
+  group: Amanitaceae
+- scientific_name: Amanita ceciliae
+  known_varieties: ''
+  common_name: Snakeskin Grisette
+  edibility: Conditionally edible
+  group: Amanitaceae
+- scientific_name: Amanita ovoidea
+  known_varieties: ''
+  common_name: Bearded Amanita / Eiförmiger Wulstling
+  edibility: Toxic (causes haemolytic syndrome in southern Europe)
+  group: Amanitaceae
+- scientific_name: Amanita solitaria
+  known_varieties: ''
+  common_name: Solitary Amanita
+  edibility: Toxic
+  group: Amanitaceae
+- scientific_name: Amanita echinocephala
+  known_varieties: ''
+  common_name: Solitary Amanita (spiny cap form)
+  edibility: Toxic
+  group: Amanitaceae
+- scientific_name: Russula vesca
+  known_varieties: flavivolvata, alba
+  common_name: Bare-toothed Russula / The Flirt
+  edibility: Edible (mild, pleasant flavour; one of the better edible Russula)
+  group: Russulaceae
+- scientific_name: Russula virescens
+  known_varieties: ''
+  common_name: Greencracked Brittlegill / Grüntäubling
+  edibility: Edible (choice; cracking green cap)
+  group: Russulaceae
+- scientific_name: Russula cyanoxantha
+  known_varieties: cyanoxantha, peltereaui
+  common_name: Charcoal Burner / Frauentäubling
+  edibility: Edible (choice; variable colour, non-acrid taste)
+  group: Russulaceae
+- scientific_name: Russula parazurea
+  known_varieties: ''
+  common_name: Powdery Brittlegill
+  edibility: Edible (mild taste)
+  group: Russulaceae
+- scientific_name: Russula aurea
+  known_varieties: ''
+  common_name: Gilded Brittlegill / Goldtäubling
+  edibility: Edible (good)
+  group: Russulaceae
+- scientific_name: Russula mustelina
+  known_varieties: ''
+  common_name: Weasel Brittlegill
+  edibility: Edible (good; robust, brown cap in spruce forests)
+  group: Russulaceae
+- scientific_name: Russula olivacea
+  known_varieties: ''
+  common_name: Olive Brittlegill / Olivgrüner Täubling
+  edibility: Edible (good)
+  group: Russulaceae
+- scientific_name: Russula integra
+  known_varieties: ''
+  common_name: Entire Brittlegill
+  edibility: Edible (good)
+  group: Russulaceae
+- scientific_name: Russula romellii
+  known_varieties: ''
+  common_name: Romell's Brittlegill
+  edibility: Edible
+  group: Russulaceae
+- scientific_name: Russula vinosa
+  known_varieties: ''
+  common_name: Vinous Brittlegill
+  edibility: Edible
+  group: Russulaceae
+- scientific_name: Russula xerampelina
+  known_varieties: ''
+  common_name: Crab Brittlegill / Schmalspuriger Täubling
+  edibility: Edible (good; shellfish-like odour)
+  group: Russulaceae
+- scientific_name: Russula badia
+  known_varieties: ''
+  common_name: Burning Brittlegill
+  edibility: Inedible (acrid, burning taste)
+  group: Russulaceae
+- scientific_name: Russula foetens
+  known_varieties: ''
+  common_name: Stinking Brittlegill / Stinktäubling
+  edibility: Inedible (strong unpleasant odour)
+  group: Russulaceae
+- scientific_name: Russula laurocerasi
+  known_varieties: ''
+  common_name: Almond Brittlegill
+  edibility: Inedible (marzipan odour, acrid)
+  group: Russulaceae
+- scientific_name: Russula ochroleuca
+  known_varieties: ''
+  common_name: Ochre Brittlegill / Ockertäubling
+  edibility: Inedible (mildly acrid)
+  group: Russulaceae
+- scientific_name: Russula claroflava
+  known_varieties: ''
+  common_name: Yellow Swamp Brittlegill
+  edibility: Edible
+  group: Russulaceae
+- scientific_name: Russula decolorans
+  known_varieties: ''
+  common_name: Copper Brittlegill
+  edibility: Edible (mild taste)
+  group: Russulaceae
+- scientific_name: Russula emetica
+  known_varieties: emetica, longipes
+  common_name: The Sickener / Speitäubling
+  edibility: Toxic (causes vomiting and diarrhoea)
+  group: Russulaceae
+- scientific_name: Russula sanguinea
+  known_varieties: ''
+  common_name: Bloody Brittlegill
+  edibility: Inedible (very acrid; under pine)
+  group: Russulaceae
+- scientific_name: Russula queletii
+  known_varieties: ''
+  common_name: Fruity Brittlegill
+  edibility: Inedible (acrid)
+  group: Russulaceae
+- scientific_name: Russula sardonia
+  known_varieties: ''
+  common_name: Primrose Brittlegill / Zitronentäubling
+  edibility: Inedible (very acrid)
+  group: Russulaceae
+- scientific_name: Russula atropurpurea
+  known_varieties: ''
+  common_name: Blackish-Purple Brittlegill
+  edibility: Inedible (slightly acrid)
+  group: Russulaceae
+- scientific_name: Russula ionochlora
+  known_varieties: ''
+  common_name: Oilslick Brittlegill
+  edibility: Edible
+  group: Russulaceae
+- scientific_name: Russula delica
+  known_varieties: ''
+  common_name: Milk-White Brittlegill / Weißtäubling
+  edibility: Edible (mediocre)
+  group: Russulaceae
+- scientific_name: Russula chloroides
+  known_varieties: ''
+  common_name: Blue-gilled Brittlegill
+  edibility: Edible (mediocre)
+  group: Russulaceae
+- scientific_name: Russula albonigra
+  known_varieties: ''
+  common_name: Blackening Brittlegill
+  edibility: Edible (mediocre)
+  group: Russulaceae
+- scientific_name: Russula adusta
+  known_varieties: ''
+  common_name: Burnt Brittlegill
+  edibility: Inedible
+  group: Russulaceae
+- scientific_name: Russula nigricans
+  known_varieties: ''
+  common_name: Blackening Russula
+  edibility: Inedible
+  group: Russulaceae
+- scientific_name: Russula densifolia
+  known_varieties: ''
+  common_name: Dense-gilled Brittlegill
+  edibility: Inedible
+  group: Russulaceae
+- scientific_name: Russula fragilis
+  known_varieties: ''
+  common_name: Fragile Brittlegill
+  edibility: Inedible (acrid)
+  group: Russulaceae
+- scientific_name: Russula velenovskyi
+  known_varieties: ''
+  common_name: Velenovský's Brittlegill
+  edibility: Edible
+  group: Russulaceae
+- scientific_name: Russula turci
+  known_varieties: ''
+  common_name: Turci's Brittlegill
+  edibility: Edible (mild; under conifers, Alpine)
+  group: Russulaceae
+- scientific_name: Russula grisea
+  known_varieties: ''
+  common_name: Greyish Brittlegill
+  edibility: Edible
+  group: Russulaceae
+- scientific_name: Russula risigallina
+  known_varieties: ''
+  common_name: Golden Brittlegill
+  edibility: Edible
+  group: Russulaceae
+- scientific_name: Russula nana
+  known_varieties: ''
+  common_name: Alpine Brittlegill
+  edibility: Unknown (high-Alpine, small species)
+  group: Russulaceae
+- scientific_name: Russula cessans
+  known_varieties: ''
+  common_name: Late Brittlegill
+  edibility: Unknown
+  group: Russulaceae
+- scientific_name: Russula aquosa
+  known_varieties: ''
+  common_name: Watery Brittlegill
+  edibility: Edible (mild; in wet conifer woods)
+  group: Russulaceae
+- scientific_name: Russula gracillima
+  known_varieties: ''
+  common_name: Slender Brittlegill
+  edibility: Inedible
+  group: Russulaceae
+- scientific_name: Russula nobilis
+  known_varieties: ''
+  common_name: Beechwood Sickener
+  edibility: Inedible (acrid)
+  group: Russulaceae
+- scientific_name: Lactarius deliciosus
+  known_varieties: ''
+  common_name: Saffron Milk Cap / Lactario delizioso / Reizker
+  edibility: Edible (choice; highly prized in Italy and Spain)
+  group: Russulaceae
+- scientific_name: Lactarius deterrimus
+  known_varieties: ''
+  common_name: False Saffron Milk Cap
+  edibility: Edible (mediocre; found under spruce)
+  group: Russulaceae
+- scientific_name: Lactarius salmonicolor
+  known_varieties: ''
+  common_name: Salmon Milk Cap
+  edibility: Edible (good; under silver fir)
+  group: Russulaceae
+- scientific_name: Lactarius semisanguifluus
+  known_varieties: ''
+  common_name: Semi-bloody Milk Cap
+  edibility: Edible (good)
+  group: Russulaceae
+- scientific_name: Lactarius sanguifluus
+  known_varieties: ''
+  common_name: Bloody Milk Cap / Weinroter Reizker
+  edibility: Edible (choice; blood-red latex, under pine)
+  group: Russulaceae
+- scientific_name: Lactarius piperatus
+  known_varieties: ''
+  common_name: Peppery Milk Cap / Pfeffermilchling
+  edibility: Conditionally edible (dried as spice in Eastern Europe; acrid raw)
+  group: Russulaceae
+- scientific_name: Lactarius vellereus
+  known_varieties: ''
+  common_name: Fleecy Milk Cap / Wolliger Milchling
+  edibility: Conditionally edible (acrid raw; occasionally pickled after processing)
+  group: Russulaceae
+- scientific_name: Lactarius volemus
+  known_varieties: volemus, oedematopus
+  common_name: Weeping Milk Cap / Brätling
+  edibility: Edible (choice; strong smell, copious white latex)
+  group: Russulaceae
+- scientific_name: Lactarius fulvissimus
+  known_varieties: ''
+  common_name: Tawny Milk Cap
+  edibility: Edible (mild taste)
+  group: Russulaceae
+- scientific_name: Lactarius mitissimus
+  known_varieties: ''
+  common_name: Mild Milk Cap
+  edibility: Edible
+  group: Russulaceae
+- scientific_name: Lactarius camphoratus
+  known_varieties: ''
+  common_name: Curry Milk Cap / Kampfer-Milchling
+  edibility: Edible (mediocre; strong curry-like odour)
+  group: Russulaceae
+- scientific_name: Lactarius rufus
+  known_varieties: ''
+  common_name: Rufous Milk Cap / Rotbrauner Milchling
+  edibility: Conditionally edible (very acrid; edible after salting/pickling)
+  group: Russulaceae
+- scientific_name: Lactarius helvus
+  known_varieties: ''
+  common_name: Fenugreek Milk Cap / Bruch-Milchling
+  edibility: Toxic (can cause serious illness)
+  group: Russulaceae
+- scientific_name: Lactarius blennius
+  known_varieties: ''
+  common_name: Beech Milk Cap
+  edibility: Inedible (acrid)
+  group: Russulaceae
+- scientific_name: Lactarius necator
+  known_varieties: ''
+  common_name: Ugly Milk Cap / Dunkler Milchling
+  edibility: Conditionally edible (pickled after processing in Scandinavia)
+  group: Russulaceae
+- scientific_name: Lactarius glyciosmus
+  known_varieties: ''
+  common_name: Coconut Milk Cap / Kokosmilchling
+  edibility: Inedible (acrid)
+  group: Russulaceae
+- scientific_name: Lactarius torminosus
+  known_varieties: ''
+  common_name: Woolly Milk Cap / Birken-Reizker
+  edibility: Conditionally edible (must be processed; edible after salting)
+  group: Russulaceae
+- scientific_name: Lactarius pubescens
+  known_varieties: ''
+  common_name: Bearded Milk Cap / Birken-Milchling
+  edibility: Conditionally edible (acrid raw)
+  group: Russulaceae
+- scientific_name: Lactarius scrobiculatus
+  known_varieties: ''
+  common_name: Spotted Milk Cap
+  edibility: Conditionally edible (acrid; edible after processing)
+  group: Russulaceae
+- scientific_name: Lactarius chrysorrheus
+  known_varieties: ''
+  common_name: Yellowdrop Milk Cap
+  edibility: Toxic
+  group: Russulaceae
+- scientific_name: Lactarius pyrogalus
+  known_varieties: ''
+  common_name: Fiery Milk Cap
+  edibility: Inedible (very acrid)
+  group: Russulaceae
+- scientific_name: Lactarius trivialis
+  known_varieties: ''
+  common_name: Trivial Milk Cap
+  edibility: Conditionally edible
+  group: Russulaceae
+- scientific_name: Lactarius subdulcis
+  known_varieties: ''
+  common_name: Mild Milk Cap (beech form)
+  edibility: Edible (mediocre)
+  group: Russulaceae
+- scientific_name: Lactarius tabidus
+  known_varieties: ''
+  common_name: Birch Milk Cap
+  edibility: Inedible
+  group: Russulaceae
+- scientific_name: Lactarius alpinus
+  known_varieties: ''
+  common_name: Alpine Milk Cap
+  edibility: Unknown (high-Alpine specialist)
+  group: Russulaceae
+- scientific_name: Lactarius nanus
+  known_varieties: ''
+  common_name: Dwarf Milk Cap
+  edibility: Unknown (Arctic-Alpine)
+  group: Russulaceae
+- scientific_name: Lactarius circellatus
+  known_varieties: ''
+  common_name: Zonate Milk Cap
+  edibility: Inedible (acrid)
+  group: Russulaceae
+- scientific_name: Lactarius serifluus
+  known_varieties: ''
+  common_name: Watery Milk Cap
+  edibility: Inedible
+  group: Russulaceae
+- scientific_name: Lactarius quietus
+  known_varieties: ''
+  common_name: Oakbug Milk Cap
+  edibility: Inedible
+  group: Russulaceae
+- scientific_name: Lactarius repraesentaneus
+  known_varieties: ''
+  common_name: Violet Milk Cap
+  edibility: Conditionally edible
+  group: Russulaceae
+- scientific_name: Hygrophorus hypothejus
+  known_varieties: ''
+  common_name: Herald of Winter / Herbst-Schneckling
+  edibility: Edible (mediocre)
+  group: Hygrophoraceae
+- scientific_name: Hygrophorus russula
+  known_varieties: ''
+  common_name: Russula Woodwax / Tauben-Schneckling
+  edibility: Edible (good)
+  group: Hygrophoraceae
+- scientific_name: Hygrophorus purpurascens
+  known_varieties: ''
+  common_name: Veiled Woodwax
+  edibility: Edible
+  group: Hygrophoraceae
+- scientific_name: Hygrophorus camarophyllus
+  known_varieties: ''
+  common_name: Arched Woodwax
+  edibility: Edible (good)
+  group: Hygrophoraceae
+- scientific_name: Hygrophorus marzuolus
+  known_varieties: ''
+  common_name: March Woodwax / Märzschneckling
+  edibility: Edible (good; emerges through snow in early spring)
+  group: Hygrophoraceae
+- scientific_name: Hygrophorus chrysodon
+  known_varieties: ''
+  common_name: Golden Waxcap / Goldblättriger Schneckling
+  edibility: Edible (mediocre)
+  group: Hygrophoraceae
+- scientific_name: Hygrophorus cossus
+  known_varieties: ''
+  common_name: Goat Moth Woodwax
+  edibility: Inedible (unpleasant odour)
+  group: Hygrophoraceae
+- scientific_name: Hygrophorus poetarum
+  known_varieties: ''
+  common_name: Poet's Woodwax
+  edibility: Edible (good)
+  group: Hygrophoraceae
+- scientific_name: Hygrophorus pudorinus
+  known_varieties: ''
+  common_name: Rosy Woodwax
+  edibility: Edible
+  group: Hygrophoraceae
+- scientific_name: Hygrophorus agathosmus
+  known_varieties: ''
+  common_name: Grey Almond Woodwax
+  edibility: Edible (almond scent)
+  group: Hygrophoraceae
+- scientific_name: Hygrophorus olivaceoalbus
+  known_varieties: ''
+  common_name: Olive-brown Woodwax / Olivbrauner Schneckling
+  edibility: Edible
+  group: Hygrophoraceae
+- scientific_name: Hygrophorus erubescens
+  known_varieties: ''
+  common_name: Blotched Woodwax
+  edibility: Inedible (bitter)
+  group: Hygrophoraceae
+- scientific_name: Hygrophorus lucorum
+  known_varieties: ''
+  common_name: Larch Woodwax
+  edibility: Edible
+  group: Hygrophoraceae
+- scientific_name: Hygrophorus eburneus
+  known_varieties: ''
+  common_name: Ivory Woodwax / Elfenbein-Schneckling
+  edibility: Edible
+  group: Hygrophoraceae
+- scientific_name: Hygrophorus latitabundus
+  known_varieties: ''
+  common_name: Slimy Woodwax
+  edibility: Edible
+  group: Hygrophoraceae
+- scientific_name: Hygrophorus discoxanthus
+  known_varieties: ''
+  common_name: Yellowing Woodwax
+  edibility: Edible
+  group: Hygrophoraceae
+- scientific_name: Hygrocybe punicea
+  known_varieties: ''
+  common_name: Crimson Waxcap
+  edibility: Edible
+  group: Hygrophoraceae
+- scientific_name: Hygrocybe coccinea
+  known_varieties: ''
+  common_name: Scarlet Waxcap
+  edibility: Edible
+  group: Hygrophoraceae
+- scientific_name: Hygrocybe conica
+  known_varieties: conica, conicoides
+  common_name: Blackening Waxcap / Kegeliger Saftling
+  edibility: Inedible (blackens; suspected toxicity)
+  group: Hygrophoraceae
+- scientific_name: Hygrocybe psittacina
+  known_varieties: ''
+  common_name: Parrot Waxcap
+  edibility: Edible (poor)
+  group: Hygrophoraceae
+- scientific_name: Hygrocybe pratensis
+  known_varieties: ''
+  common_name: Meadow Waxcap
+  edibility: Edible (good)
+  group: Hygrophoraceae
+- scientific_name: Hygrocybe chlorophana
+  known_varieties: ''
+  common_name: Golden Waxcap
+  edibility: Edible
+  group: Hygrophoraceae
+- scientific_name: Cuphophyllus virgineus
+  known_varieties: ''
+  common_name: Snowy Waxcap
+  edibility: Edible
+  group: Hygrophoraceae
+- scientific_name: Tricholoma terreum
+  known_varieties: ''
+  common_name: Grey Knight / Erd-Ritterling / Morette
+  edibility: Edible (good; but potentially confused with toxic species)
+  group: Tricholomataceae
+- scientific_name: Tricholoma saponaceum
+  known_varieties: saponaceum, squamosum
+  common_name: Soapy Knight / Seifenritterling
+  edibility: Toxic (soap-like smell; gastrointestinal upsets)
+  group: Tricholomataceae
+- scientific_name: Tricholoma sulphureum
+  known_varieties: ''
+  common_name: Sulphur Knight / Schwefelritterling
+  edibility: Toxic (gastrointestinal upset; coal-gas smell)
+  group: Tricholomataceae
+- scientific_name: Tricholoma pardinum
+  known_varieties: ''
+  common_name: Leopard Knight / Tigerpilz
+  edibility: Deadly toxic (causes severe gastrointestinal illness)
+  group: Tricholomataceae
+- scientific_name: Tricholoma virgatum
+  known_varieties: ''
+  common_name: Streaky Knight
+  edibility: Toxic
+  group: Tricholomataceae
+- scientific_name: Tricholoma sciodes
+  known_varieties: ''
+  common_name: Beech Knight
+  edibility: Toxic (mildly)
+  group: Tricholomataceae
+- scientific_name: Tricholoma imbricatum
+  known_varieties: ''
+  common_name: Matt Knight
+  edibility: Edible (mediocre)
+  group: Tricholomataceae
+- scientific_name: Tricholoma focale
+  known_varieties: ''
+  common_name: Booted Knight / Genatterter Ritterling
+  edibility: Edible (mediocre)
+  group: Tricholomataceae
+- scientific_name: Tricholoma caligatum
+  known_varieties: ''
+  common_name: Booted Knight (southern form)
+  edibility: Edible (mediocre)
+  group: Tricholomataceae
+- scientific_name: Tricholoma portentosum
+  known_varieties: ''
+  common_name: Dirty Knight / Schwarzfaseriger Ritterling
+  edibility: Edible (good; mild taste)
+  group: Tricholomataceae
+- scientific_name: Tricholoma album
+  known_varieties: ''
+  common_name: White Knight
+  edibility: Toxic (bitter)
+  group: Tricholomataceae
+- scientific_name: Tricholoma lascivum
+  known_varieties: ''
+  common_name: Aromatic Knight
+  edibility: Inedible
+  group: Tricholomataceae
+- scientific_name: Tricholoma argyraceum
+  known_varieties: ''
+  common_name: Silvery-grey Knight
+  edibility: Inedible
+  group: Tricholomataceae
+- scientific_name: Tricholoma equestre
+  known_varieties: ''
+  common_name: Man on Horseback / Yellow Knight / Grünling
+  edibility: Toxic (associated with rhabdomyolysis after repeated ingestion)
+  group: Tricholomataceae
+- scientific_name: Tricholoma batschii
+  known_varieties: ''
+  common_name: Pine Knight
+  edibility: Edible (mediocre)
+  group: Tricholomataceae
+- scientific_name: Tricholoma fulvum
+  known_varieties: ''
+  common_name: Birch Knight
+  edibility: Inedible
+  group: Tricholomataceae
+- scientific_name: Tricholoma vaccinum
+  known_varieties: ''
+  common_name: Scaly Knight
+  edibility: Inedible (acrid)
+  group: Tricholomataceae
+- scientific_name: Tricholoma columbetta
+  known_varieties: ''
+  common_name: Dove-Grey Knight
+  edibility: Edible (good)
+  group: Tricholomataceae
+- scientific_name: Tricholoma ustaloides
+  known_varieties: ''
+  common_name: Peach-coloured Knight
+  edibility: Toxic
+  group: Tricholomataceae
+- scientific_name: Tricholoma ustale
+  known_varieties: ''
+  common_name: Burnt Knight
+  edibility: Toxic
+  group: Tricholomataceae
+- scientific_name: Tricholoma scalpturatum
+  known_varieties: ''
+  common_name: Yellowing Knight
+  edibility: Edible
+  group: Tricholomataceae
+- scientific_name: Tricholoma pessundatum
+  known_varieties: ''
+  common_name: Moist Knight
+  edibility: Toxic
+  group: Tricholomataceae
+- scientific_name: Tricholoma acerbum
+  known_varieties: ''
+  common_name: Bitter Knight
+  edibility: Inedible
+  group: Tricholomataceae
+- scientific_name: Calocybe gambosa
+  known_varieties: ''
+  common_name: St. George's Mushroom / Prugnolo / Maipilz
+  edibility: Edible (choice; spring mushroom, mealy smell)
+  group: Tricholomataceae
+- scientific_name: Lyophyllum decastes
+  known_varieties: ''
+  common_name: Clustered Domecap / Büscheliger Rasling
+  edibility: Edible (good)
+  group: Lyophyllaceae
+- scientific_name: Lyophyllum connatum
+  known_varieties: ''
+  common_name: White Domecap
+  edibility: Toxic (mild)
+  group: Lyophyllaceae
+- scientific_name: Melanoleuca brevipes
+  known_varieties: ''
+  common_name: Short-stemmed Cavalier
+  edibility: Edible (mediocre)
+  group: Tricholomataceae
+- scientific_name: Melanoleuca melaleuca
+  known_varieties: ''
+  common_name: Common Cavalier
+  edibility: Edible (mediocre)
+  group: Tricholomataceae
+- scientific_name: Clitopilus prunulus
+  known_varieties: ''
+  common_name: Sweetbread Mushroom / Mehlräsling
+  edibility: Edible (choice; mealy smell; can be confused with Clitocybe)
+  group: Tricholomataceae
+- scientific_name: Armillaria mellea
+  known_varieties: ''
+  common_name: Honey Fungus / Chiodino / Hallimasch
+  edibility: Conditionally edible (must be cooked; primary cause of edible mushroom
+    poisoning in Italy)
+  group: Physalacriaceae
+- scientific_name: Armillaria ostoyae
+  known_varieties: ''
+  common_name: Dark Honey Fungus
+  edibility: Conditionally edible (cook thoroughly)
+  group: Physalacriaceae
+- scientific_name: Armillaria gallica
+  known_varieties: ''
+  common_name: Bulbous Honey Fungus
+  edibility: Conditionally edible
+  group: Physalacriaceae
+- scientific_name: Armillaria cepistipes
+  known_varieties: ''
+  common_name: Onion-footed Honey Fungus
+  edibility: Conditionally edible
+  group: Physalacriaceae
+- scientific_name: Armillaria tabescens
+  known_varieties: ''
+  common_name: Ringless Honey Fungus
+  edibility: Conditionally edible
+  group: Physalacriaceae
+- scientific_name: Flammulina velutipes
+  known_varieties: ''
+  common_name: Velvet Shank / Samtfußrübling / Gelone invernale
+  edibility: Edible (good; fruits in winter from snow)
+  group: Physalacriaceae
+- scientific_name: Oudemansiella mucida
+  known_varieties: ''
+  common_name: Porcelain Fungus / Beringter Schleimrübling
+  edibility: Edible (mediocre; striking white, slimy cap on beech)
+  group: Physalacriaceae
+- scientific_name: Oudemansiella radicata
+  known_varieties: ''
+  common_name: Deeproot Mushroom / Tiefrübling
+  edibility: Edible (mediocre)
+  group: Physalacriaceae
+- scientific_name: Clitocybe nebularis
+  known_varieties: ''
+  common_name: Clouded Funnel / Nebelgrauer Trichterling
+  edibility: Conditionally edible (some individuals react badly; best avoided)
+  group: Clitocybaceae
+- scientific_name: Clitocybe geotropa
+  known_varieties: ''
+  common_name: Trooping Funnel
+  edibility: Edible (good)
+  group: Clitocybaceae
+- scientific_name: Infundibulicybe gibba
+  known_varieties: ''
+  common_name: Common Funnel / Gewöhnlicher Trichterling
+  edibility: Edible (mediocre)
+  group: Clitocybaceae
+- scientific_name: Clitocybe odora
+  known_varieties: ''
+  common_name: Aniseed Funnel / Dufttrichterling
+  edibility: Edible (mediocre; strong anise odour)
+  group: Clitocybaceae
+- scientific_name: Clitocybe fragrans
+  known_varieties: ''
+  common_name: Fragrant Funnel
+  edibility: Toxic
+  group: Clitocybaceae
+- scientific_name: Clitocybe phyllophila
+  known_varieties: ''
+  common_name: Frosty Funnel
+  edibility: Deadly toxic (contains muscarine)
+  group: Clitocybaceae
+- scientific_name: Clitocybe dealbata
+  known_varieties: ''
+  common_name: Ivory Funnel / Feldtrichterling
+  edibility: Deadly toxic (high muscarine content; often confused with St George's)
+  group: Clitocybaceae
+- scientific_name: Clitocybe cerussata
+  known_varieties: ''
+  common_name: Lead-white Funnel
+  edibility: Deadly toxic
+  group: Clitocybaceae
+- scientific_name: Lepista nuda
+  known_varieties: ''
+  common_name: Wood Blewit / Violetter Rötelritterling
+  edibility: Edible (good; lilac gills and cap)
+  group: Tricholomataceae
+- scientific_name: Lepista saeva
+  known_varieties: ''
+  common_name: Field Blewit
+  edibility: Edible (good)
+  group: Tricholomataceae
+- scientific_name: Lepista flaccida
+  known_varieties: ''
+  common_name: Tawny Funnel
+  edibility: Edible (mediocre)
+  group: Tricholomataceae
+- scientific_name: Cortinarius violaceus
+  known_varieties: ''
+  common_name: Violet Webcap / Violetter Dickfuß
+  edibility: Edible (poor quality; too tough; deep violet colour)
+  group: Cortinariaceae
+- scientific_name: Cortinarius praestans
+  known_varieties: ''
+  common_name: Goliath Webcap
+  edibility: Edible (good; very large, choice)
+  group: Cortinariaceae
+- scientific_name: Cortinarius triumphans
+  known_varieties: ''
+  common_name: Birch Webcap / Triumph-Dickfuß
+  edibility: Edible (mediocre)
+  group: Cortinariaceae
+- scientific_name: Cortinarius collinitus
+  known_varieties: ''
+  common_name: Smeared Webcap / Schleimgürtelfuß
+  edibility: Edible (mediocre)
+  group: Cortinariaceae
+- scientific_name: Cortinarius mucosus
+  known_varieties: ''
+  common_name: Orange Webcap
+  edibility: Edible (mediocre)
+  group: Cortinariaceae
+- scientific_name: Cortinarius camphoratus
+  known_varieties: ''
+  common_name: Goat Webcap
+  edibility: Inedible (unpleasant odour)
+  group: Cortinariaceae
+- scientific_name: Cortinarius traganus
+  known_varieties: ''
+  common_name: Gassy Webcap / Bocksdickfuß
+  edibility: Toxic (gastrointestinal)
+  group: Cortinariaceae
+- scientific_name: Cortinarius caerulescens
+  known_varieties: ''
+  common_name: Mealy Webcap
+  edibility: Inedible
+  group: Cortinariaceae
+- scientific_name: Cortinarius alboviolaceus
+  known_varieties: ''
+  common_name: Pearly Webcap
+  edibility: Edible (mediocre)
+  group: Cortinariaceae
+- scientific_name: Cortinarius rubellus
+  known_varieties: ''
+  common_name: Deadly Webcap / Spitzkegel-Dickfuß
+  edibility: Deadly toxic (orellanine; causes delayed renal failure)
+  group: Cortinariaceae
+- scientific_name: Cortinarius orellanus
+  known_varieties: ''
+  common_name: Fool's Webcap / Orangefuchsiger Dickfuß
+  edibility: Deadly toxic (orellanine; causes delayed renal failure)
+  group: Cortinariaceae
+- scientific_name: Cortinarius gentilis
+  known_varieties: ''
+  common_name: Deadly Cinnamon Webcap
+  edibility: Deadly toxic
+  group: Cortinariaceae
+- scientific_name: Cortinarius sanguineus
+  known_varieties: ''
+  common_name: Blood Webcap / Blutroter Hautkopf
+  edibility: Toxic
+  group: Cortinariaceae
+- scientific_name: Cortinarius semisanguineus
+  known_varieties: ''
+  common_name: Surprise Webcap
+  edibility: Toxic
+  group: Cortinariaceae
+- scientific_name: Cortinarius cinnabarinus
+  known_varieties: ''
+  common_name: Cinnabar Webcap
+  edibility: Toxic
+  group: Cortinariaceae
+- scientific_name: Cortinarius bolaris
+  known_varieties: ''
+  common_name: Dappled Webcap
+  edibility: Toxic
+  group: Cortinariaceae
+- scientific_name: Cortinarius delibutus
+  known_varieties: ''
+  common_name: Yellow Webcap
+  edibility: Inedible
+  group: Cortinariaceae
+- scientific_name: Cortinarius glaucopus
+  known_varieties: ''
+  common_name: Grey-gilled Webcap
+  edibility: Inedible
+  group: Cortinariaceae
+- scientific_name: Cortinarius ionochlorus
+  known_varieties: ''
+  common_name: Greenfoot Webcap
+  edibility: Inedible
+  group: Cortinariaceae
+- scientific_name: Cortinarius flexipes
+  known_varieties: ''
+  common_name: Pelargonium Webcap
+  edibility: Inedible
+  group: Cortinariaceae
+- scientific_name: Cortinarius brunneus
+  known_varieties: ''
+  common_name: Brown Rollrim Webcap
+  edibility: Unknown
+  group: Cortinariaceae
+- scientific_name: Cortinarius obtusus
+  known_varieties: ''
+  common_name: Blunt-headed Webcap
+  edibility: Unknown
+  group: Cortinariaceae
+- scientific_name: Cortinarius decipiens
+  known_varieties: ''
+  common_name: Sepia Webcap
+  edibility: Unknown
+  group: Cortinariaceae
+- scientific_name: Cortinarius variicolor
+  known_varieties: ''
+  common_name: Contrary Webcap
+  edibility: Inedible
+  group: Cortinariaceae
+- scientific_name: Cortinarius suaveolens
+  known_varieties: ''
+  common_name: Sweet-scented Webcap
+  edibility: Unknown
+  group: Cortinariaceae
+- scientific_name: Cortinarius percomis
+  known_varieties: ''
+  common_name: Pleasant Webcap
+  edibility: Unknown
+  group: Cortinariaceae
+- scientific_name: Cortinarius odorifer
+  known_varieties: ''
+  common_name: Fragrant Webcap
+  edibility: Edible (strong anise-like odour)
+  group: Cortinariaceae
+- scientific_name: Cortinarius caperatus
+  known_varieties: ''
+  common_name: Gypsy Mushroom / Zigeuner
+  edibility: Edible (choice; one of the very few Cortinarius species widely considered
+    safe to eat; nutty flavour)
+  group: Cortinariaceae
+- scientific_name: Inocybe erubescens
+  known_varieties: ''
+  common_name: Deadly Fibrecap / Ziegelroter Risspilz
+  edibility: Deadly toxic (very high muscarine content)
+  group: Inocybaceae
+- scientific_name: Inocybe rimosa
+  known_varieties: ''
+  common_name: Split Fibrecap / Kegeliger Risspilz
+  edibility: Toxic (muscarine)
+  group: Inocybaceae
+- scientific_name: Inocybe geophylla
+  known_varieties: geophylla, lilacina
+  common_name: White Fibrecap / Erdblättriger Risspilz
+  edibility: Toxic (muscarine)
+  group: Inocybaceae
+- scientific_name: Inocybe napipes
+  known_varieties: ''
+  common_name: Bulbous-footed Fibrecap
+  edibility: Toxic
+  group: Inocybaceae
+- scientific_name: Inocybe lanuginosa
+  known_varieties: ''
+  common_name: Woolly Fibrecap
+  edibility: Toxic
+  group: Inocybaceae
+- scientific_name: Inocybe asterospora
+  known_varieties: ''
+  common_name: Star-spored Fibrecap
+  edibility: Toxic
+  group: Inocybaceae
+- scientific_name: Inocybe bongardii
+  known_varieties: ''
+  common_name: Peach Fibrecap
+  edibility: Toxic
+  group: Inocybaceae
+- scientific_name: Inocybe dulcamara
+  known_varieties: ''
+  common_name: Bittersweet Fibrecap
+  edibility: Toxic
+  group: Inocybaceae
+- scientific_name: Hebeloma crustuliniforme
+  known_varieties: ''
+  common_name: Poison Pie / Tonpilz
+  edibility: Toxic
+  group: Hymenogastraceae
+- scientific_name: Hebeloma sinapizans
+  known_varieties: ''
+  common_name: Bitter Poisonpie
+  edibility: Toxic
+  group: Hymenogastraceae
+- scientific_name: Hebeloma radicosum
+  known_varieties: ''
+  common_name: Rooting Poisonpie
+  edibility: Toxic
+  group: Hymenogastraceae
+- scientific_name: Entoloma sinuatum
+  known_varieties: ''
+  common_name: Livid Pinkgill / Lead Poisoner / Lividpilz
+  edibility: Deadly toxic (causes severe gastrointestinal poisoning)
+  group: Entolomataceae
+- scientific_name: Entoloma rhodopolium
+  known_varieties: ''
+  common_name: Wood Pinkgill
+  edibility: Toxic
+  group: Entolomataceae
+- scientific_name: Entoloma nidorosum
+  known_varieties: ''
+  common_name: Nitrous Pinkgill
+  edibility: Toxic
+  group: Entolomataceae
+- scientific_name: Entoloma bloxamii
+  known_varieties: ''
+  common_name: Big Blue Pinkgill
+  edibility: Unknown (protected in several European countries)
+  group: Entolomataceae
+- scientific_name: Entoloma nitidum
+  known_varieties: ''
+  common_name: Shiny Pinkgill
+  edibility: Toxic
+  group: Entolomataceae
+- scientific_name: Agaricus campestris
+  known_varieties: ''
+  common_name: Field Mushroom / Prataiolo / Wiesenchampignon
+  edibility: Edible (choice; classic edible mushroom)
+  group: Agaricaceae
+- scientific_name: Agaricus sylvaticus
+  known_varieties: ''
+  common_name: Blushing Wood Mushroom / Waldchampignon
+  edibility: Edible (good)
+  group: Agaricaceae
+- scientific_name: Agaricus silvicola
+  known_varieties: ''
+  common_name: Wood Mushroom / Anis-Champignon
+  edibility: Edible (good; anise smell)
+  group: Agaricaceae
+- scientific_name: Agaricus arvensis
+  known_varieties: ''
+  common_name: Horse Mushroom / Schaf-Champignon
+  edibility: Edible (choice; anise smell)
+  group: Agaricaceae
+- scientific_name: Agaricus augustus
+  known_varieties: ''
+  common_name: The Prince / Riesenchampignon
+  edibility: Edible (choice; almond/anise scent)
+  group: Agaricaceae
+- scientific_name: Agaricus bisporus
+  known_varieties: ''
+  common_name: Button Mushroom / Zucht-Champignon
+  edibility: Edible (the cultivated mushroom; also found wild)
+  group: Agaricaceae
+- scientific_name: Agaricus xanthodermus
+  known_varieties: ''
+  common_name: Yellow-staining Mushroom / Karbol-Champignon
+  edibility: Toxic (causes gastrointestinal upset; yellows immediately when cut)
+  group: Agaricaceae
+- scientific_name: Agaricus langei
+  known_varieties: ''
+  common_name: Scaly Wood Mushroom
+  edibility: Edible
+  group: Agaricaceae
+- scientific_name: Macrolepiota procera
+  known_varieties: ''
+  common_name: Parasol Mushroom / Mazza di tamburo / Riesenschirmling
+  edibility: Edible (choice; large, parasol-shaped; excellent when fried)
+  group: Agaricaceae
+- scientific_name: Chlorophyllum rhacodes
+  known_varieties: ''
+  common_name: Shaggy Parasol / Safran-Schirmling
+  edibility: Conditionally edible (can cause gastrointestinal upset in some people)
+  group: Agaricaceae
+- scientific_name: Macrolepiota mastoidea
+  known_varieties: ''
+  common_name: Slender Parasol
+  edibility: Edible
+  group: Agaricaceae
+- scientific_name: Macrolepiota excoriata
+  known_varieties: ''
+  common_name: Grassy Parasol
+  edibility: Edible
+  group: Agaricaceae
+- scientific_name: Lepiota cristata
+  known_varieties: ''
+  common_name: Stinking Dapperling
+  edibility: Toxic
+  group: Agaricaceae
+- scientific_name: Lepiota clypeolaria
+  known_varieties: ''
+  common_name: Shield Dapperling
+  edibility: Toxic
+  group: Agaricaceae
+- scientific_name: Lepiota brunneoincarnata
+  known_varieties: ''
+  common_name: Deadly Dapperling
+  edibility: Deadly toxic (amatoxins)
+  group: Agaricaceae
+- scientific_name: Lepiota castanea
+  known_varieties: ''
+  common_name: Chestnut Dapperling
+  edibility: Deadly toxic
+  group: Agaricaceae
+- scientific_name: Cystoderma amianthinum
+  known_varieties: ''
+  common_name: Earthy Powdercap
+  edibility: Inedible
+  group: Agaricaceae
+- scientific_name: Cystoderma carcharias
+  known_varieties: ''
+  common_name: Pearly Powdercap
+  edibility: Inedible
+  group: Agaricaceae
+- scientific_name: Pleurotus ostreatus
+  known_varieties: ''
+  common_name: Oyster Mushroom / Gelone / Austernpilz
+  edibility: Edible (choice; excellent edible, cultivated worldwide)
+  group: Pleurotaceae
+- scientific_name: Pleurotus eryngii
+  known_varieties: ''
+  common_name: King Oyster / Cardoncello
+  edibility: Edible (choice; meaty texture)
+  group: Pleurotaceae
+- scientific_name: Pleurotus cornucopiae
+  known_varieties: ''
+  common_name: Branching Oyster
+  edibility: Edible (good)
+  group: Pleurotaceae
+- scientific_name: Pleurotus pulmonarius
+  known_varieties: ''
+  common_name: Indian Oyster / Summer Oyster
+  edibility: Edible (good)
+  group: Pleurotaceae
+- scientific_name: Pholiota squarrosa
+  known_varieties: ''
+  common_name: Shaggy Scalycap
+  edibility: Toxic (with alcohol; gastrointestinal)
+  group: Strophariaceae
+- scientific_name: Pholiota flammans
+  known_varieties: ''
+  common_name: Flaming Scalycap
+  edibility: Inedible
+  group: Strophariaceae
+- scientific_name: Pholiota adiposa
+  known_varieties: ''
+  common_name: Fat Pholiota
+  edibility: Inedible
+  group: Strophariaceae
+- scientific_name: Pholiota aurivella
+  known_varieties: ''
+  common_name: Golden Scalycap
+  edibility: Inedible
+  group: Strophariaceae
+- scientific_name: Kuehneromyces mutabilis
+  known_varieties: ''
+  common_name: Two-toned Scalycap / Stockschwämmchen
+  edibility: Edible (good; but can be confused with deadly Galerina marginata)
+  group: Strophariaceae
+- scientific_name: Hypholoma fasciculare
+  known_varieties: ''
+  common_name: Sulphur Tuft / Schwefelköpfchen
+  edibility: Toxic (bitter, gastrointestinal)
+  group: Strophariaceae
+- scientific_name: Hypholoma capnoides
+  known_varieties: ''
+  common_name: Conifer Tuft
+  edibility: Edible (good; gills smoke-grey, under conifers)
+  group: Strophariaceae
+- scientific_name: Hypholoma lateritium
+  known_varieties: ''
+  common_name: Brick Tuft / Ziegelroter Schwefelkopf
+  edibility: Conditionally edible (bitter; avoid)
+  group: Strophariaceae
+- scientific_name: Stropharia aeruginosa
+  known_varieties: ''
+  common_name: Verdigris Roundhead / Grünspan-Träuschling
+  edibility: Inedible
+  group: Strophariaceae
+- scientific_name: Stropharia hornemannii
+  known_varieties: ''
+  common_name: Conifer Roundhead
+  edibility: Toxic
+  group: Strophariaceae
+- scientific_name: Stropharia rugosoannulata
+  known_varieties: ''
+  common_name: King Stropharia / Wine Cap
+  edibility: Edible (good)
+  group: Strophariaceae
+- scientific_name: Agrocybe praecox
+  known_varieties: ''
+  common_name: Spring Fieldcap
+  edibility: Edible (mediocre)
+  group: Strophariaceae
+- scientific_name: Cyclocybe aegerita
+  known_varieties: ''
+  common_name: Black Poplar Mushroom / Pioppino / Piopparello
+  edibility: Edible (choice; widely cultivated in Italy)
+  group: Strophariaceae
+- scientific_name: Mycena galericulata
+  known_varieties: ''
+  common_name: Common Bonnet / Rosablättriger Helmling
+  edibility: Inedible
+  group: Mycenaceae
+- scientific_name: Mycena pura
+  known_varieties: ''
+  common_name: Lilac Bonnet / Rettichhelmling
+  edibility: Toxic (radish smell; contains muscarine)
+  group: Mycenaceae
+- scientific_name: Mycena haematopus
+  known_varieties: ''
+  common_name: Bleeding Fairy Helmet / Bluthelmling
+  edibility: Inedible
+  group: Mycenaceae
+- scientific_name: Mycena rosea
+  known_varieties: ''
+  common_name: Rosy Bonnet
+  edibility: Toxic
+  group: Mycenaceae
+- scientific_name: Mycena crocata
+  known_varieties: ''
+  common_name: Saffrondrop Bonnet
+  edibility: Inedible
+  group: Mycenaceae
+- scientific_name: Mycena epipterygia
+  known_varieties: ''
+  common_name: Yellowleg Bonnet
+  edibility: Inedible
+  group: Mycenaceae
+- scientific_name: Mycena polygramma
+  known_varieties: ''
+  common_name: Grooved Bonnet
+  edibility: Inedible
+  group: Mycenaceae
+- scientific_name: Marasmius oreades
+  known_varieties: ''
+  common_name: Fairy Ring Champignon / Nelkenschwindling
+  edibility: Edible (good; forms fairy rings; excellent dried)
+  group: Marasmiaceae
+- scientific_name: Marasmius scorodonius
+  known_varieties: ''
+  common_name: Garlic Parachute
+  edibility: Edible (used as garlic substitute)
+  group: Marasmiaceae
+- scientific_name: Marasmius rotula
+  known_varieties: ''
+  common_name: Collared Parachute
+  edibility: Inedible
+  group: Marasmiaceae
+- scientific_name: Gymnopus dryophilus
+  known_varieties: ''
+  common_name: Russet Toughshank
+  edibility: Edible (mediocre)
+  group: Omphalotaceae
+- scientific_name: Gymnopus confluens
+  known_varieties: ''
+  common_name: Clustered Toughshank
+  edibility: Inedible
+  group: Omphalotaceae
+- scientific_name: Rhodocollybia butyracea
+  known_varieties: ''
+  common_name: Butter Cap / Butterrübling
+  edibility: Edible (mediocre)
+  group: Omphalotaceae
+- scientific_name: Rhodocollybia maculata
+  known_varieties: ''
+  common_name: Spotted Toughshank
+  edibility: Inedible (bitter)
+  group: Omphalotaceae
+- scientific_name: Laccaria laccata
+  known_varieties: ''
+  common_name: Deceiver / Gemeiner Lacktrichterling
+  edibility: Edible (mediocre)
+  group: Hydnangiaceae
+- scientific_name: Laccaria amethystina
+  known_varieties: ''
+  common_name: Amethyst Deceiver / Amathistlacktrichterling
+  edibility: Edible (mediocre; striking violet colour)
+  group: Hydnangiaceae
+- scientific_name: Laccaria bicolor
+  known_varieties: ''
+  common_name: Two-toned Deceiver
+  edibility: Edible
+  group: Hydnangiaceae
+- scientific_name: Laccaria proxima
+  known_varieties: ''
+  common_name: Scurfy Deceiver
+  edibility: Edible
+  group: Hydnangiaceae
+- scientific_name: Galerina marginata
+  known_varieties: ''
+  common_name: Deadly Skullcap / Gifthäubling
+  edibility: Deadly toxic (amatoxins; often confused with Kuehneromyces mutabilis)
+  group: Hymenogastraceae
+- scientific_name: Galerina paludosa
+  known_varieties: ''
+  common_name: Bog Bell
+  edibility: Toxic
+  group: Hymenogastraceae
+- scientific_name: Coprinus comatus
+  known_varieties: ''
+  common_name: Shaggy Ink Cap / Lawyer's Wig / Schopftintling
+  edibility: Edible (choice; eat young before auto-digestion; not with alcohol)
+  group: Agaricaceae
+- scientific_name: Coprinellus micaceus
+  known_varieties: ''
+  common_name: Glistening Ink Cap / Glimmertintling
+  edibility: Conditionally edible (edible when young; avoid alcohol)
+  group: Agaricaceae
+- scientific_name: Coprinopsis atramentaria
+  known_varieties: ''
+  common_name: Common Ink Cap / Falten-Tintling
+  edibility: Toxic with alcohol (contains coprine; causes Antabuse-like reaction)
+  group: Agaricaceae
+- scientific_name: Panaeolus sphinctrinus
+  known_varieties: ''
+  common_name: Petticoat Mottlegill
+  edibility: Inedible
+  group: Psathyrellaceae
+- scientific_name: Psathyrella candolleana
+  known_varieties: ''
+  common_name: Pale Brittlestem
+  edibility: Edible (mediocre)
+  group: Psathyrellaceae
+- scientific_name: Psathyrella piluliformis
+  known_varieties: ''
+  common_name: Common Stump Brittlestem
+  edibility: Inedible
+  group: Psathyrellaceae
+- scientific_name: Cantharellus cibarius
+  known_varieties: cibarius, pallens, amethysteus
+  common_name: Golden Chanterelle / Gallinaccio / Pfifferling
+  edibility: Edible (choice; one of the best edible mushrooms, apricot-like aroma)
+  group: Cantharellaceae
+- scientific_name: Cantharellus amethysteus
+  known_varieties: ''
+  common_name: Amethyst Chanterelle
+  edibility: Edible (choice)
+  group: Cantharellaceae
+- scientific_name: Cantharellus pallens
+  known_varieties: ''
+  common_name: Pale Chanterelle
+  edibility: Edible (good)
+  group: Cantharellaceae
+- scientific_name: Cantharellus ferruginascens
+  known_varieties: ''
+  common_name: Rusty-staining Chanterelle
+  edibility: Edible (good)
+  group: Cantharellaceae
+- scientific_name: Cantharellus subpruinosus
+  known_varieties: ''
+  common_name: Powdery Chanterelle
+  edibility: Edible (good)
+  group: Cantharellaceae
+- scientific_name: Cantharellus melanoxeros
+  known_varieties: ''
+  common_name: Blackening Chanterelle
+  edibility: Edible (good; sold commercially in Italy)
+  group: Cantharellaceae
+- scientific_name: Cantharellus cinereus
+  known_varieties: ''
+  common_name: Ashen Chanterelle
+  edibility: Edible
+  group: Cantharellaceae
+- scientific_name: Craterellus cornucopioides
+  known_varieties: ''
+  common_name: Horn of Plenty / Trombetta dei morti / Totentrompete
+  edibility: Edible (choice; excellent flavour; dries very well)
+  group: Cantharellaceae
+- scientific_name: Craterellus tubaeformis
+  known_varieties: ''
+  common_name: Trumpet Chanterelle / Yellowleg / Trompetenpfifferling
+  edibility: Edible (good; used in autumn/winter)
+  group: Cantharellaceae
+- scientific_name: Hydnum repandum
+  known_varieties: ''
+  common_name: Wood Hedgehog / Stoppelpilz / Dentino
+  edibility: Edible (choice; distinctive spines on underside)
+  group: Hydnaceae
+- scientific_name: Hydnum rufescens
+  known_varieties: ''
+  common_name: Terracotta Hedgehog
+  edibility: Edible (good)
+  group: Hydnaceae
+- scientific_name: Clavulina coralloides
+  known_varieties: ''
+  common_name: Crested Coral Fungus / Weißer Hahnenkamm
+  edibility: Edible (mediocre)
+  group: Cantharellales
+- scientific_name: Clavulina rugosa
+  known_varieties: ''
+  common_name: Wrinkled Coral
+  edibility: Edible
+  group: Cantharellales
+- scientific_name: Clavulina cinerea
+  known_varieties: ''
+  common_name: Grey Coral
+  edibility: Edible
+  group: Cantharellales
+- scientific_name: Gomphus clavatus
+  known_varieties: ''
+  common_name: Pig's Ear / Schweinsohr
+  edibility: Edible (good; protected in several European countries)
+  group: Gomphaceae
+- scientific_name: Ramaria botrytis
+  known_varieties: ''
+  common_name: Cauliflower Coral
+  edibility: Edible (good)
+  group: Gomphales
+- scientific_name: Ramaria flava
+  known_varieties: ''
+  common_name: Yellow Coral / Gelbe Koralle
+  edibility: Conditionally edible (may cause gastrointestinal upset)
+  group: Gomphales
+- scientific_name: Ramaria formosa
+  known_varieties: ''
+  common_name: Handsome Coral
+  edibility: Toxic (gastrointestinal)
+  group: Gomphales
+- scientific_name: Ramaria aurea
+  known_varieties: ''
+  common_name: Golden Coral
+  edibility: Edible (mediocre)
+  group: Gomphales
+- scientific_name: Ramaria stricta
+  known_varieties: ''
+  common_name: Upright Coral
+  edibility: Inedible
+  group: Gomphales
+- scientific_name: Ramaria pallida
+  known_varieties: ''
+  common_name: Pale Coral
+  edibility: Toxic
+  group: Gomphales
+- scientific_name: Sparassis crispa
+  known_varieties: ''
+  common_name: Cauliflower Fungus / Krause Glucke / Sedano selvatico
+  edibility: Edible (choice; huge brain-like fungus at base of conifers)
+  group: Sparassidaceae
+- scientific_name: Clavariadelphus pistillaris
+  known_varieties: ''
+  common_name: Giant Club / Riesenkeule
+  edibility: Inedible (bitter)
+  group: Gomphales
+- scientific_name: Clavariadelphus truncatus
+  known_varieties: ''
+  common_name: Flat-topped Coral
+  edibility: Edible (sweet taste)
+  group: Gomphales
+- scientific_name: Ganoderma lucidum
+  known_varieties: ''
+  common_name: Reishi / Lacquered Bracket / Glänzender Lackporling
+  edibility: Inedible (medicinal use; woody)
+  group: Ganodermataceae
+- scientific_name: Ganoderma applanatum
+  known_varieties: ''
+  common_name: Artist's Bracket / Flacher Lackporling
+  edibility: Inedible (woody)
+  group: Ganodermataceae
+- scientific_name: Ganoderma resinaceum
+  known_varieties: ''
+  common_name: Resinous Polypore
+  edibility: Inedible
+  group: Ganodermataceae
+- scientific_name: Fomitopsis pinicola
+  known_varieties: ''
+  common_name: Red-belted Conk / Rotrandiger Baumschwamm
+  edibility: Inedible
+  group: Fomitopsidaceae
+- scientific_name: Fomitopsis betulina
+  known_varieties: ''
+  common_name: Birch Polypore / Birkenporling
+  edibility: Inedible (medicinal use)
+  group: Fomitopsidaceae
+- scientific_name: Fomes fomentarius
+  known_varieties: ''
+  common_name: Tinder Fungus / Amadou / Zunderschwamm
+  edibility: Inedible (historically used as tinder)
+  group: Polyporaceae
+- scientific_name: Laricifomes officinalis
+  known_varieties: ''
+  common_name: Agarikon / Lärchenschwamm
+  edibility: Inedible (medicinal; protected; strictly on larch)
+  group: Polyporaceae
+- scientific_name: Laetiporus sulphureus
+  known_varieties: ''
+  common_name: Chicken of the Woods / Schwefelporling
+  edibility: Edible (good; young brackets only; may cause reactions in some people)
+  group: Polyporaceae
+- scientific_name: Trametes versicolor
+  known_varieties: ''
+  common_name: Turkey Tail / Schmetterlingsporling
+  edibility: Inedible (medicinal; PSK extract)
+  group: Polyporaceae
+- scientific_name: Trametes gibbosa
+  known_varieties: ''
+  common_name: Lumpy Bracket
+  edibility: Inedible
+  group: Polyporaceae
+- scientific_name: Polyporus squamosus
+  known_varieties: ''
+  common_name: Dryad's Saddle / Schuppiger Porling
+  edibility: Edible (young caps only; tough when mature)
+  group: Polyporaceae
+- scientific_name: Polyporus umbellatus
+  known_varieties: ''
+  common_name: Umbrella Polypore / Laubholz-Porling
+  edibility: Edible (good; forms clusters of small caps from a common base)
+  group: Polyporaceae
+- scientific_name: Meripilus giganteus
+  known_varieties: ''
+  common_name: Giant Polypore
+  edibility: Edible (young only; mediocre)
+  group: Meripilaceae
+- scientific_name: Inonotus obliquus
+  known_varieties: ''
+  common_name: Chaga / Schiefer Schillerporling
+  edibility: Inedible (medicinal use)
+  group: Hymenochaetales
+- scientific_name: Inonotus hispidus
+  known_varieties: ''
+  common_name: Shaggy Bracket
+  edibility: Inedible
+  group: Hymenochaetales
+- scientific_name: Fistulina hepatica
+  known_varieties: ''
+  common_name: Beefsteak Fungus / Leberreischling
+  edibility: Edible (mediocre; sour taste)
+  group: Fistulinaceae
+- scientific_name: Phlebia radiata
+  known_varieties: ''
+  common_name: Wrinkled Crust
+  edibility: Inedible
+  group: Polyporales
+- scientific_name: Bjerkandera adusta
+  known_varieties: ''
+  common_name: Smoky Bracket
+  edibility: Inedible
+  group: Polyporaceae
+- scientific_name: Daedalea quercina
+  known_varieties: ''
+  common_name: Oak Mazegill
+  edibility: Inedible
+  group: Polyporaceae
+- scientific_name: Ischnoderma benzoinum
+  known_varieties: ''
+  common_name: Benzoin Bracket / Harziger Porling
+  edibility: Inedible
+  group: Polyporaceae
+- scientific_name: Bondarzewia montana
+  known_varieties: ''
+  common_name: Alpine Bondarzewia
+  edibility: Edible (mediocre; large, at base of conifers)
+  group: Russulaceae
+- scientific_name: Hericium erinaceus
+  known_varieties: ''
+  common_name: Lion's Mane / Igelstachelbart
+  edibility: Edible (choice; medicinal; on beech and oak)
+  group: Hericiaceae
+- scientific_name: Hericium coralloides
+  known_varieties: ''
+  common_name: Coral Tooth / Ästiger Stachelbart
+  edibility: Edible (good; branched white coral on dead wood)
+  group: Hericiaceae
+- scientific_name: Hericium flagellum
+  known_varieties: ''
+  common_name: Fir Coral / Tannenstachelbart
+  edibility: Edible (good; on silver fir, Alpine)
+  group: Hericiaceae
+- scientific_name: Hydnellum peckii
+  known_varieties: ''
+  common_name: Bleeding Tooth / Devil's Tooth
+  edibility: Inedible (bitter)
+  group: Thelephorales
+- scientific_name: Hydnellum suaveolens
+  known_varieties: ''
+  common_name: Fragrant Spine
+  edibility: Inedible
+  group: Thelephorales
+- scientific_name: Hydnellum concrescens
+  known_varieties: ''
+  common_name: Zonate Spine
+  edibility: Inedible
+  group: Thelephorales
+- scientific_name: Sarcodon imbricatus
+  known_varieties: ''
+  common_name: Hawk's Wing / Schindelpilz
+  edibility: Conditionally edible (bitter when mature; edible young)
+  group: Thelephorales
+- scientific_name: Phellodon niger
+  known_varieties: ''
+  common_name: Black Tooth Fungus
+  edibility: Inedible
+  group: Thelephorales
+- scientific_name: Phellodon tomentosus
+  known_varieties: ''
+  common_name: Woolly Tooth
+  edibility: Inedible
+  group: Thelephorales
+- scientific_name: Bankera fuligineoalba
+  known_varieties: ''
+  common_name: Drab Tooth
+  edibility: Inedible
+  group: Thelephorales
+- scientific_name: Phallus impudicus
+  known_varieties: ''
+  common_name: Common Stinkhorn / Gemeine Stinkmorchel
+  edibility: Edible (egg stage only; fetid smell once opened)
+  group: Phallales
+- scientific_name: Phallus hadriani
+  known_varieties: ''
+  common_name: Dune Stinkhorn
+  edibility: Edible (egg stage)
+  group: Phallales
+- scientific_name: Clathrus ruber
+  known_varieties: ''
+  common_name: Red Cage / Tintenfischpilz
+  edibility: Inedible (fetid; a southern European stinkhorn)
+  group: Phallales
+- scientific_name: Lycoperdon perlatum
+  known_varieties: ''
+  common_name: Common Puffball / Flaschenbovist / Vescia
+  edibility: Edible (when pure white inside; good fried)
+  group: Agaricaceae
+- scientific_name: Lycoperdon pyriforme
+  known_varieties: ''
+  common_name: Stump Puffball / Birnenförmiger Bovist
+  edibility: Edible (when white inside)
+  group: Agaricaceae
+- scientific_name: Lycoperdon echinatum
+  known_varieties: ''
+  common_name: Spiny Puffball
+  edibility: Edible (when white inside)
+  group: Agaricaceae
+- scientific_name: Lycoperdon excipuliforme
+  known_varieties: ''
+  common_name: Pestle Puffball
+  edibility: Edible (when white inside)
+  group: Agaricaceae
+- scientific_name: Calvatia gigantea
+  known_varieties: ''
+  common_name: Giant Puffball / Riesenbovist
+  edibility: Edible (choice; when pure white and firm inside)
+  group: Agaricaceae
+- scientific_name: Handkea utriformis
+  known_varieties: ''
+  common_name: Mosaic Puffball
+  edibility: Edible (when white inside)
+  group: Agaricaceae
+- scientific_name: Bovista plumbea
+  known_varieties: ''
+  common_name: Grey Puffball
+  edibility: Edible (when white)
+  group: Agaricaceae
+- scientific_name: Bovista nigrescens
+  known_varieties: ''
+  common_name: Brown Puffball
+  edibility: Edible
+  group: Agaricaceae
+- scientific_name: Geastrum triplex
+  known_varieties: ''
+  common_name: Collared Earthstar
+  edibility: Inedible
+  group: Geastrales
+- scientific_name: Geastrum fimbriatum
+  known_varieties: ''
+  common_name: Sessile Earthstar
+  edibility: Inedible
+  group: Geastrales
+- scientific_name: Geastrum sessile
+  known_varieties: ''
+  common_name: Fringed Earthstar
+  edibility: Inedible
+  group: Geastrales
+- scientific_name: Geastrum pectinatum
+  known_varieties: ''
+  common_name: Beaked Earthstar
+  edibility: Inedible
+  group: Geastrales
+- scientific_name: Myriostoma coliforme
+  known_varieties: ''
+  common_name: Saltshaker Earthstar
+  edibility: Inedible (very rare; protected)
+  group: Phallales
+- scientific_name: Auricularia auricula-judae
+  known_varieties: ''
+  common_name: Jelly Ear / Judasohr
+  edibility: Edible (good; cultivated; gelatinous texture)
+  group: Auriculariales
+- scientific_name: Tremella mesenterica
+  known_varieties: ''
+  common_name: Yellow Brain / Goldgelber Zitterling
+  edibility: Edible (mediocre; gelatinous)
+  group: Tremellales
+- scientific_name: Tremella foliacea
+  known_varieties: ''
+  common_name: Leafy Brain
+  edibility: Edible (mediocre)
+  group: Tremellales
+- scientific_name: Calocera viscosa
+  known_varieties: ''
+  common_name: Yellow Stagshorn / Klebriger Hörnling
+  edibility: Inedible
+  group: Dacrymycetales
+- scientific_name: Calocera cornea
+  known_varieties: ''
+  common_name: Small Stagshorn
+  edibility: Inedible
+  group: Dacrymycetales
+- scientific_name: Dacryopinax spathularia
+  known_varieties: ''
+  common_name: Fan-shaped Jelly Fungus
+  edibility: Inedible
+  group: Dacrymycetales
+- scientific_name: Exidia recisa
+  known_varieties: ''
+  common_name: Amber Jelly / Amber Hexenbutterl
+  edibility: Edible (mediocre; gelatinous)
+  group: Auriculariales
+- scientific_name: Exidia glandulosa
+  known_varieties: ''
+  common_name: Black Witches' Butter
+  edibility: Edible (mediocre)
+  group: Auriculariales
+- scientific_name: Morchella esculenta
+  known_varieties: esculenta, vulgaris, rotunda
+  common_name: Common Morel / Spugnola / Morchel
+  edibility: Edible (choice; one of the finest spring mushrooms; toxic raw)
+  group: Pezizales
+- scientific_name: Morchella elata
+  known_varieties: ''
+  common_name: Black Morel
+  edibility: Edible (choice; toxic raw)
+  group: Pezizales
+- scientific_name: Morchella semilibera
+  known_varieties: ''
+  common_name: Half-free Morel
+  edibility: Edible (good; toxic raw)
+  group: Pezizales
+- scientific_name: Morchella punctipes
+  known_varieties: ''
+  common_name: Half-free Morel / Spugnola semi-libera
+  edibility: Edible (good; cap only half-attached to stipe; toxic raw, must be cooked)
+  group: Pezizales
+- scientific_name: Verpa bohemica
+  known_varieties: ''
+  common_name: Wrinkled Thimble Cap
+  edibility: Conditionally edible (toxic raw; large quantities cause problems)
+  group: Pezizales
+- scientific_name: Gyromitra esculenta
+  known_varieties: ''
+  common_name: False Morel / Frühjahrslorchel / Spugnola falsa
+  edibility: Deadly toxic (contains gyromitrin; fatal; must never be eaten)
+  group: Pezizales
+- scientific_name: Gyromitra gigas
+  known_varieties: ''
+  common_name: Snow Morel / Riesenschüssellorchel
+  edibility: Conditionally edible (some eat after processing; risk of toxicity)
+  group: Pezizales
+- scientific_name: Gyromitra infula
+  known_varieties: ''
+  common_name: Hooded False Morel
+  edibility: Deadly toxic
+  group: Pezizales
+- scientific_name: Helvella lacunosa
+  known_varieties: ''
+  common_name: Elfin Saddle / Schwärzende Lorchel
+  edibility: Conditionally edible (toxic raw; edible after thorough cooking)
+  group: Pezizales
+- scientific_name: Helvella crispa
+  known_varieties: ''
+  common_name: White Saddle / Herbstlorchel
+  edibility: Conditionally edible (toxic raw)
+  group: Pezizales
+- scientific_name: Helvella elastica
+  known_varieties: ''
+  common_name: Elastic Saddle
+  edibility: Conditionally edible
+  group: Pezizales
+- scientific_name: Disciotis venosa
+  known_varieties: ''
+  common_name: Veined Cup
+  edibility: Edible (cook thoroughly)
+  group: Pezizales
+- scientific_name: Peziza badia
+  known_varieties: ''
+  common_name: Bay Cup
+  edibility: Edible (mediocre)
+  group: Pezizales
+- scientific_name: Peziza vesiculosa
+  known_varieties: ''
+  common_name: Bladder Cup
+  edibility: Inedible
+  group: Pezizales
+- scientific_name: Peziza repanda
+  known_varieties: ''
+  common_name: Recurved Cup
+  edibility: Edible (mediocre)
+  group: Pezizales
+- scientific_name: Sarcoscypha coccinea
+  known_varieties: ''
+  common_name: Scarlet Elf Cup / Scharlachroter Kelchbecherling
+  edibility: Edible (mediocre; ornamental; winter/spring)
+  group: Pezizales
+- scientific_name: Otidea onotica
+  known_varieties: ''
+  common_name: Hare's Ear / Hasenöhrchen
+  edibility: Edible (mediocre)
+  group: Pezizales
+- scientific_name: Mitrula paludosa
+  known_varieties: ''
+  common_name: Bog Beacon
+  edibility: Unknown
+  group: Leotiales
+- scientific_name: Tuber magnatum
+  known_varieties: ''
+  common_name: White Truffle of Alba / Tartufo bianco
+  edibility: Edible (choice; the world's most expensive fungus)
+  group: Pezizales (Tuberaceae)
+- scientific_name: Tuber melanosporum
+  known_varieties: ''
+  common_name: Périgord Black Truffle / Tartufo nero pregiato
+  edibility: Edible (choice; highly prized; aromatic)
+  group: Pezizales (Tuberaceae)
+- scientific_name: Tuber aestivum
+  known_varieties: ''
+  common_name: Summer Truffle / Scorzone
+  edibility: Edible (good; less aromatic than winter truffles)
+  group: Pezizales (Tuberaceae)
+- scientific_name: Tuber brumale
+  known_varieties: ''
+  common_name: Winter Truffle / Tartufo nero invernale
+  edibility: Edible (good; musk-like odour)
+  group: Pezizales (Tuberaceae)
+- scientific_name: Tuber borchii
+  known_varieties: ''
+  common_name: Bianchetto Truffle / Tartufo bianchetto
+  edibility: Edible (good; white truffle of lesser value)
+  group: Pezizales (Tuberaceae)
+- scientific_name: Stereum hirsutum
+  known_varieties: ''
+  common_name: Hairy Curtain Crust
+  edibility: Inedible
+  group: Stereaceae
+- scientific_name: Stereum sanguinolentum
+  known_varieties: ''
+  common_name: Bleeding Conifer Crust
+  edibility: Inedible
+  group: Stereaceae
+- scientific_name: Hericium alpestre
+  known_varieties: ''
+  common_name: Alpine Coral Tooth
+  edibility: Edible (good; strictly Alpine fir forests)
+  group: Hericiaceae
+- scientific_name: Pluteus cervinus
+  known_varieties: ''
+  common_name: Deer Shield / Rehbrauner Dachpilz
+  edibility: Edible (mediocre)
+  group: Pluteaceae
+- scientific_name: Pluteus salicinus
+  known_varieties: ''
+  common_name: Willow Shield
+  edibility: Edible (mediocre)
+  group: Pluteaceae
+- scientific_name: Volvariella bombycina
+  known_varieties: ''
+  common_name: Silky Rosegill
+  edibility: Edible (mediocre)
+  group: Pluteaceae
+- scientific_name: Volvariella volvacea
+  known_varieties: ''
+  common_name: Paddy Straw Mushroom
+  edibility: Edible (widely cultivated in East Asia)
+  group: Pluteaceae
+- scientific_name: Schizophyllum commune
+  known_varieties: ''
+  common_name: Split Gill / Gemeiner Spaltblättling
+  edibility: Inedible (tough)
+  group: Schizophyllaceae
+- scientific_name: Lentinellus cochleatus
+  known_varieties: ''
+  common_name: Aniseed Cockleshell
+  edibility: Edible (anise smell)
+  group: Russulales
+- scientific_name: Panellus stipticus
+  known_varieties: ''
+  common_name: Bitter Oysterling / Herber Knäueling
+  edibility: Inedible
+  group: Mycenaceae
+- scientific_name: Baeospora myosura
+  known_varieties: ''
+  common_name: Conifercone Cap
+  edibility: Inedible
+  group: Mycenaceae
+- scientific_name: Psilocybe cubensis
+  known_varieties: ''
+  common_name: Golden Teacher / Kubanischer Kahlkopf
+  edibility: Psychoactive (contains psilocybin and psilocin)
+  group: Strophariaceae
+- scientific_name: Psilocybe semilanceata
+  known_varieties: ''
+  common_name: Liberty Cap / Spitzkegeliger Kahlkopf
+  edibility: Psychoactive (contains psilocybin and psilocin)
+  group: Strophariaceae
+- scientific_name: Psilocybe serbica
+  known_varieties: ''
+  common_name: Serbian Psilocybe
+  edibility: Psychoactive (recorded in Trentino-Alto Adige; conifer forests)
+  group: Strophariaceae
+- scientific_name: Omphalotus olearius
+  known_varieties: ''
+  common_name: Jack O'Lantern / Fungo dell'ulivo
+  edibility: Toxic (bioluminescent; causes severe gastrointestinal illness)
+  group: Omphalotaceae
+- scientific_name: Bulgaria inquinans
+  known_varieties: ''
+  common_name: Black Bulgar
+  edibility: Edible (reportedly; rubbery texture)
+  group: Helotiales
+- scientific_name: Ascocoryne sarcoides
+  known_varieties: ''
+  common_name: Purple Jellydisc
+  edibility: Inedible
+  group: Helotiales
+- scientific_name: Neogyromitra gigas
+  known_varieties: ''
+  common_name: Snow Morel / Giant Lorchel
+  edibility: Conditionally edible (toxic raw; risk remains after cooking)
+  group: Pezizales
+- scientific_name: Claviceps purpurea
+  known_varieties: ''
+  common_name: Ergot
+  edibility: Deadly toxic (a parasitic fungus on grasses)
+  group: Hypocreales
+- scientific_name: Xylaria hypoxylon
+  known_varieties: ''
+  common_name: Candlesnuff Fungus / Geweihförmige Holzkeule
+  edibility: Inedible
+  group: Xylariales
+- scientific_name: Xylaria polymorpha
+  known_varieties: ''
+  common_name: Dead Man's Fingers
+  edibility: Inedible
+  group: Xylariales
+- scientific_name: Daldinia concentrica
+  known_varieties: ''
+  common_name: King Alfred's Cakes / Kohlenbeere
+  edibility: Inedible
+  group: Xylariales
+- scientific_name: Hypoxylon fragiforme
+  known_varieties: ''
+  common_name: Beech Woodwart
+  edibility: Inedible
+  group: Xylariales
+- scientific_name: Nectria cinnabarina
+  known_varieties: ''
+  common_name: Coral Spot
+  edibility: Inedible
+  group: Hypocreales
+- scientific_name: Rhytisma acerinum
+  known_varieties: ''
+  common_name: Tar Spot of Maple
+  edibility: Inedible (fungal leaf pathogen)
+  group: Rhytismatales
+- scientific_name: Diaporthe eres
+  known_varieties: ''
+  common_name: Diaporthe canker
+  edibility: Unknown
+  group: Diaporthales
+- scientific_name: Neofavolus alveolaris
+  known_varieties: ''
+  common_name: Hexagonal-pored Polypore
+  edibility: Edible (poor; tough)
+  group: Polyporaceae
+- scientific_name: Climacocystis borealis
+  known_varieties: ''
+  common_name: Northern Bracket
+  edibility: Inedible
+  group: Polyporaceae
+- scientific_name: Postia caesia
+  known_varieties: ''
+  common_name: Conifer Blueing Bracket
+  edibility: Inedible
+  group: Polyporaceae
+- scientific_name: Phellinus igniarius
+  known_varieties: ''
+  common_name: Willow Bracket
+  edibility: Inedible
+  group: Hymenochaetales
+- scientific_name: Phellinus pini
+  known_varieties: ''
+  common_name: Pine Bracket
+  edibility: Inedible
+  group: Hymenochaetales
+- scientific_name: Cerioporus leptocephalus
+  known_varieties: ''
+  common_name: Blackleg Polypore
+  edibility: Edible (mediocre)
+  group: Polyporaceae
+- scientific_name: Cerioporus squamosus
+  known_varieties: ''
+  common_name: Dryad's Saddle
+  edibility: Edible (young only)
+  group: Polyporaceae
+- scientific_name: Leucopaxillus giganteus
+  known_varieties: ''
+  common_name: Giant Funnel
+  edibility: Edible (mediocre)
+  group: Tricholomataceae
+- scientific_name: Leucopaxillus compactus
+  known_varieties: ''
+  common_name: Compact Leucopaxillus
+  edibility: Inedible (bitter; rare and protected)
+  group: Tricholomataceae
+- scientific_name: Cortinarius phlegmacium
+  known_varieties: ''
+  common_name: Slimy Webcap
+  edibility: Inedible
+  group: Cortinariaceae
+- scientific_name: Phlebia tremellosa
+  known_varieties: ''
+  common_name: Jelly Rot
+  edibility: Inedible
+  group: Polyporales
+- scientific_name: Climacodon septentrionalis
+  known_varieties: ''
+  common_name: Northern Tooth
+  edibility: Inedible
+  group: Polyporaceae
+- scientific_name: Crepidotus mollis
+  known_varieties: ''
+  common_name: Soft Slipper Toadstool
+  edibility: Inedible
+  group: Inocybaceae
+- scientific_name: Crepidotus variabilis
+  known_varieties: ''
+  common_name: Variable Oysterling
+  edibility: Inedible
+  group: Inocybaceae
+- scientific_name: Tapinella panuoides
+  known_varieties: ''
+  common_name: Velvet Oyster / Tannen-Holzrübling
+  edibility: Toxic
+  group: Boletales
+- scientific_name: Lactifluus piperatus
+  known_varieties: ''
+  common_name: Peppery Milk Cap (Lactifluus)
+  edibility: Conditionally edible
+  group: Russulaceae
+- scientific_name: Lactifluus vellereus
+  known_varieties: ''
+  common_name: Fleecy Milk Cap (Lactifluus)
+  edibility: Conditionally edible
+  group: Russulaceae
+- scientific_name: Lactifluus volemus
+  known_varieties: ''
+  common_name: Weeping Milk Cap (Lactifluus)
+  edibility: Edible (choice)
+  group: Russulaceae
+- scientific_name: Suillus bellini
+  known_varieties: ''
+  common_name: Bellini's Bolete
+  edibility: Edible (mediocre; Mediterranean pine specialist)
+  group: Boletales
+- scientific_name: Cortinarius calopus
+  known_varieties: ''
+  common_name: Beautiful-footed Webcap
+  edibility: Unknown
+  group: Cortinariaceae
+- scientific_name: Cortinarius laniger
+  known_varieties: ''
+  common_name: Woolly Webcap
+  edibility: Unknown
+  group: Cortinariaceae
+- scientific_name: Cortinarius cliduchus
+  known_varieties: ''
+  common_name: Saffron Webcap
+  edibility: Unknown
+  group: Cortinariaceae
+- scientific_name: Cortinarius elatior
+  known_varieties: ''
+  common_name: Tall Webcap
+  edibility: Inedible
+  group: Cortinariaceae
+- scientific_name: Hebeloma mesophaeum
+  known_varieties: ''
+  common_name: Veiled Poisonpie
+  edibility: Toxic
+  group: Hymenogastraceae
+- scientific_name: Hebeloma sacchariolens
+  known_varieties: ''
+  common_name: Sweet Poisonpie
+  edibility: Toxic
+  group: Hymenogastraceae
+- scientific_name: Entoloma prunuloides
+  known_varieties: ''
+  common_name: Mealy Plums Pinkgill
+  edibility: Toxic
+  group: Entolomataceae
+- scientific_name: Entoloma sericeum
+  known_varieties: ''
+  common_name: Silky Pinkgill
+  edibility: Toxic
+  group: Entolomataceae
+- scientific_name: Naucoria escharoides
+  known_varieties: ''
+  common_name: Alder Naucoria
+  edibility: Inedible
+  group: Hymenogastraceae
+- scientific_name: Tubaria furfuracea
+  known_varieties: ''
+  common_name: Scurfy Twiglet
+  edibility: Inedible
+  group: Tubariaceae
+- scientific_name: Panaeolus semiovatus
+  known_varieties: ''
+  common_name: Egghead Mottlegill
+  edibility: Unknown
+  group: Psathyrellaceae
+- scientific_name: Panaeolus foenisecii
+  known_varieties: ''
+  common_name: Mower's Mushroom
+  edibility: Unknown (possibly mildly psychoactive)
+  group: Psathyrellaceae
+- scientific_name: Cortinarius varius
+  known_varieties: ''
+  common_name: Contrary Webcap
+  edibility: Inedible
+  group: Cortinariaceae
+- scientific_name: Tricholoma bresadolanum
+  known_varieties: ''
+  common_name: Bresadola's Knight
+  edibility: Unknown (Alpine species)
+  group: Tricholomataceae
+- scientific_name: Russula melliolens
+  known_varieties: ''
+  common_name: Honey-scented Brittlegill
+  edibility: Edible
+  group: Russulaceae
+- scientific_name: Russula amoenolens
+  known_varieties: ''
+  common_name: Camembert Brittlegill
+  edibility: Inedible
+  group: Russulaceae
+- scientific_name: Russula sororia
+  known_varieties: ''
+  common_name: Sepia Brittlegill
+  edibility: Inedible
+  group: Russulaceae
+- scientific_name: Russula fellea
+  known_varieties: ''
+  common_name: Geranium Brittlegill
+  edibility: Inedible (geranium smell; acrid)
+  group: Russulaceae
+- scientific_name: Russula torulosa
+  known_varieties: ''
+  common_name: Purplish Brittlegill
+  edibility: Edible (mediocre)
+  group: Russulaceae
+- scientific_name: Russula lilacina
+  known_varieties: ''
+  common_name: Lilac Brittlegill
+  edibility: Unknown
+  group: Russulaceae
+- scientific_name: Lactarius azonites
+  known_varieties: ''
+  common_name: Zoneless Milk Cap
+  edibility: Inedible
+  group: Russulaceae
+- scientific_name: Lactarius evosmus
+  known_varieties: ''
+  common_name: Balsam Milk Cap
+  edibility: Inedible
+  group: Russulaceae
+- scientific_name: Lactarius lilacinus
+  known_varieties: ''
+  common_name: Lilac Milk Cap
+  edibility: Inedible
+  group: Russulaceae
+- scientific_name: Lactarius badiosanguineus
+  known_varieties: ''
+  common_name: Subalpine Milk Cap
+  edibility: Edible (Alpine; under dwarf willow)
+  group: Russulaceae
+- scientific_name: Sarcosphaera coronaria
+  known_varieties: ''
+  common_name: Crown Cup
+  edibility: Toxic (causes haemolytic anaemia)
+  group: Pezizales
+- scientific_name: Helvella atra
+  known_varieties: ''
+  common_name: Dark-coloured Elfin Saddle
+  edibility: Conditionally edible
+  group: Pezizales
+- scientific_name: Geastrum striatum
+  known_varieties: ''
+  common_name: Striate Earthstar
+  edibility: Inedible
+  group: Geastrales
+- scientific_name: Geastrum quadrifidum
+  known_varieties: ''
+  common_name: Four-pointed Earthstar
+  edibility: Inedible
+  group: Geastrales
+- scientific_name: Scleroderma areolatum
+  known_varieties: ''
+  common_name: Leopard Earthball
+  edibility: Toxic
+  group: Boletales
+- scientific_name: Lycoperdon mammiforme
+  known_varieties: ''
+  common_name: Flaky Puffball
+  edibility: Edible (when white inside)
+  group: Agaricaceae
+- scientific_name: Calvatia utriformis
+  known_varieties: ''
+  common_name: Mosaic Puffball
+  edibility: Edible
+  group: Agaricaceae
+- scientific_name: Cortinarius purpurascens
+  known_varieties: ''
+  common_name: Bruising Webcap
+  edibility: Unknown
+  group: Cortinariaceae
+- scientific_name: Cortinarius cinnamomeus
+  known_varieties: ''
+  common_name: Cinnamon Webcap
+  edibility: Toxic
+  group: Cortinariaceae
+- scientific_name: Cortinarius armeniacus
+  known_varieties: ''
+  common_name: Apricot Webcap
+  edibility: Unknown
+  group: Cortinariaceae
+- scientific_name: Cortinarius hemitrichus
+  known_varieties: ''
+  common_name: Frosty Webcap
+  edibility: Unknown
+  group: Cortinariaceae
+- scientific_name: Cortinarius paleaceus
+  known_varieties: ''
+  common_name: Pelargonium Webcap (small)
+  edibility: Unknown
+  group: Cortinariaceae
+- scientific_name: Hygrophorus gliocyclus
+  known_varieties: ''
+  common_name: Slimy Woodwax
+  edibility: Edible
+  group: Hygrophoraceae
+- scientific_name: Hygrophorus penarioides
+  known_varieties: ''
+  common_name: Pear-scented Woodwax
+  edibility: Edible
+  group: Hygrophoraceae
+- scientific_name: Hygrophorus korhonenii
+  known_varieties: ''
+  common_name: Korhonen's Woodwax
+  edibility: Unknown
+  group: Hygrophoraceae
+- scientific_name: Caloboletus radicans
+  known_varieties: ''
+  common_name: Rooting Bolete
+  edibility: Toxic (intensely bitter)
+  group: Boletales
+- scientific_name: Suillellus luridus
+  known_varieties: ''
+  common_name: Lurid Bolete
+  edibility: Conditionally edible (toxic raw; must be thoroughly cooked)
+  group: Boletales
+- scientific_name: Rubroboletus satanas
+  known_varieties: ''
+  common_name: Satan's Bolete / Satanspilz
+  edibility: Toxic (causes severe gastrointestinal illness; impressive red pores)
+  group: Boletales
+- scientific_name: Butyriboletus regius
+  known_varieties: ''
+  common_name: Royal Bolete
+  edibility: Edible (good; violet-tinged cap)
+  group: Boletales
+- scientific_name: Xerocomus ferrugineus
+  known_varieties: ''
+  common_name: Ferruginous Bolete
+  edibility: Edible (mediocre)
+  group: Boletales
+- scientific_name: Phylloporus pelletieri
+  known_varieties: ''
+  common_name: Gilded Bolete (gilled bolete)
+  edibility: Edible (mediocre; unusual in having gills instead of pores)
+  group: Boletales
+- scientific_name: Cortinarius torvus
+  known_varieties: ''
+  common_name: Stout Webcap
+  edibility: Inedible
+  group: Cortinariaceae
+- scientific_name: Cortinarius rigens
+  known_varieties: ''
+  common_name: Stiff Webcap
+  edibility: Unknown
+  group: Cortinariaceae
+- scientific_name: Inocybe cookei
+  known_varieties: ''
+  common_name: Straw Fibrecap
+  edibility: Toxic
+  group: Inocybaceae
+- scientific_name: Inocybe sindonia
+  known_varieties: ''
+  common_name: Soft Fibrecap
+  edibility: Toxic
+  group: Inocybaceae
+- scientific_name: Lactarius mammosus
+  known_varieties: ''
+  common_name: Conifer Milk Cap
+  edibility: Inedible
+  group: Russulaceae
+- scientific_name: Lactarius flexuosus
+  known_varieties: ''
+  common_name: Lilac Milk Cap (grey form)
+  edibility: Conditionally edible
+  group: Russulaceae
+- scientific_name: Cortinarius sebaceus
+  known_varieties: ''
+  common_name: Tallow Webcap
+  edibility: Unknown
+  group: Cortinariaceae
+- scientific_name: Cortinarius hinnuleus
+  known_varieties: ''
+  common_name: Earthy Webcap
+  edibility: Unknown
+  group: Cortinariaceae
+- scientific_name: Ramaria decurrens
+  known_varieties: ''
+  common_name: Coral Fungus (alpine form)
+  edibility: Unknown
+  group: Gomphales
+- scientific_name: Hygrocybe nigrescens
+  known_varieties: ''
+  common_name: Blackening Waxcap
+  edibility: Edible
+  group: Hygrophoraceae
+- scientific_name: Hygrocybe miniata
+  known_varieties: ''
+  common_name: Vermilion Waxcap
+  edibility: Edible
+  group: Hygrophoraceae
+- scientific_name: Hygrocybe acutoconica
+  known_varieties: ''
+  common_name: Persistent Waxcap
+  edibility: Edible
+  group: Hygrophoraceae
+- scientific_name: Entoloma jubatum
+  known_varieties: ''
+  common_name: Sepia Pinkgill
+  edibility: Toxic
+  group: Entolomataceae
+- scientific_name: Clavulinopsis fusiformis
+  known_varieties: ''
+  common_name: Golden Spindles
+  edibility: Inedible
+  group: Clavariaceae
+- scientific_name: Clavulinopsis corniculata
+  known_varieties: ''
+  common_name: Meadow Coral
+  edibility: Inedible
+  group: Clavariaceae
+- scientific_name: Pseudoclitocybe cyathiformis
+  known_varieties: ''
+  common_name: Goblet Funnel
+  edibility: Inedible
+  group: Tricholomataceae
+- scientific_name: Rickenella fibula
+  known_varieties: ''
+  common_name: Orange Mosscap
+  edibility: Inedible
+  group: Inocybaceae
+- scientific_name: Arrhenia epichysium
+  known_varieties: ''
+  common_name: Mealy Oysterling
+  edibility: Inedible
+  group: Hygrophoraceae
+- scientific_name: Ampulloclitocybe clavipes
+  known_varieties: ''
+  common_name: Club Foot
+  edibility: Toxic with alcohol
+  group: Clitocybaceae
+- scientific_name: Tephrocybe rancida
+  known_varieties: ''
+  common_name: Rancid Greyling
+  edibility: Inedible
+  group: Tricholomataceae
+- scientific_name: Paxillus filamentosus
+  known_varieties: ''
+  common_name: Alder Rollrim (alt.)
+  edibility: Toxic
+  group: Boletales
+- scientific_name: Inonotus dryadeus
+  known_varieties: ''
+  common_name: Weeping Conk
+  edibility: Inedible
+  group: Hymenochaetales
+- scientific_name: Phellinus tremulae
+  known_varieties: ''
+  common_name: Aspen Bracket
+  edibility: Inedible
+  group: Hymenochaetales
+- scientific_name: Ganoderma carnosum
+  known_varieties: ''
+  common_name: Fleshy Polypore
+  edibility: Inedible (on Abies; noted in northern Italy studies)
+  group: Ganodermataceae
+- scientific_name: Fomitopsis officinalis
+  known_varieties: ''
+  common_name: Quinine Polypore / Lärchen-Porling
+  edibility: Inedible (medicinal; protected species; on larch)
+  group: Fomitopsidaceae
+- scientific_name: Dichomitus squalens
+  known_varieties: ''
+  common_name: Pine Maze Polypore
+  edibility: Inedible
+  group: Polyporaceae
+- scientific_name: Sarcoporia polyspora
+  known_varieties: ''
+  common_name: Alpine Wood-rot Polypore
+  edibility: Inedible
+  group: Polyporaceae
+- scientific_name: Serpula himantioides
+  known_varieties: ''
+  common_name: Wild Dry Rot
+  edibility: Inedible
+  group: Boletales
+- scientific_name: Coniophora puteana
+  known_varieties: ''
+  common_name: Wet Rot
+  edibility: Inedible
+  group: Boletales
+- scientific_name: Russula maculata
+  known_varieties: ''
+  common_name: Spotted Brittlegill
+  edibility: Edible
+  group: Russulaceae
+- scientific_name: Russula intermedia
+  known_varieties: ''
+  common_name: Intermediate Brittlegill
+  edibility: Unknown
+  group: Russulaceae
+- scientific_name: Russula minutula
+  known_varieties: ''
+  common_name: Minute Brittlegill
+  edibility: Unknown
+  group: Russulaceae
+- scientific_name: Russula curtipes
+  known_varieties: ''
+  common_name: Short-footed Brittlegill
+  edibility: Unknown
+  group: Russulaceae
+- scientific_name: Cortinarius bicolor
+  known_varieties: ''
+  common_name: Two-coloured Webcap
+  edibility: Unknown
+  group: Cortinariaceae
+- scientific_name: Cortinarius saniosus
+  known_varieties: ''
+  common_name: Bitter Webcap
+  edibility: Unknown
+  group: Cortinariaceae
+- scientific_name: Cortinarius vibratilis
+  known_varieties: ''
+  common_name: Bitter-tasting Webcap
+  edibility: Inedible (bitter)
+  group: Cortinariaceae
+- scientific_name: Cortinarius salor
+  known_varieties: ''
+  common_name: Blue-capped Webcap
+  edibility: Unknown
+  group: Cortinariaceae
+- scientific_name: Tricholoma stans
+  known_varieties: ''
+  common_name: Robust Knight
+  edibility: Unknown
+  group: Tricholomataceae
+- scientific_name: Tricholoma albobrunneum
+  known_varieties: ''
+  common_name: Pine Knight
+  edibility: Inedible (acrid)
+  group: Tricholomataceae
+- scientific_name: Tricholoma fracticum
+  known_varieties: ''
+  common_name: Robust Knight (alt.)
+  edibility: Edible (mediocre)
+  group: Tricholomataceae
+- scientific_name: Tricholoma josserandii
+  known_varieties: ''
+  common_name: Josserand's Knight
+  edibility: Toxic
+  group: Tricholomataceae
+- scientific_name: Imleria suilloides
+  known_varieties: ''
+  common_name: Bog Bolete
+  edibility: Unknown
+  group: Boletales
+- scientific_name: Abortiporus biennis
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Polyporales
+- scientific_name: Agaricus andrewii
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Agaricaceae
+- scientific_name: Agaricus argenteus
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Agaricaceae
+- scientific_name: Agaricus bernardii
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Agaricaceae
+- scientific_name: Agaricus comtulus
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Agaricaceae
+- scientific_name: Agaricus haemorrhoidarius
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Agaricaceae
+- scientific_name: Agaricus impudicus
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Agaricaceae
+- scientific_name: Agaricus julius
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Agaricaceae
+- scientific_name: Agaricus moelleri
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Agaricaceae
+- scientific_name: Agaricus phaeolepidotus
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Agaricaceae
+- scientific_name: Agaricus porphyrocephalus
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Agaricaceae
+- scientific_name: Agaricus praeclaresquamosus
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Agaricaceae
+- scientific_name: Agrocybe acericola
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Strophariaceae
+- scientific_name: Agrocybe dura
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Strophariaceae
+- scientific_name: Agrocybe molesta
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Strophariaceae
+- scientific_name: Agrocybe paludosa
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Strophariaceae
+- scientific_name: Aleuria aurantia
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Pezizales
+- scientific_name: Amanita bisporigera
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Amanitaceae
+- scientific_name: Amanita cokeri
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Amanitaceae
+- scientific_name: Amanita gioiosa
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Amanitaceae
+- scientific_name: Amanita jacksonii
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Amanitaceae
+- scientific_name: Amanita liquii
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Amanitaceae
+- scientific_name: Amanita mairei
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Amanitaceae
+- scientific_name: Amanita novinupta
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Amanitaceae
+- scientific_name: Amanita ocreata
+  known_varieties: ''
+  common_name: Western Destroying Angel
+  edibility: Deadly toxic
+  group: Amanitaceae
+- scientific_name: Amanita orientigemmata
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Amanitaceae
+- scientific_name: Amanita parcivolvata
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Amanitaceae
+- scientific_name: Amanita proxima
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Amanitaceae
+- scientific_name: Amanita regalis
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Amanitaceae
+- scientific_name: Amanita sinicoflava
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Amanitaceae
+- scientific_name: Amanita smithiana
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Amanitaceae
+- scientific_name: Amanita vittadinii
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Amanitaceae
+- scientific_name: Ampulloclitocybe avellaneialba
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Clitocybaceae
+- scientific_name: Aphroditeola olida
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Agaricales
+- scientific_name: Armillaria borealis
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Physalacriaceae
+- scientific_name: Armillaria lutea
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Physalacriaceae
+- scientific_name: Armillaria nabsnona
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Physalacriaceae
+- scientific_name: Ascocoryne cylichnium
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Helotiales
+- scientific_name: Aureoboletus mirabilis
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Boletales
+- scientific_name: Auricularia angiospermarum
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Auriculariales
+- scientific_name: Auricularia heimuer
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Auriculariales
+- scientific_name: Auricularia mesenterica
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Auriculariales
+- scientific_name: Bjerkandera fumosa
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Polyporaceae
+- scientific_name: Boletus aestivalis
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Boletales
+- scientific_name: Boletus badius
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Boletales
+- scientific_name: Boletus betulicola
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Boletales
+- scientific_name: Boletus chrysenteron
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Boletales
+- scientific_name: Boletus kluzakii
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Boletales
+- scientific_name: Boletus pseudoregius
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Boletales
+- scientific_name: Boletus subtomentosus
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Boletales
+- scientific_name: Bondarzewia mesenterica
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Russulaceae
+- scientific_name: Bonomyces sinopicus
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Agaricales
+- scientific_name: Bovista aestivalis
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Agaricaceae
+- scientific_name: Bovista paludosa
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Agaricaceae
+- scientific_name: Bovista tomentosa
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Agaricaceae
+- scientific_name: Calocera pallidospathulata
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Dacrymycetales
+- scientific_name: Calvatia excipuliformis
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Agaricaceae
+- scientific_name: Cantharellus formosus
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Cantharellaceae
+- scientific_name: Cantharellus friesii
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Cantharellaceae
+- scientific_name: Cantharellus minor
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Cantharellaceae
+- scientific_name: Cerrena unicolor
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Polyporales
+- scientific_name: Chlorophyllum brunneum
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Agaricaceae
+- scientific_name: Chlorophyllum molybdites
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Agaricaceae
+- scientific_name: Chroogomphus fulmineus
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Boletales
+- scientific_name: Chrysomphalina chrysophylla
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Agaricales
+- scientific_name: Clathrus chrysomycelinus
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Phallales
+- scientific_name: Clathrus columnatus
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Phallales
+- scientific_name: Clathrus crispus
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Phallales
+- scientific_name: Clavaria amoena
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Agaricales
+- scientific_name: Clavaria fragilis
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Agaricales
+- scientific_name: Clavariadelphus ligula
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Gomphales
+- scientific_name: Clavulina cristata
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Cantharellales
+- scientific_name: Clavulinopsis laeticolor
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Clavariaceae
+- scientific_name: Clavulinopsis luteoalba
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Clavariaceae
+- scientific_name: Clitocybe alexandri
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Clitocybaceae
+- scientific_name: Clitocybe clavipes
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Clitocybaceae
+- scientific_name: Clitocybe gibba
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Clitocybaceae
+- scientific_name: Clitocybe illudens
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Clitocybaceae
+- scientific_name: Clitocybe maxima
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Clitocybaceae
+- scientific_name: Clitocybe nuda
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Clitocybaceae
+- scientific_name: Clitocybe phaeophthalma
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Clitocybaceae
+- scientific_name: Clitocybe rivulosa
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Clitocybaceae
+- scientific_name: Clitocybe robusta
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Clitocybaceae
+- scientific_name: Clitocybe squamulosa
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Clitocybaceae
+- scientific_name: Clitocybe vibecina
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Clitocybaceae
+- scientific_name: Coltricia cinnamomea
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Hymenochaetales
+- scientific_name: Coniophora olivacea
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Boletales
+- scientific_name: Connopus acervatus
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Agaricales
+- scientific_name: Coprinellus bisporus
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Agaricaceae
+- scientific_name: Coprinellus disseminatus
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Agaricaceae
+- scientific_name: Coprinellus domesticus
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Agaricaceae
+- scientific_name: Coprinellus flocculosus
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Agaricaceae
+- scientific_name: Coprinellus radians
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Agaricaceae
+- scientific_name: Coprinellus truncorum
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Agaricaceae
+- scientific_name: Coprinellus xanthothrix
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Agaricaceae
+- scientific_name: Coprinopsis acuminata
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Agaricaceae
+- scientific_name: Coprinopsis nivea
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Agaricaceae
+- scientific_name: Coprinopsis picacea
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Agaricaceae
+- scientific_name: Coprinopsis romagnesiana
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Agaricaceae
+- scientific_name: Coprinopsis variegata
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Agaricaceae
+- scientific_name: Coprinus sterquilinus
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Agaricaceae
+- scientific_name: Cortinarius caesiocanescens
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Cortinariaceae
+- scientific_name: Cortinarius cotoneus
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Cortinariaceae
+- scientific_name: Cortinarius cyanites
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Cortinariaceae
+- scientific_name: Cortinarius hesleri
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Cortinariaceae
+- scientific_name: Cortinarius marylandensis
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Cortinariaceae
+- scientific_name: Cortinarius mucifluoides
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Cortinariaceae
+- scientific_name: Cortinarius smithii
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Cortinariaceae
+- scientific_name: Cortinarius splendens
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Cortinariaceae
+- scientific_name: Cortinarius subfoetens
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Cortinariaceae
+- scientific_name: Craterellus fallax
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Cantharellaceae
+- scientific_name: Craterellus lutescens
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Cantharellaceae
+- scientific_name: Crepidotus calolepis
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Inocybaceae
+- scientific_name: Crepidotus epibryus
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Inocybaceae
+- scientific_name: Cuphophyllus russocoriaceus
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Hygrophoraceae
+- scientific_name: Cyanosporus subcaesius
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Polyporales
+- scientific_name: Cyclocybe cylindracea
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Strophariaceae
+- scientific_name: Cystoderma fallax
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Agaricaceae
+- scientific_name: Cystoderma granulosum
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Agaricaceae
+- scientific_name: Cystoderma jasonis
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Agaricaceae
+- scientific_name: Dacrymyces chrysospermus
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Dacrymycetales
+- scientific_name: Daedaleopsis confragosa
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Polyporales
+- scientific_name: Discina ancilis
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Pezizales
+- scientific_name: Discina perlata
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Pezizales
+- scientific_name: Entoloma cetratum
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Entolomataceae
+- scientific_name: Entoloma conferendum
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Entolomataceae
+- scientific_name: Entoloma griseocyaneum
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Entolomataceae
+- scientific_name: Entoloma luridum
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Entolomataceae
+- scientific_name: Entoloma serrulatum
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Entolomataceae
+- scientific_name: Exidia nigricans
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Auriculariales
+- scientific_name: Exidia plana
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Auriculariales
+- scientific_name: Exidia repanda
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Auriculariales
+- scientific_name: Exidia truncata
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Auriculariales
+- scientific_name: Faerberia carbonaria
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Agaricales
+- scientific_name: Flammulina elastica
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Physalacriaceae
+- scientific_name: Flammulina fennae
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Physalacriaceae
+- scientific_name: Flammulina filiformis
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Physalacriaceae
+- scientific_name: Flammulina populicola
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Physalacriaceae
+- scientific_name: Fomitopsis rosea
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Fomitopsidaceae
+- scientific_name: Fuscopostia fragilis
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Polyporales
+- scientific_name: Galerina sphagnorum
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Hymenogastraceae
+- scientific_name: Ganoderma adspersum
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Ganodermataceae
+- scientific_name: Ganoderma australe
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Ganodermataceae
+- scientific_name: Ganoderma brownii
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Ganodermataceae
+- scientific_name: Ganoderma curtisii
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Ganodermataceae
+- scientific_name: Ganoderma lobatum
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Ganodermataceae
+- scientific_name: Ganoderma sessile
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Ganodermataceae
+- scientific_name: Ganoderma tsugae
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Ganodermataceae
+- scientific_name: Geastrum berkeleyi
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Geastrales
+- scientific_name: Geastrum fornicatum
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Geastrales
+- scientific_name: Geastrum jurei
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Geastrales
+- scientific_name: Geastrum lageniforme
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Geastrales
+- scientific_name: Geastrum leptospermum
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Geastrales
+- scientific_name: Geastrum minimum
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Geastrales
+- scientific_name: Geastrum rufescens
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Geastrales
+- scientific_name: Geastrum saccatum
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Geastrales
+- scientific_name: Geastrum schmidelii
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Geastrales
+- scientific_name: Geastrum welwitschii
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Geastrales
+- scientific_name: Geopora sumneriana
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Pezizales
+- scientific_name: Gomphidius oregonensis
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Boletales
+- scientific_name: Gomphidius rutilus
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Boletales
+- scientific_name: Gomphidius smithii
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Boletales
+- scientific_name: Grifola frondosa
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Polyporales
+- scientific_name: Guepiniopsis alpina
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Dacrymycetales
+- scientific_name: Gymnopilus penetrans
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Agaricales
+- scientific_name: Gymnopus androsaceus
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Omphalotaceae
+- scientific_name: Gymnopus ocior
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Omphalotaceae
+- scientific_name: Gyromitra ambigua
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Pezizales
+- scientific_name: Gyromitra californica
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Pezizales
+- scientific_name: Gyromitra montana
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Pezizales
+- scientific_name: Haasiella splendidissima
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Agaricales
+- scientific_name: Hebeloma ingratum
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Hymenogastraceae
+- scientific_name: Hebeloma insigne
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Hymenogastraceae
+- scientific_name: Hebeloma leucosarx
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Hymenogastraceae
+- scientific_name: Hebeloma populinum
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Hymenogastraceae
+- scientific_name: Hebeloma radicosoides
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Hymenogastraceae
+- scientific_name: Helvella ephippium
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Pezizales
+- scientific_name: Helvella latispora
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Pezizales
+- scientific_name: Hemileccinum impolitum
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Boletales
+- scientific_name: Hericium americanum
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Hericiaceae
+- scientific_name: Hericium cirrhatum
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Hericiaceae
+- scientific_name: Hohenbuehelia petaloides
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Agaricales
+- scientific_name: Hortiboletus bubalinus
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Boletales
+- scientific_name: Hortiboletus rubellus
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Boletales
+- scientific_name: Hydnellum caeruleum
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Thelephorales
+- scientific_name: Hydnellum cyanopodium
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Thelephorales
+- scientific_name: Hydnellum ferrugineum
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Thelephorales
+- scientific_name: Hydnellum scrobiculatum
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Thelephorales
+- scientific_name: Hydnum aerostatisporum
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Hydnaceae
+- scientific_name: Hydnum albidum
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Hydnaceae
+- scientific_name: Hydnum ellipsosporum
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Hydnaceae
+- scientific_name: Hydnum subtilior
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Hydnaceae
+- scientific_name: Hygrocybe aurantiosplendens
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Hygrophoraceae
+- scientific_name: Hygrocybe calciphila
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Hygrophoraceae
+- scientific_name: Hygrocybe cantharellus
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Hygrophoraceae
+- scientific_name: Hygrocybe ceracea
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Hygrophoraceae
+- scientific_name: Hygrocybe conicoides
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Hygrophoraceae
+- scientific_name: Hygrocybe cuspidata
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Hygrophoraceae
+- scientific_name: Hygrocybe flavescens
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Hygrophoraceae
+- scientific_name: Hygrocybe glutinipes
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Hygrophoraceae
+- scientific_name: Hygrocybe mucronella
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Hygrophoraceae
+- scientific_name: Hygrocybe persistens
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Hygrophoraceae
+- scientific_name: Hygrocybe quieta
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Hygrophoraceae
+- scientific_name: Hygrocybe reidii
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Hygrophoraceae
+- scientific_name: Hygrocybe singeri
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Hygrophoraceae
+- scientific_name: Hygrocybe splendidissima
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Hygrophoraceae
+- scientific_name: Hygrocybe squamulosa
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Hygrophoraceae
+- scientific_name: Hygrocybe substrangulata
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Hygrophoraceae
+- scientific_name: Hygrocybe virginea
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Hygrophoraceae
+- scientific_name: Hygrophorus bakerensis
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Hygrophoraceae
+- scientific_name: Hygrophorus capreloarius
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Hygrophoraceae
+- scientific_name: Hygrophorus occidentalis
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Hygrophoraceae
+- scientific_name: Hygrophorus piceae
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Hygrophoraceae
+- scientific_name: Hygrophorus pustulatus
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Hygrophoraceae
+- scientific_name: Hypholoma subviride
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Strophariaceae
+- scientific_name: Hypsizygus tessulatus
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Agaricales
+- scientific_name: Imperator rhodopurpureus
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Boletales
+- scientific_name: Infundibulicybe catinus
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Clitocybaceae
+- scientific_name: Infundibulicybe geotropa
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Clitocybaceae
+- scientific_name: Infundibulicybe squamulosa
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Clitocybaceae
+- scientific_name: Inocybe fastigiata
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Inocybaceae
+- scientific_name: Kretzschmaria deusta
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Xylariales
+- scientific_name: Laccaria fraterna
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Hydnangiaceae
+- scientific_name: Laccaria tortilis
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Hydnangiaceae
+- scientific_name: Laccaria trichodermophora
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Hydnangiaceae
+- scientific_name: Lactarius cilicioides
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Russulaceae
+- scientific_name: Lactarius controversus
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Russulaceae
+- scientific_name: Lactarius corrugis
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Russulaceae
+- scientific_name: Lactarius deceptivus
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Russulaceae
+- scientific_name: Lactarius fennoscandicus
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Russulaceae
+- scientific_name: Lactarius fragilis
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Russulaceae
+- scientific_name: Lactarius hepaticus
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Russulaceae
+- scientific_name: Lactarius hygrophoroides
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Russulaceae
+- scientific_name: Lactarius intermedius
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Russulaceae
+- scientific_name: Lactarius maculatipes
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Russulaceae
+- scientific_name: Lactarius mairei
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Russulaceae
+- scientific_name: Lactarius scoticus
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Russulaceae
+- scientific_name: Lactarius tesquorum
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Russulaceae
+- scientific_name: Lactarius turpis
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Russulaceae
+- scientific_name: Lactarius uvidus
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Russulaceae
+- scientific_name: Lactarius vinaceorufescens
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Russulaceae
+- scientific_name: Lactarius xanthogalactus
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Russulaceae
+- scientific_name: Lactarius zonarius
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Russulaceae
+- scientific_name: Laetiporus cincinnatus
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Polyporaceae
+- scientific_name: Laetiporus huroniensis
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Polyporaceae
+- scientific_name: Leccinum albellum
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Boletales
+- scientific_name: Leccinum albostipitatum
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Boletales
+- scientific_name: Leccinum cyaneobasileucum
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Boletales
+- scientific_name: Leccinum insigne
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Boletales
+- scientific_name: Leccinum rufum
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Boletales
+- scientific_name: Lentinellus ursinus
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Russulales
+- scientific_name: Lenzites betulinus
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Polyporales
+- scientific_name: Lepiota felina
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Agaricaceae
+- scientific_name: Lepiota fuscovinacea
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Agaricaceae
+- scientific_name: Lepiota ignivolvata
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Agaricaceae
+- scientific_name: Lepiota magnispora
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Agaricaceae
+- scientific_name: Lepiota subincarnata
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Agaricaceae
+- scientific_name: Lepiota xanthophylla
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Agaricaceae
+- scientific_name: Lepista glaucocana
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Tricholomataceae
+- scientific_name: Lepista multiformis
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Tricholomataceae
+- scientific_name: Lepista personata
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Tricholomataceae
+- scientific_name: Lepista sordida
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Tricholomataceae
+- scientific_name: Leucoagaricus leucothites
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Agaricales
+- scientific_name: Leucoagaricus rubrotinctus
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Agaricales
+- scientific_name: Leucocybe candicans
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Agaricales
+- scientific_name: Leucopholiota decorosa
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Agaricales
+- scientific_name: Limacella illinita
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Agaricales
+- scientific_name: Lycoperdon lividum
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Agaricaceae
+- scientific_name: Lycoperdon molle
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Agaricaceae
+- scientific_name: Lycoperdon nigrescens
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Agaricaceae
+- scientific_name: Lycoperdon pratense
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Agaricaceae
+- scientific_name: Lycoperdon pulcherrimum
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Agaricaceae
+- scientific_name: Lycoperdon subincarnatum
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Agaricaceae
+- scientific_name: Lycoperdon umbrinum
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Agaricaceae
+- scientific_name: Lyophyllum fumosum
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Lyophyllaceae
+- scientific_name: Macrocystidia cucumis
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Agaricales
+- scientific_name: Macrolepiota konradii
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Agaricaceae
+- scientific_name: Marasmius bulliardi
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Marasmiaceae
+- scientific_name: Marasmius capillaris
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Marasmiaceae
+- scientific_name: Marasmius fulvoferrugineus
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Marasmiaceae
+- scientific_name: Marasmius pulcherripes
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Marasmiaceae
+- scientific_name: Marasmius siccus
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Marasmiaceae
+- scientific_name: Melanoleuca evenosa
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Tricholomataceae
+- scientific_name: Melanoleuca polioleuca
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Tricholomataceae
+- scientific_name: Meripilus sumstinei
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Meripilaceae
+- scientific_name: Meruliporia incrassata
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Polyporales
+- scientific_name: Morchella populiphila
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Pezizales
+- scientific_name: Mutinus caninus
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Phallales
+- scientific_name: Mycena acicula
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Mycenaceae
+- scientific_name: Mycena arcangeliana
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Mycenaceae
+- scientific_name: Mycena galopus
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Mycenaceae
+- scientific_name: Mycena inclinata
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Mycenaceae
+- scientific_name: Mycena maculata
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Mycenaceae
+- scientific_name: Mycena pelianthina
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Mycenaceae
+- scientific_name: Mycena sanguinolenta
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Mycenaceae
+- scientific_name: Mycena tintinnabulum
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Mycenaceae
+- scientific_name: Nectria coccinea
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Hypocreales
+- scientific_name: Neoboletus sinensis
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Boletales
+- scientific_name: Neobulgaria pura
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Helotiales
+- scientific_name: Omphalotus illudens
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Omphalotaceae
+- scientific_name: Otidea bufonia
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Pezizales
+- scientific_name: Otidea leporina
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Pezizales
+- scientific_name: Panellus serotinus
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Mycenaceae
+- scientific_name: Paralepistopsis amoenolens
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Agaricales
+- scientific_name: Parasola auricoma
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Agaricales
+- scientific_name: Paxillus obscurisporus
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Boletales
+- scientific_name: Paxillus vernalis
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Boletales
+- scientific_name: Peziza ammophila
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Pezizales
+- scientific_name: Peziza badioconfusa
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Pezizales
+- scientific_name: Peziza fimeti
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Pezizales
+- scientific_name: Peziza phyllogena
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Pezizales
+- scientific_name: Phaeolus schweinitzii
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Polyporales
+- scientific_name: Phellodon atratus
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Thelephorales
+- scientific_name: Phellodon confluens
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Thelephorales
+- scientific_name: Pholiota alnicola
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Strophariaceae
+- scientific_name: Pholiota gummosa
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Strophariaceae
+- scientific_name: Pholiota limonella
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Strophariaceae
+- scientific_name: Phylloporus rhodoxanthus
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Boletales
+- scientific_name: Phyllotopsis nidulans
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Agaricales
+- scientific_name: Piptoporus betulinus
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Polyporales
+- scientific_name: Pisolithus arenarius
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Boletales
+- scientific_name: Pleurotus dryinus
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Pleurotaceae
+- scientific_name: Pleurotus populinus
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Pleurotaceae
+- scientific_name: Plicaturopsis crispa
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Polyporales
+- scientific_name: Pluteus atromarginatus
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Pluteaceae
+- scientific_name: Pluteus petasatus
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Pluteaceae
+- scientific_name: Pluteus umbrosus
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Pluteaceae
+- scientific_name: Polyporus badius
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Polyporaceae
+- scientific_name: Polyporus brumalis
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Polyporaceae
+- scientific_name: Polyporus ciliatus
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Polyporaceae
+- scientific_name: Polyporus durus
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Polyporaceae
+- scientific_name: Polyporus melanopus
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Polyporaceae
+- scientific_name: Polyporus tuberaster
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Polyporaceae
+- scientific_name: Psathyrella incerta
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Psathyrellaceae
+- scientific_name: Pseudoboletus parasiticus
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Boletales
+- scientific_name: Pseudohydnum gelatinosum
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Cantharellales
+- scientific_name: Psilocybe arcana
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Strophariaceae
+- scientific_name: Psilocybe bohemica
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Strophariaceae
+- scientific_name: Psilocybe mexicana
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Strophariaceae
+- scientific_name: Psilocybe moravica
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Strophariaceae
+- scientific_name: Psilocybe pelliculosa
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Strophariaceae
+- scientific_name: Psilocybe samuiensis
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Strophariaceae
+- scientific_name: Psilocybe strictipes
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Strophariaceae
+- scientific_name: Ramaria araiospora
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Gomphales
+- scientific_name: Ramaria caulifloriformis
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Gomphales
+- scientific_name: Ramaria fennica
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Gomphales
+- scientific_name: Ramaria flavescens
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Gomphales
+- scientific_name: Ramaria gracilis
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Gomphales
+- scientific_name: Ramaria rielii
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Gomphales
+- scientific_name: Ramaria rubrievanescens
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Gomphales
+- scientific_name: Ramaria rubripermanens
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Gomphales
+- scientific_name: Ramaria strasseri
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Gomphales
+- scientific_name: Ramariopsis kunzei
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Agaricales
+- scientific_name: Rhizopogon rubescens
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Boletales
+- scientific_name: Rubroboletus dupainii
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Boletales
+- scientific_name: Rubroboletus legaliae
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Boletales
+- scientific_name: Rubroboletus pulcherrimus
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Boletales
+- scientific_name: Rubroboletus pulchrotinctus
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Boletales
+- scientific_name: Rubroboletus rhodoxanthus
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Boletales
+- scientific_name: Rubroboletus rubrosanguineus
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Boletales
+- scientific_name: Russula acrifolia
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Russulaceae
+- scientific_name: Russula aeruginea
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Russulaceae
+- scientific_name: Russula amethystina
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Russulaceae
+- scientific_name: Russula betularum
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Russulaceae
+- scientific_name: Russula brevipes
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Russulaceae
+- scientific_name: Russula cerolens
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Russulaceae
+- scientific_name: Russula cutefracta
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Russulaceae
+- scientific_name: Russula dissimulans
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Russulaceae
+- scientific_name: Russula fragrantissima
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Russulaceae
+- scientific_name: Russula grata
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Russulaceae
+- scientific_name: Russula heterophylla
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Russulaceae
+- scientific_name: Russula illota
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Russulaceae
+- scientific_name: Russula mairei
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Russulaceae
+- scientific_name: Russula pectinatoides
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Russulaceae
+- scientific_name: Russula tenuiceps
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Russulaceae
+- scientific_name: Russula variata
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Russulaceae
+- scientific_name: Sarcodon fuscoindicus
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Thelephorales
+- scientific_name: Sarcodon scabrosus
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Thelephorales
+- scientific_name: Sarcomyxa serotina
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Agaricales
+- scientific_name: Sarcoscypha austriaca
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Pezizales
+- scientific_name: Sarcoscypha dudley
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Pezizales
+- scientific_name: Sarcoscypha occidentalis
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Pezizales
+- scientific_name: Sarcosoma globosum
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Pezizales
+- scientific_name: Scleroderma cepa
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Boletales
+- scientific_name: Scleroderma floridanum
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Boletales
+- scientific_name: Scleroderma michiganense
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Boletales
+- scientific_name: Serpula lacrymans
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Boletales
+- scientific_name: Skeletocutis amorpha
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Polyporales
+- scientific_name: Sparassis spathulata
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Sparassidaceae
+- scientific_name: Squamanita paradoxa
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Agaricales
+- scientific_name: Stereum complicatum
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Stereaceae
+- scientific_name: Stereum gausapatum
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Stereaceae
+- scientific_name: Stereum ostrea
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Stereaceae
+- scientific_name: Stereum subtomentosum
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Stereaceae
+- scientific_name: Strobilomyces confusus
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Boletales
+- scientific_name: Strobilurus esculentus
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Agaricales
+- scientific_name: Stropharia caerulea
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Strophariaceae
+- scientific_name: Stropharia coronilla
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Strophariaceae
+- scientific_name: Stropharia cyanea
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Strophariaceae
+- scientific_name: Stropharia pseudocyanea
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Strophariaceae
+- scientific_name: Stropharia semiglobata
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Strophariaceae
+- scientific_name: Suillellus comptus
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Boletales
+- scientific_name: Suillellus mendax
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Boletales
+- scientific_name: Suillellus queletii
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Boletales
+- scientific_name: Suillus borealis
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Boletales
+- scientific_name: Suillus bresadolae
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Boletales
+- scientific_name: Suillus brevipes
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Boletales
+- scientific_name: Suillus clintonianus
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Boletales
+- scientific_name: Suillus mediterraneensis
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Boletales
+- scientific_name: Suillus tomentosus
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Boletales
+- scientific_name: Suillus weaverae
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Boletales
+- scientific_name: Trametes betulina
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Polyporaceae
+- scientific_name: Trametes elegans
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Polyporaceae
+- scientific_name: Trametes hirsuta
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Polyporaceae
+- scientific_name: Trametes pubescens
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Polyporaceae
+- scientific_name: Trametes suaveolens
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Polyporaceae
+- scientific_name: Tremella aurantia
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Tremellales
+- scientific_name: Tricholoma atrosquamosum
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Tricholomataceae
+- scientific_name: Tricholoma huronense
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Tricholomataceae
+- scientific_name: Tricholoma inamoenum
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Tricholomataceae
+- scientific_name: Tricholoma magnivelare
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Tricholomataceae
+- scientific_name: Tricholoma matsutake
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Tricholomataceae
+- scientific_name: Tricholoma murrillianum
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Tricholomataceae
+- scientific_name: Tricholoma nigrum
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Tricholomataceae
+- scientific_name: Tricholoma orirubens
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Tricholomataceae
+- scientific_name: Tricholoma resplendens
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Tricholomataceae
+- scientific_name: Tricholoma sejunctum
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Tricholomataceae
+- scientific_name: Tricholoma smithii
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Tricholomataceae
+- scientific_name: Tricholoma tigrinum
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Tricholomataceae
+- scientific_name: Tricholoma venenatum
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Tricholomataceae
+- scientific_name: Tricholomella constricta
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Agaricales
+- scientific_name: Tubaria dispersa
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Tubariaceae
+- scientific_name: Tuber foetidum
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Pezizales (Tuberaceae)
+- scientific_name: Tuber indicum
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Pezizales (Tuberaceae)
+- scientific_name: Tuber uncinatum
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Pezizales (Tuberaceae)
+- scientific_name: Tylopilus brevisporus
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Boletales
+- scientific_name: Tylopilus ferrugineus
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Boletales
+- scientific_name: Tylopilus indecisus
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Boletales
+- scientific_name: Tylopilus rhoadsiae
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Boletales
+- scientific_name: Tylopilus rubrobrunneus
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Boletales
+- scientific_name: Tylopilus variobrunneus
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Boletales
+- scientific_name: Tyromyces chioneus
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Polyporales
+- scientific_name: Verpa conica
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Pezizales
+- scientific_name: Volvariella speciosa
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Pluteaceae
+- scientific_name: Volvopluteus gloiocephalus
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Agaricales
+- scientific_name: Wynnea americana
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Pezizales
+- scientific_name: Xerocomellus diffractus
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Boletales
+- scientific_name: Xerocomellus porosporus
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Boletales
+- scientific_name: Xerocomus illudens
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Boletales
+- scientific_name: Xerocomus silwoodensis
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Boletales
+- scientific_name: Xerocomus tenax
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Boletales
+- scientific_name: Xeromphalina campanella
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Agaricales
+- scientific_name: Xeromphalina kauffmanii
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Agaricales
+- scientific_name: Xylaria carpophila
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Xylariales
+- scientific_name: Xylaria longipes
+  known_varieties: ''
+  common_name: ''
+  edibility: Unknown
+  group: Xylariales

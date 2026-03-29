@@ -4,166 +4,117 @@ used throughout the system.
 
 This rubric governs:
     - What the ingestion LLM extracts (via schemas in llm/schemas.py)
-    - How features are grouped for embedding (morphological, ecological, taxonomic)
+    - How features are grouped for embedding (6 embedding groups + numeric)
     - What the similarity engine compares
 
-The rubric is designed to be expanded over time. Adding new features
-requires updating: this file, the extraction schema, and the embedding logic.
+Field-to-group assignments are loaded from a YAML profile under
+ingestion/profiles/<name>.yaml. The active profile is set via
+GROUPING_PROFILE in .env (default: "default").
 """
 
+from pathlib import Path
+
+import yaml
+
+from config import settings
+
 # ---------------------------------------------------------------------------
-# Feature groups — define which fields belong to each similarity group
+# Numeric fields — for direct comparison, not embedded
 # ---------------------------------------------------------------------------
 
-MORPHOLOGICAL_FIELDS = [
-    # --- Cap ---
-    "cap.shape",                        # convex, broadly convex, flat, depressed, umbonate, etc.
-    "cap.colors",                       # list of observed colors (fresh)
-    "cap.color_faded",                  # color when dried/faded — e.g. buff, brownish
-    "cap.color_pattern",                # uniform, darker center, two-toned, mottled, etc.
-    "cap.surface_texture",              # velvety, slimy, smooth, fibrous, hairy-scaly, dry, etc.
-    "cap.surface_moisture",             # dry, viscid, glutinous, hygrophanous, etc.
-    "cap.scales_or_warts",              # present/absent + description
-    "cap.margin_type",                  # inrolled, wavy, even, striate/lined, etc.
-    "cap.margin_lined_at_maturity",     # bool — lined/striate at margin with age (e.g. Laccaria)
-    "cap.bruising_color",               # color change on handling/damage
-    "cap.central_depression",           # bool — depressed at disc
-    "cap.diameter_min_cm",
-    "cap.diameter_max_cm",
-
-    # --- Hymenium type ---
-    "hymenium.type",                    # gills | pores | teeth | ridges | smooth
-
-    # --- Gills (if hymenium.type == gills) ---
-    "gills.attachment",                 # free, adnate, decurrent, sinuate, etc.
-    "gills.spacing",                    # crowded, close, subdistant, distant
-    "gills.color",
-    "gills.color_with_age",
-    "gills.thickness",                  # thin, thick — e.g. Laccaria thick gills
-    "gills.texture",                    # waxy, brittle, normal
-    "gills.edge_texture",               # smooth, serrate, eroded, fimbriate
-
-    # --- Pores / Tubes (if hymenium.type == pores) ---
-    "pores.color",
-    "pores.color_with_age",
-    "pores.bruising_color",             # e.g. slowly orangish-brown, blue, none
-    "pores.density_per_mm",
-    "tubes.depth_mm",
-
-    # --- Stem ---
-    "stem.color",
-    "stem.color_with_age",
-    "stem.surface_texture",             # smooth, reticulate, fibrous, hairy, scaly, powdery
-    "stem.reticulation",                # none | partial | full — key for boletes
-    "stem.shape",                       # equal, club-shaped, tapered base, bulbous, swollen base
-    "stem.attachment_position",         # central, eccentric, lateral, absent
-    "stem.consistency",                 # firm, fibrous, spongy, brittle
-    "stem.hollow_or_solid",             # hollow | stuffed | solid
-    "stem.base_color",
-    "stem.basal_mycelium_color",        # mycelium color at base — e.g. lilac in Laccaria
-    "stem.finger_stain_color",          # e.g. yellow stain from Retiboletus ornatipes
-    "stem.bruising_color",              # color change on bruising
-    "stem.height_min_cm",
-    "stem.height_max_cm",
-    "stem.diameter_min_cm",
-    "stem.diameter_max_cm",
-
-    # --- Veil ---
-    "veil.present",
-    "veil.type",                        # partial | universal | cortina | absent
-    "veil.cortina_present",             # bool — explicit flag; key differentiator vs. Cortinarius
-    "veil.shape",
-    "veil.color",
-    "veil.ring_position",               # superior, median, inferior, apical
-    "veil.ring_mobility",               # fixed, movable
-    "veil.ring_persistence",            # persistent, fugacious, ring_zone
-
-    # --- Volva ---
-    "volva.present",
-    "volva.type",
-    "volva.shape",
-    "volva.color",
-
-    # --- Flesh ---
-    "flesh.color",
-    "flesh.bruising_color",
-    "flesh.latex",                      # absent, white, blue, red, orange, etc.
-    "flesh.odor",
-    "flesh.taste",                      # mild, bitter, acrid, farinaceous, not distinctive
-    "flesh.texture",                    # firm, soft, brittle, insubstantial, watery
-    "flesh.hyphal_structure",           # homoiomerous, heteromerous
-    "flesh.cap_stem_consistency",       # homogeneous, heterogeneous
-    "flesh.quantity",                   # insubstantial | thin | moderate | thick
-
-    # --- Spore print ---
-    "spore_print_color",
-
-    # --- Spores (microscopic) ---
-    "spore.shape",                      # globose, ellipsoid, subfusoid, amygdaliform, etc.
-    "spore.length_min_um",
-    "spore.length_max_um",
-    "spore.width_min_um",
-    "spore.width_max_um",
-    "spore.ornamentation",              # smooth | echinulate | warty | reticulate | striate
-    "spore.spine_length_um",            # for echinulate spores — e.g. 1.5–3 µm in Laccaria
-    "spore.spine_base_width_um",        # diagnostic detail for Laccaria genus
-    "spore.amyloidity",                 # amyloid | inamyloid | dextrinoid
-    "spore.color_in_KOH",
-
-    # --- Microscopic: basidia ---
-    "microscopic.basidia_spore_count",  # 4-spored, 2-spored, mixed — can differ within species
-
-    # --- Microscopic: cystidia ---
-    "microscopic.cheilocystidia_shape",       # narrowly cylindric, subclavate, etc.
-    "microscopic.cheilocystidia_dims_um",     # e.g. "25–65 x 4–12"
-    "microscopic.pleurocystidia_shape",
-    "microscopic.pleurocystidia_dims_um",
-    "microscopic.cystidia_color_in_KOH",
-
-    # --- Microscopic: pileipellis ---
-    "microscopic.pileipellis_type",           # cutis | trichoderm | ixocutis | hymeniderm
-    "microscopic.pileipellis_element_width_um",
-    "microscopic.pileipellis_terminal_cell_shape",  # subclavate, capitate, rounded, etc.
-
-    # --- Chemical reactions ---
-    "chemical.KOH_cap",
-    "chemical.KOH_flesh",
-    "chemical.NH4OH_cap",
-    "chemical.NH4OH_flesh",
-    "chemical.FeSO4_cap",
-    "chemical.FeSO4_flesh",
-
-    # --- Overall ---
-    "overall_size_class",               # small | medium | large
-    "overall_body_form",                # agaricoid, boletoid, gasteroid, tremelloid, etc.
-    "growth_habit",                     # solitary, scattered, gregarious, caespitose, connate
-    "edibility_status",                 # edible | inedible | toxic | choice | unknown
-    "known_lookalikes",
+# Range pairs: (min_field, max_field)
+NUMERIC_RANGE_FIELDS: list[tuple[str, str]] = [
+    ("cap.diameter_min_cm", "cap.diameter_max_cm"),
+    ("stem.height_min_cm", "stem.height_max_cm"),
+    ("stem.diameter_min_cm", "stem.diameter_max_cm"),
+    ("spore.length_min_um", "spore.length_max_um"),
+    ("spore.width_min_um", "spore.width_max_um"),
 ]
 
-ECOLOGICAL_FIELDS = [
-    "ecology.trophic_mode",             # mycorrhizal | saprotrophic | parasitic
-    "ecology.habitat_types",            # hardwood forest, conifer forest, grassland, etc.
-    "ecology.substrate",                # soil, wood, dung, leaf litter, etc.
-    "ecology.associated_trees",         # oak, beech, pine, etc.
-    "ecology.fruiting_seasons",         # spring | summer | fall | winter
-    "ecology.fruiting_months",          # e.g. "July–September", "late spring and summer"
-    "ecology.geographic_regions",
-    "ecology.altitude_notes",
-    "ecology.growth_position",          # terrestrial | lignicolous | coprophilous | etc.
-    "ecology.microhabitat_notes",       # e.g. mossy ground, disturbed areas
+# Single values: (field, tolerance) — tolerance is max distance for score = 0
+NUMERIC_SINGLE_FIELDS: list[tuple[str, float]] = [
+    ("pores.density_per_mm", 3.0),
+    ("tubes.depth_mm", 15.0),
+    ("spore.spine_length_um", 2.0),
+    ("spore.spine_base_width_um", 1.0),
+    ("microscopic.pileipellis_element_width_um", 5.0),
 ]
 
-TAXONOMIC_FIELDS = [
-    "kingdom",
-    "phylum",                           # e.g. Basidiomycetes — useful for broad filtering
-    "order",
-    "family",
-    "genus",
-    "species",
-    "common_names",
-    "synonyms",
-]
+# Combined list for iteration
+NUMERIC_FIELDS: list[tuple] = NUMERIC_RANGE_FIELDS + NUMERIC_SINGLE_FIELDS
+
+# Set-overlap field — Jaccard month similarity, not embedded
+MONTH_OVERLAP_FIELD: str = "ecology.fruiting_months"
+
+# All numeric field paths (flattened from range pairs + single values)
+# MONTH_OVERLAP_FIELD is included to prevent profiles from embedding it.
+_NUMERIC_FIELD_PATHS = [f for pair in NUMERIC_RANGE_FIELDS for f in pair] + [
+    f for f, _ in NUMERIC_SINGLE_FIELDS
+] + [MONTH_OVERLAP_FIELD]
+
+# ---------------------------------------------------------------------------
+# YAML profile loading
+# ---------------------------------------------------------------------------
+
+_PROFILES_DIR = Path(__file__).parent / "profiles"
+
+
+def _load_profile(name: str) -> dict[str, list[str]]:
+    """Load a grouping profile YAML and validate it."""
+    path = _PROFILES_DIR / f"{name}.yaml"
+    if not path.exists():
+        raise FileNotFoundError(f"Grouping profile {name!r} not found at {path}")
+    with open(path) as f:
+        profile = yaml.safe_load(f)
+
+    if not profile:
+        raise ValueError(f"Profile {name!r} is empty")
+    # Normalize empty groups to []
+    for key in list(profile):
+        if profile[key] is None:
+            profile[key] = []
+    # Validate no numeric fields in embedding groups
+    numeric = set(_NUMERIC_FIELD_PATHS)
+    for group, fields in profile.items():
+        overlap = numeric & set(fields)
+        if overlap:
+            raise ValueError(
+                f"Profile {name!r}, group {group!r}: numeric fields not allowed: {overlap}"
+            )
+    return profile
+
+
+def get_active_profile() -> str:
+    """Return the name of the active grouping profile."""
+    return settings.grouping_profile
+
+
+# ---------------------------------------------------------------------------
+# Embedding groups — each maps to one pgvector column
+# ---------------------------------------------------------------------------
+
+EMBEDDING_GROUPS: dict[str, list[str]] = _load_profile(settings.grouping_profile)
+GROUP_SLOTS = tuple(EMBEDDING_GROUPS.keys())  # derived from active profile, for backward compat
+
+# Non-morphological groups — used for morpho pool priority (Stage 2)
+_NON_MORPHOLOGICAL = {"ecological", "habitat", "trees", "growth", "taxonomic"}
+MORPHOLOGICAL_GROUP_NAMES: frozenset[str] = frozenset(
+    g for g in EMBEDDING_GROUPS if g not in _NON_MORPHOLOGICAL
+)
+
+# ---------------------------------------------------------------------------
+# Backward-compatible union — used by build_comparison_table
+# ---------------------------------------------------------------------------
+
+MORPHOLOGICAL_FIELDS: list[str] = []
+for _fields in EMBEDDING_GROUPS.values():
+    MORPHOLOGICAL_FIELDS.extend(_fields)
+MORPHOLOGICAL_FIELDS.extend(_NUMERIC_FIELD_PATHS)
+
+
+# ---------------------------------------------------------------------------
+# Helpers
+# ---------------------------------------------------------------------------
 
 
 def _get_nested(d: dict, path: str):

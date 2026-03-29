@@ -17,6 +17,8 @@ from pathlib import Path
 import requests
 from bs4 import BeautifulSoup
 
+from ingestion.sources._image_utils import filter_content_images
+
 SOURCE_NAME = "mushroomexpert"
 CACHE_DIR = Path("data/cache")
 RATE_LIMIT_SECONDS = 1.0
@@ -126,7 +128,7 @@ def fetch_species_page(scientific_name: str, aliases: list[str] | None = None) -
         return None
 
     html, final_url = page
-    soup = BeautifulSoup(html, "html.parser")
+    soup = BeautifulSoup(html, "lxml")
 
     # mushroomexpert uses <td width="380"> as the left content column
     content_td = soup.find("td", {"width": "380"})
@@ -149,6 +151,7 @@ def fetch_species_page(scientific_name: str, aliases: list[str] | None = None) -
         logger.debug("Empty content for %s (mushroomexpert)", scientific_name)
         return None
 
-    result = {"text": text, "url": final_url}
+    image_urls = filter_content_images(source.find_all("img"), final_url)
+    result = {"text": text, "url": final_url, "image_urls": image_urls}
     _save_cache(scientific_name, result)
     return result

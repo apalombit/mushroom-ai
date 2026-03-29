@@ -1,0 +1,2313 @@
+# Known lookalike mappings per species (merged from ground_truth_pairs + extracted_lookalikes)
+# indexed:       lookalikes present in species_list.yaml
+# non_indexed:   lookalikes not yet in species_list.yaml
+# danger_notes:  safety-critical confusion notes (from curated ground truth)
+#
+# Total species with lookalikes: 416
+
+lookalikes:
+- species: Agaricus arvensis
+  indexed:
+  - Agaricus bisporus
+  - Agaricus campestris
+  - Agaricus moelleri
+  - Agaricus silvicola
+  - Agaricus xanthodermus
+  - Amanita virosa
+- species: Agaricus augustus
+  indexed:
+  - Agaricus bernardii
+  - Agaricus impudicus
+  - Agaricus julius
+  - Agaricus praeclaresquamosus
+  - Amanita smithiana
+- species: Agaricus bisporus
+  indexed:
+  - Agaricus campestris
+  - Agaricus comtulus
+  - Agaricus xanthodermus
+  - Amanita virosa
+- species: Agaricus campestris
+  indexed:
+  - Agaricus andrewii
+  - Agaricus argenteus
+  - Agaricus arvensis
+  - Agaricus bisporus
+  - Agaricus comtulus
+  - Agaricus porphyrocephalus
+  - Agaricus xanthodermus
+  - Amanita phalloides
+  - Amanita verna
+  - Amanita virosa
+  - Leucoagaricus leucothites
+  danger_notes:
+  - lookalike: Agaricus xanthodermus
+    note: A. campestris is edible; A. xanthodermus causes GI distress. Very similar appearance.
+  - lookalike: Amanita phalloides
+    note: A. campestris is edible; A. phalloides is deadly. Young A. phalloides can resemble field mushrooms.
+- species: Agaricus langei
+  indexed:
+  - Agaricus sylvaticus
+- species: Agaricus sylvaticus
+  indexed:
+  - Agaricus haemorrhoidarius
+  - Agaricus langei
+  - Agaricus phaeolepidotus
+  - Agaricus xanthodermus
+  - Tricholoma vaccinum
+- species: Agaricus xanthodermus
+  indexed:
+  - Agaricus arvensis
+  - Agaricus campestris
+  danger_notes:
+  - lookalike: Agaricus campestris
+    note: A. campestris is edible; A. xanthodermus causes GI distress. Very similar appearance.
+- species: Agrocybe praecox
+  indexed:
+  - Agrocybe acericola
+  - Agrocybe dura
+  - Agrocybe molesta
+  - Agrocybe paludosa
+  - Cyclocybe cylindracea
+  - Marasmius oreades
+- species: Amanita battarrae
+  indexed:
+  - Amanita fulva
+  - Amanita vaginata
+- species: Amanita caesarea
+  indexed:
+  - Amanita crocea
+  - Amanita fulva
+  - Amanita jacksonii
+  - Amanita muscaria
+  - Amanita phalloides
+  danger_notes:
+  - lookalike: Amanita muscaria
+    note: A. caesarea is choice edible; A. muscaria is toxic. Confused when young (egg stage).
+  - lookalike: Amanita phalloides
+    note: A. caesarea is choice edible; A. phalloides is deadly. Young specimens can look similar.
+- species: Amanita ceciliae
+  indexed:
+  - Amanita crocea
+  - Amanita fulva
+  - Amanita liquii
+  - Amanita sinicoflava
+  - Amanita vaginata
+- species: Amanita citrina
+  indexed:
+  - Amanita phalloides
+  - Amanita porphyria
+  - Amanita virosa
+  - Armillaria mellea
+- species: Amanita crocea
+  indexed:
+  - Amanita caesarea
+  - Amanita fulva
+  - Amanita muscaria
+- species: Amanita echinocephala
+  indexed:
+  - Amanita citrina
+  - Amanita cokeri
+  - Amanita muscaria
+  - Amanita smithiana
+  - Amanita strobiliformis
+  - Amanita virosa
+  - Amanita vittadinii
+- species: Amanita excelsa
+  indexed:
+  - Amanita citrina
+  - Amanita pantherina
+  - Amanita rubescens
+  - Amanita strobiliformis
+- species: Amanita fulva
+  indexed:
+  - Amanita caesarea
+  - Amanita crocea
+  - Amanita vaginata
+- species: Amanita gemmata
+  indexed:
+  - Amanita citrina
+  - Amanita gioiosa
+  - Amanita muscaria
+  - Amanita orientigemmata
+  - Amanita pantherina
+- species: Amanita muscaria
+  indexed:
+  - Amanita caesarea
+  - Amanita gemmata
+  - Amanita pantherina
+  - Amanita parcivolvata
+  - Amanita regalis
+  - Amanita rubescens
+  - Russula nobilis
+  danger_notes:
+  - lookalike: Amanita caesarea
+    note: A. caesarea is choice edible; A. muscaria is toxic. Confused when young (egg stage).
+- species: Amanita ocreata
+  indexed:
+  - Amanita phalloides
+- species: Amanita ovoidea
+  indexed:
+  - Amanita citrina
+  - Amanita phalloides
+  - Amanita proxima
+  - Amanita strobiliformis
+  - Amanita verna
+  - Amanita virosa
+- species: Amanita pantherina
+  indexed:
+  - Amanita excelsa
+  - Amanita gemmata
+  - Amanita rubescens
+  - Amanita vaginata
+  danger_notes:
+  - lookalike: Amanita rubescens
+    note: A. rubescens is edible (cooked); A. pantherina is toxic. Similar cap with patches.
+- species: Amanita phalloides
+  indexed:
+  - Agaricus campestris
+  - Agaricus silvicola
+  - Amanita caesarea
+  - Amanita citrina
+  - Amanita gemmata
+  - Amanita ocreata
+  - Amanita verna
+  - Calvatia gigantea
+  - Leucoagaricus leucothites
+  - Lycoperdon perlatum
+  - Lycoperdon pyriforme
+  - Melanoleuca evenosa
+  - Russula heterophylla
+  - Russula virescens
+  - Tricholoma columbetta
+  - Volvariella volvacea
+  danger_notes:
+  - lookalike: Amanita caesarea
+    note: A. caesarea is choice edible; A. phalloides is deadly. Young specimens can look similar.
+  - lookalike: Agaricus campestris
+    note: A. campestris is edible; A. phalloides is deadly. Young A. phalloides can resemble field mushrooms.
+  - lookalike: Russula virescens
+    note: R. virescens is edible; A. phalloides is deadly. Green-capped species confusion.
+- species: Amanita porphyria
+  indexed:
+  - Amanita citrina
+  - Amanita excelsa
+  - Amanita pantherina
+  - Amanita rubescens
+- species: Amanita rubescens
+  indexed:
+  - Amanita caesarea
+  - Amanita excelsa
+  - Amanita francheti
+  - Amanita muscaria
+  - Amanita novinupta
+  - Amanita pantherina
+  danger_notes:
+  - lookalike: Amanita pantherina
+    note: A. rubescens is edible (cooked); A. pantherina is toxic. Similar cap with patches.
+- species: Amanita strobiliformis
+  indexed:
+  - Amanita citrina
+  - Amanita ovoidea
+  - Amanita solitaria
+  - Amanita virosa
+  - Amanita vittadinii
+- species: Amanita vaginata
+  indexed:
+  - Amanita caesarea
+  - Amanita ceciliae
+  - Amanita crocea
+  - Amanita fulva
+  - Amanita mairei
+- species: Amanita verna
+  indexed:
+  - Agaricus campestris
+  - Amanita citrina
+  - Amanita phalloides
+  - Amanita vaginata
+  - Amanita virosa
+  - Leucoagaricus leucothites
+- species: Amanita virosa
+  indexed:
+  - Agaricus campestris
+  - Agaricus silvicola
+  - Amanita bisporigera
+  - Amanita citrina
+  - Amanita phalloides
+  - Amanita strobiliformis
+  - Amanita verna
+  - Coprinus comatus
+  - Lycoperdon perlatum
+  - Lycoperdon pyriforme
+- species: Ampulloclitocybe clavipes
+  indexed:
+  - Ampulloclitocybe avellaneialba
+  - Clitocybe nebularis
+  - Infundibulicybe geotropa
+- species: Armillaria cepistipes
+  indexed:
+  - Armillaria mellea
+- species: Armillaria gallica
+  indexed:
+  - Armillaria cepistipes
+  - Armillaria mellea
+  - Armillaria ostoyae
+  - Armillaria tabescens
+  - Pholiota squarrosa
+- species: Armillaria mellea
+  indexed:
+  - Amanita citrina
+  - Armillaria gallica
+  - Armillaria ostoyae
+  - Armillaria tabescens
+  - Galerina marginata
+  - Hypholoma fasciculare
+  - Hypholoma lateritium
+  - Pholiota squarrosa
+  danger_notes:
+  - lookalike: Galerina marginata
+    note: A. mellea is conditionally edible; G. marginata is deadly. Can grow on same substrates.
+- species: Armillaria ostoyae
+  indexed:
+  - Armillaria borealis
+  - Armillaria cepistipes
+  - Armillaria gallica
+  - Armillaria lutea
+  - Armillaria mellea
+  - Armillaria tabescens
+  - Pholiota squarrosa
+- species: Armillaria tabescens
+  indexed:
+  - Galerina marginata
+  - Omphalotus illudens
+- species: Ascocoryne sarcoides
+  indexed:
+  - Ascocoryne cylichnium
+  - Auricularia auricula-judae
+  - Tremella foliacea
+- species: Auricularia auricula-judae
+  indexed:
+  - Auricularia angiospermarum
+  - Auricularia heimuer
+  - Auricularia mesenterica
+- species: Baeospora myosura
+  indexed:
+  - Strobilurus esculentus
+- species: Bjerkandera adusta
+  indexed:
+  - Bjerkandera fumosa
+  - Cerrena unicolor
+  - Trametes versicolor
+- species: Boletus aereus
+  indexed:
+  - Boletus aestivalis
+  - Boletus betulicola
+  - Boletus edulis
+  - Boletus pinophilus
+  - Boletus reticulatus
+  - Tylopilus felleus
+- species: Boletus edulis
+  indexed:
+  - Boletus aereus
+  - Boletus pinophilus
+  - Boletus reticulatus
+  - Leccinum scabrum
+  - Tylopilus felleus
+  danger_notes:
+  - lookalike: Tylopilus felleus
+    note: B. edulis is choice edible; T. felleus is extremely bitter (inedible). Similar cap and stem.
+- species: Boletus pinophilus
+  indexed:
+  - Aureoboletus mirabilis
+  - Boletus aereus
+  - Boletus betulicola
+  - Boletus edulis
+  - Boletus reticulatus
+  - Tylopilus felleus
+- species: Boletus reticulatus
+  indexed:
+  - Boletus aereus
+  - Boletus edulis
+  - Boletus pinophilus
+  - Tylopilus felleus
+- species: Bovista nigrescens
+  indexed:
+  - Bovista aestivalis
+  - Bovista paludosa
+  - Bovista plumbea
+  - Bovista tomentosa
+- species: Bovista plumbea
+  indexed:
+  - Amanita phalloides
+  - Calvatia gigantea
+  - Lycoperdon mammiforme
+  - Lycoperdon perlatum
+  - Lycoperdon pyriforme
+  - Scleroderma citrinum
+- species: Bulgaria inquinans
+  indexed:
+  - Daldinia concentrica
+  - Exidia glandulosa
+  - Exidia truncata
+  - Neobulgaria pura
+  - Sarcosoma globosum
+- species: Butyriboletus appendiculatus
+  indexed:
+  - Boletus edulis
+  - Butyriboletus regius
+  - Caloboletus calopus
+  - Caloboletus radicans
+- species: Butyriboletus fechtneri
+  indexed:
+  - Butyriboletus appendiculatus
+  - Butyriboletus fuscoroseus
+  - Butyriboletus regius
+  - Caloboletus calopus
+  - Caloboletus radicans
+  - Hemileccinum impolitum
+  - Rubroboletus pulchrotinctus
+  - Rubroboletus satanas
+- species: Butyriboletus fuscoroseus
+  indexed:
+  - Butyriboletus fechtneri
+- species: Butyriboletus regius
+  indexed:
+  - Boletus kluzakii
+  - Boletus pseudoregius
+  - Butyriboletus appendiculatus
+  - Hortiboletus rubellus
+  - Rubroboletus pulchrotinctus
+- species: Caloboletus calopus
+  indexed:
+  - Butyriboletus fechtneri
+  - Caloboletus radicans
+  - Rubroboletus satanas
+  - Suillellus luridus
+  - Xerocomellus chrysenteron
+- species: Caloboletus radicans
+  indexed:
+  - Caloboletus calopus
+  - Hemileccinum impolitum
+  - Rubroboletus satanas
+  - Suillellus luridus
+- species: Calocera cornea
+  indexed:
+  - Calocera pallidospathulata
+  - Calocera viscosa
+- species: Calocera viscosa
+  indexed:
+  - Calocera cornea
+  - Clavulinopsis corniculata
+  - Clavulinopsis fusiformis
+  - Ramaria flava
+  - Ramaria flavescens
+- species: Calocybe gambosa
+  indexed:
+  - Clitopilus prunulus
+  - Entoloma sinuatum
+  - Inocybe erubescens
+  - Tricholomella constricta
+- species: Calvatia gigantea
+  indexed:
+  - Amanita phalloides
+  - Handkea utriformis
+  - Lycoperdon pratense
+  - Lycoperdon pyriforme
+  - Scleroderma citrinum
+- species: Cantharellus amethysteus
+  indexed:
+  - Cantharellus cibarius
+- species: Cantharellus cibarius
+  indexed:
+  - Cantharellus amethysteus
+  - Cantharellus ferruginascens
+  - Cantharellus friesii
+  - Clitocybe illudens
+  - Hygrophoropsis aurantiaca
+  - Omphalotus olearius
+  danger_notes:
+  - lookalike: Omphalotus olearius
+    note: C. cibarius is choice edible; O. olearius is toxic. Similar orange color and shape.
+  - lookalike: Hygrophoropsis aurantiaca
+    note: C. cibarius is edible; H. aurantiaca is inedible/mildly toxic. Very similar appearance.
+- species: Cantharellus cinereus
+  indexed:
+  - Craterellus cornucopioides
+- species: Cantharellus ferruginascens
+  indexed:
+  - Cantharellus cibarius
+- species: Cantharellus pallens
+  indexed:
+  - Cantharellus cibarius
+- species: Cerioporus leptocephalus
+  indexed:
+  - Polyporus badius
+  - Polyporus brumalis
+  - Polyporus ciliatus
+  - Polyporus durus
+  - Polyporus melanopus
+- species: Cerioporus squamosus
+  indexed:
+  - Piptoporus betulinus
+  - Polyporus tuberaster
+- species: Chlorophyllum molybdites
+  indexed:
+  - Macrolepiota procera
+  danger_notes:
+  - lookalike: Macrolepiota procera
+    note: M. procera is edible; C. molybdites is toxic. Nearly identical appearance.
+- species: Chlorophyllum rhacodes
+  indexed:
+  - Agaricus augustus
+  - Chlorophyllum brunneum
+  - Chlorophyllum molybdites
+  - Macrolepiota konradii
+  - Macrolepiota procera
+- species: Chroogomphus rutilus
+  indexed:
+  - Chroogomphus fulmineus
+  - Gomphidius glutinosus
+- species: Clathrus ruber
+  indexed:
+  - Clathrus chrysomycelinus
+  - Clathrus columnatus
+  - Clathrus crispus
+- species: Clavariadelphus pistillaris
+  indexed:
+  - Clavariadelphus ligula
+  - Clavariadelphus truncatus
+  - Clavulinopsis fusiformis
+- species: Clavariadelphus truncatus
+  indexed:
+  - Clavariadelphus pistillaris
+- species: Clavulina cinerea
+  indexed:
+  - Clavulina coralloides
+  - Clavulina rugosa
+- species: Clavulina coralloides
+  indexed:
+  - Clavulina cinerea
+  - Clavulina rugosa
+  - Ramaria stricta
+  - Ramariopsis kunzei
+- species: Clavulina rugosa
+  indexed:
+  - Clavulina cinerea
+  - Clavulina coralloides
+  - Clavulina cristata
+- species: Clavulinopsis corniculata
+  indexed:
+  - Calocera viscosa
+  - Clavulinopsis fusiformis
+- species: Clavulinopsis fusiformis
+  indexed:
+  - Clavaria fragilis
+  - Clavulinopsis corniculata
+  - Clavulinopsis laeticolor
+  - Clavulinopsis luteoalba
+- species: Clitocybe dealbata
+  indexed:
+  - Clitocybe gibba
+- species: Clitocybe fragrans
+  indexed:
+  - Clitocybe gibba
+  - Clitocybe odora
+  - Infundibulicybe gibba
+- species: Clitocybe geotropa
+  indexed:
+  - Clitocybe gibba
+  - Entoloma sinuatum
+- species: Clitocybe gibba
+  indexed:
+  - Clitocybe dealbata
+- species: Clitocybe nebularis
+  indexed:
+  - Clitocybe alexandri
+  - Clitocybe clavipes
+  - Clitocybe nuda
+  - Entoloma nitidum
+  - Entoloma sinuatum
+  - Lepista nuda
+- species: Clitocybe odora
+  indexed:
+  - Clitocybe fragrans
+  - Clitocybe phyllophila
+  - Clitocybe rivulosa
+  - Leucocybe candicans
+  - Stropharia aeruginosa
+  - Stropharia caerulea
+  - Stropharia pseudocyanea
+- species: Clitocybe phyllophila
+  indexed:
+  - Calocybe gambosa
+  - Clitocybe cerussata
+  - Clitocybe dealbata
+  - Clitopilus prunulus
+- species: Clitopilus prunulus
+  indexed:
+  - Clitocybe cerussata
+  - Clitocybe dealbata
+  - Clitocybe rivulosa
+- species: Coniophora puteana
+  indexed:
+  - Coniophora olivacea
+- species: Coprinellus micaceus
+  indexed:
+  - Coprinellus bisporus
+  - Coprinellus disseminatus
+  - Coprinellus domesticus
+  - Coprinellus flocculosus
+  - Coprinellus radians
+  - Coprinellus truncorum
+  - Coprinellus xanthothrix
+  - Coprinopsis atramentaria
+  - Coprinopsis variegata
+- species: Coprinopsis atramentaria
+  indexed:
+  - Coprinellus flocculosus
+  - Coprinellus micaceus
+  - Coprinopsis acuminata
+  - Coprinopsis romagnesiana
+  - Coprinus comatus
+  danger_notes:
+  - lookalike: Coprinus comatus
+    note: C. comatus is edible; C. atramentaria causes illness with alcohol.
+- species: Coprinus comatus
+  indexed:
+  - Amanita virosa
+  - Chlorophyllum molybdites
+  - Coprinellus domesticus
+  - Coprinopsis atramentaria
+  - Coprinopsis nivea
+  - Coprinopsis picacea
+  - Coprinus sterquilinus
+  - Parasola auricoma
+  danger_notes:
+  - lookalike: Coprinopsis atramentaria
+    note: C. comatus is edible; C. atramentaria causes illness with alcohol.
+- species: Cortinarius alboviolaceus
+  indexed:
+  - Cortinarius camphoratus
+  - Cortinarius paleaceus
+  - Cortinarius traganus
+  - Inocybe fastigiata
+  - Inocybe rimosa
+  - Lepista nuda
+- species: Cortinarius bolaris
+  indexed:
+  - Cortinarius orellanus
+  - Cortinarius rubellus
+- species: Cortinarius brunneus
+  indexed:
+  - Cortinarius bicolor
+- species: Cortinarius caerulescens
+  indexed:
+  - Cortinarius caesiocanescens
+  - Cortinarius calopus
+  - Cortinarius purpurascens
+  - Cortinarius saniosus
+  - Cortinarius violaceus
+- species: Cortinarius camphoratus
+  indexed:
+  - Cortinarius traganus
+  - Cortinarius violaceus
+- species: Cortinarius caperatus
+  indexed:
+  - Cortinarius laniger
+  - Cortinarius traganus
+- species: Cortinarius cinnamomeus
+  indexed:
+  - Cortinarius semisanguineus
+- species: Cortinarius decipiens
+  indexed:
+  - Cortinarius hemitrichus
+- species: Cortinarius delibutus
+  indexed:
+  - Cortinarius triumphans
+- species: Cortinarius flexipes
+  indexed:
+  - Cortinarius hemitrichus
+- species: Cortinarius glaucopus
+  indexed:
+  - Cortinarius caerulescens
+  - Cortinarius saniosus
+  - Cortinarius subfoetens
+  - Cortinarius varius
+- species: Cortinarius hemitrichus
+  indexed:
+  - Cortinarius flexipes
+- species: Cortinarius hinnuleus
+  indexed:
+  - Cortinarius flexipes
+- species: Cortinarius mucosus
+  indexed:
+  - Cortinarius collinitus
+- species: Cortinarius orellanus
+  indexed:
+  - Cantharellus cibarius
+  - Chroogomphus rutilus
+  - Cortinarius bolaris
+  - Cortinarius cinnabarinus
+  - Cortinarius rubellus
+  - Cortinarius sanguineus
+- species: Cortinarius praestans
+  indexed:
+  - Cortinarius rubellus
+  - Cortinarius varius
+  - Cortinarius violaceus
+- species: Cortinarius purpurascens
+  indexed:
+  - Clitocybe nuda
+  - Cortinarius violaceus
+- species: Cortinarius rubellus
+  indexed:
+  - Armillaria ostoyae
+  - Cantharellus cibarius
+  - Cortinarius collinitus
+  - Cortinarius cotoneus
+  - Cortinarius orellanus
+  - Craterellus tubaeformis
+- species: Cortinarius salor
+  indexed:
+  - Cortinarius alboviolaceus
+  - Cortinarius caerulescens
+  - Cortinarius camphoratus
+  - Cortinarius cyanites
+  - Cortinarius delibutus
+  - Cortinarius glaucopus
+  - Cortinarius purpurascens
+  - Cortinarius rigens
+  - Cortinarius traganus
+  - Cortinarius varius
+  - Cortinarius violaceus
+- species: Cortinarius sanguineus
+  indexed:
+  - Cortinarius brunneus
+  - Cortinarius cinnabarinus
+  - Cortinarius marylandensis
+  - Cortinarius saniosus
+  - Cortinarius semisanguineus
+  - Cortinarius smithii
+- species: Cortinarius torvus
+  indexed:
+  - Cortinarius mucifluoides
+  - Cortinarius saniosus
+- species: Cortinarius traganus
+  indexed:
+  - Cortinarius alboviolaceus
+  - Cortinarius camphoratus
+  - Cortinarius caperatus
+  - Cortinarius paleaceus
+- species: Cortinarius triumphans
+  indexed:
+  - Cortinarius cinnamomeus
+  - Cortinarius delibutus
+  - Suillus grevillei
+- species: Cortinarius variicolor
+  indexed:
+  - Cortinarius varius
+- species: Cortinarius violaceus
+  indexed:
+  - Cortinarius caerulescens
+  - Cortinarius traganus
+- species: Craterellus cornucopioides
+  indexed:
+  - Cantharellus cibarius
+  - Cantharellus cinereus
+  - Craterellus fallax
+  - Craterellus tubaeformis
+  - Faerberia carbonaria
+- species: Craterellus tubaeformis
+  indexed:
+  - Craterellus lutescens
+- species: Crepidotus mollis
+  indexed:
+  - Crepidotus calolepis
+  - Crepidotus epibryus
+  - Crepidotus variabilis
+  - Pleurotus ostreatus
+- species: Crepidotus variabilis
+  indexed:
+  - Crepidotus mollis
+- species: Cuphophyllus virgineus
+  indexed:
+  - Clitocybe rivulosa
+  - Cuphophyllus russocoriaceus
+  - Hygrophorus eburneus
+- species: Cystoderma amianthinum
+  indexed:
+  - Amanita caesarea
+  - Cystoderma carcharias
+  - Cystoderma fallax
+  - Cystoderma granulosum
+  - Cystoderma jasonis
+  - Lepiota castanea
+  - Squamanita paradoxa
+- species: Cystoderma carcharias
+  indexed:
+  - Cystoderma amianthinum
+  - Cystoderma fallax
+- species: Daedalea quercina
+  indexed:
+  - Daedaleopsis confragosa
+  - Lenzites betulinus
+- species: Daldinia concentrica
+  indexed:
+  - Kretzschmaria deusta
+- species: Disciotis venosa
+  indexed:
+  - Discina ancilis
+  - Discina perlata
+- species: Entoloma bloxamii
+  indexed:
+  - Entoloma nitidum
+  - Entoloma prunuloides
+- species: Entoloma nitidum
+  indexed:
+  - Entoloma serrulatum
+- species: Entoloma prunuloides
+  indexed:
+  - Entoloma griseocyaneum
+- species: Entoloma rhodopolium
+  indexed:
+  - Entoloma nidorosum
+  - Rhodocollybia butyracea
+- species: Entoloma sericeum
+  indexed:
+  - Entoloma cetratum
+  - Entoloma conferendum
+  - Entoloma rhodopolium
+- species: Entoloma sinuatum
+  indexed:
+  - Calocybe gambosa
+  - Clitocybe nebularis
+  - Clitopilus prunulus
+  - Hygrophorus penarioides
+  - Lyophyllum connatum
+- species: Exidia glandulosa
+  indexed:
+  - Bulgaria inquinans
+  - Exidia nigricans
+  - Exidia plana
+  - Exidia recisa
+  - Tremella mesenterica
+- species: Exidia recisa
+  indexed:
+  - Exidia glandulosa
+  - Exidia repanda
+  - Tremella mesenterica
+- species: Fistulina hepatica
+  indexed:
+  - Inonotus hispidus
+- species: Flammulina velutipes
+  indexed:
+  - Flammulina elastica
+  - Flammulina fennae
+  - Flammulina filiformis
+  - Flammulina populicola
+  - Galerina marginata
+  - Kuehneromyces mutabilis
+  - Tapinella atrotomentosa
+- species: Fomes fomentarius
+  indexed:
+  - Piptoporus betulinus
+- species: Fomitopsis pinicola
+  indexed:
+  - Fomes fomentarius
+  - Fomitopsis rosea
+- species: Galerina marginata
+  indexed:
+  - Armillaria mellea
+  - Armillaria ostoyae
+  - Flammulina velutipes
+  - Gymnopilus penetrans
+  - Kuehneromyces mutabilis
+  - Psilocybe cubensis
+  danger_notes:
+  - lookalike: Kuehneromyces mutabilis
+    note: K. mutabilis is edible; G. marginata is deadly. Grow in similar habitats on wood.
+  - lookalike: Armillaria mellea
+    note: A. mellea is conditionally edible; G. marginata is deadly. Can grow on same substrates.
+- species: Galerina paludosa
+  indexed:
+  - Galerina sphagnorum
+  - Kuehneromyces mutabilis
+- species: Ganoderma applanatum
+  indexed:
+  - Fomes fomentarius
+  - Fomitopsis pinicola
+  - Ganoderma adspersum
+  - Ganoderma australe
+  - Ganoderma brownii
+  - Ganoderma lobatum
+  - Ganoderma resinaceum
+- species: Ganoderma carnosum
+  indexed:
+  - Ganoderma lucidum
+  - Ganoderma resinaceum
+  - Ganoderma tsugae
+- species: Ganoderma lucidum
+  indexed:
+  - Ganoderma applanatum
+  - Ganoderma carnosum
+  - Ganoderma curtisii
+  - Ganoderma resinaceum
+  - Ganoderma sessile
+- species: Ganoderma resinaceum
+  indexed:
+  - Fomes fomentarius
+  - Ganoderma applanatum
+  - Ganoderma lucidum
+- species: Geastrum fimbriatum
+  indexed:
+  - Geastrum lageniforme
+  - Geastrum rufescens
+  - Geastrum saccatum
+  - Geastrum triplex
+- species: Geastrum pectinatum
+  indexed:
+  - Geastrum berkeleyi
+  - Geastrum schmidelii
+  - Geastrum striatum
+- species: Geastrum quadrifidum
+  indexed:
+  - Geastrum fornicatum
+  - Geastrum jurei
+  - Geastrum leptospermum
+  - Geastrum minimum
+  - Geastrum welwitschii
+- species: Geastrum striatum
+  indexed:
+  - Geastrum pectinatum
+- species: Geastrum triplex
+  indexed:
+  - Geastrum lageniforme
+  - Geastrum saccatum
+- species: Gomphidius glutinosus
+  indexed:
+  - Chroogomphus rutilus
+  - Gomphidius oregonensis
+  - Gomphidius roseus
+  - Gomphidius smithii
+  - Hygrophorus hypothejus
+  - Suillus luteus
+- species: Gomphidius roseus
+  indexed:
+  - Chroogomphus rutilus
+  - Gomphidius rutilus
+  - Russula emetica
+- species: Gomphus clavatus
+  indexed:
+  - Cantharellus amethysteus
+  - Cantharellus melanoxeros
+  - Clavariadelphus truncatus
+- species: Gymnopus confluens
+  indexed:
+  - Laccaria laccata
+- species: Gymnopus dryophilus
+  indexed:
+  - Rhodocollybia butyracea
+- species: Gyromitra esculenta
+  indexed:
+  - Gyromitra californica
+  - Gyromitra infula
+  - Gyromitra montana
+  - Helvella crispa
+  - Morchella esculenta
+  danger_notes:
+  - lookalike: Morchella esculenta
+    note: M. esculenta is choice edible; G. esculenta is toxic (potentially deadly). Both are spring fungi.
+- species: Gyromitra infula
+  indexed:
+  - Gyromitra ambigua
+  - Gyromitra esculenta
+- species: Hebeloma crustuliniforme
+  indexed:
+  - Hebeloma ingratum
+  - Hebeloma leucosarx
+  - Hebeloma populinum
+  - Hebeloma sinapizans
+- species: Hebeloma radicosum
+  indexed:
+  - Hebeloma radicosoides
+  - Hebeloma sinapizans
+- species: Hebeloma sinapizans
+  indexed:
+  - Hebeloma crustuliniforme
+  - Hebeloma insigne
+- species: Helvella atra
+  indexed:
+  - Helvella elastica
+  - Helvella lacunosa
+- species: Helvella crispa
+  indexed:
+  - Helvella atra
+  - Helvella elastica
+  - Helvella lacunosa
+- species: Helvella elastica
+  indexed:
+  - Helvella crispa
+  - Helvella ephippium
+  - Helvella lacunosa
+  - Helvella latispora
+- species: Hericium alpestre
+  indexed:
+  - Hericium cirrhatum
+  - Hericium coralloides
+  - Hericium erinaceus
+- species: Hericium coralloides
+  indexed:
+  - Hericium americanum
+  - Hericium cirrhatum
+  - Hericium erinaceus
+- species: Hericium erinaceus
+  indexed:
+  - Hericium americanum
+  - Hericium cirrhatum
+  - Hericium coralloides
+  - Hydnum repandum
+  - Hydnum rufescens
+- species: Hydnellum concrescens
+  indexed:
+  - Hydnellum scrobiculatum
+  - Hydnum rufescens
+  - Phellodon tomentosus
+- species: Hydnellum peckii
+  indexed:
+  - Abortiporus biennis
+  - Hydnellum ferrugineum
+  - Hydnum rufescens
+- species: Hydnellum suaveolens
+  indexed:
+  - Hydnellum caeruleum
+  - Hydnellum cyanopodium
+- species: Hydnum repandum
+  indexed:
+  - Cantharellus cibarius
+  - Hydnum aerostatisporum
+  - Hydnum albidum
+  - Hydnum ellipsosporum
+  - Hydnum rufescens
+  - Hydnum subtilior
+  - Pseudohydnum gelatinosum
+  - Sarcodon scabrosus
+- species: Hydnum rufescens
+  indexed:
+  - Hydnum repandum
+- species: Hygrocybe acutoconica
+  indexed:
+  - Hygrocybe conica
+  - Hygrocybe conicoides
+  - Hygrocybe cuspidata
+- species: Hygrocybe chlorophana
+  indexed:
+  - Hygrocybe ceracea
+  - Hygrocybe flavescens
+  - Hygrocybe glutinipes
+  - Hygrocybe persistens
+- species: Hygrocybe coccinea
+  indexed:
+  - Hygrocybe conica
+  - Hygrocybe punicea
+- species: Hygrocybe conica
+  indexed:
+  - Hygrocybe acutoconica
+  - Hygrocybe conicoides
+  - Hygrocybe nigrescens
+  - Hygrocybe punicea
+  - Hygrocybe singeri
+- species: Hygrocybe miniata
+  indexed:
+  - Hygrocybe calciphila
+  - Hygrocybe cantharellus
+  - Hygrocybe coccinea
+  - Hygrocybe conica
+  - Hygrocybe mucronella
+  - Hygrocybe quieta
+  - Hygrocybe reidii
+  - Hygrocybe squamulosa
+  - Hygrocybe substrangulata
+- species: Hygrocybe punicea
+  indexed:
+  - Hygrocybe aurantiosplendens
+  - Hygrocybe coccinea
+  - Hygrocybe conica
+  - Hygrocybe splendidissima
+- species: Hygrophoropsis aurantiaca
+  indexed:
+  - Aphroditeola olida
+  - Cantharellus cibarius
+  - Cantharellus formosus
+  - Chrysomphalina chrysophylla
+  - Cortinarius hesleri
+  - Haasiella splendidissima
+  - Omphalotus illudens
+  - Paxillus involutus
+  danger_notes:
+  - lookalike: Cantharellus cibarius
+    note: C. cibarius is edible; H. aurantiaca is inedible/mildly toxic. Very similar appearance.
+- species: Hygrophorus agathosmus
+  indexed:
+  - Hygrophorus bakerensis
+  - Hygrophorus marzuolus
+  - Hygrophorus occidentalis
+  - Hygrophorus pustulatus
+- species: Hygrophorus camarophyllus
+  indexed:
+  - Hygrophorus marzuolus
+- species: Hygrophorus chrysodon
+  indexed:
+  - Hygrophorus eburneus
+  - Hygrophorus gliocyclus
+- species: Hygrophorus discoxanthus
+  indexed:
+  - Cuphophyllus virgineus
+  - Hygrophorus chrysodon
+  - Hygrophorus eburneus
+  - Hygrophorus piceae
+- species: Hygrophorus eburneus
+  indexed:
+  - Hygrocybe virginea
+  - Hygrophorus cossus
+  - Hygrophorus piceae
+  - Limacella illinita
+- species: Hygrophorus erubescens
+  indexed:
+  - Hygrophorus capreloarius
+  - Hygrophorus purpurascens
+  - Hygrophorus russula
+- species: Hygrophorus hypothejus
+  indexed:
+  - Hygrocybe punicea
+  - Hygrophorus lucorum
+  - Hygrophorus olivaceoalbus
+- species: Hygrophorus latitabundus
+  indexed:
+  - Hygrophorus hypothejus
+  - Hygrophorus olivaceoalbus
+- species: Hygrophorus lucorum
+  indexed:
+  - Hygrophorus cossus
+- species: Hygrophorus marzuolus
+  indexed:
+  - Hygrophorus agathosmus
+  - Hygrophorus pustulatus
+- species: Hygrophorus poetarum
+  indexed:
+  - Hygrophorus penarioides
+  - Hygrophorus pudorinus
+- species: Hygrophorus pudorinus
+  indexed:
+  - Hygrophorus poetarum
+- species: Hygrophorus purpurascens
+  indexed:
+  - Hygrophorus erubescens
+  - Hygrophorus russula
+- species: Hygrophorus russula
+  indexed:
+  - Hygrophorus erubescens
+  - Hygrophorus marzuolus
+  - Hygrophorus purpurascens
+- species: Hypholoma capnoides
+  indexed:
+  - Galerina marginata
+  - Gymnopilus penetrans
+  - Hypholoma fasciculare
+  - Hypholoma lateritium
+  - Xeromphalina campanella
+- species: Hypholoma fasciculare
+  indexed:
+  - Armillaria mellea
+  - Galerina marginata
+  - Hypholoma capnoides
+  - Hypholoma lateritium
+  - Hypholoma subviride
+- species: Hypholoma lateritium
+  indexed:
+  - Armillaria mellea
+  - Hypholoma capnoides
+  - Hypholoma fasciculare
+- species: Imleria badia
+  indexed:
+  - Boletus edulis
+  - Boletus reticulatus
+  - Tylopilus felleus
+- species: Infundibulicybe gibba
+  indexed:
+  - Bonomyces sinopicus
+  - Clitocybe maxima
+  - Clitocybe phaeophthalma
+  - Clitocybe squamulosa
+  - Clitocybe vibecina
+  - Infundibulicybe catinus
+  - Infundibulicybe squamulosa
+  - Lepista flaccida
+  - Paralepistopsis amoenolens
+- species: Inocybe asterospora
+  indexed:
+  - Inocybe napipes
+- species: Inocybe erubescens
+  indexed:
+  - Inocybe geophylla
+  - Inocybe rimosa
+  - Suillus granulatus
+- species: Inocybe geophylla
+  indexed:
+  - Agaricus campestris
+- species: Inocybe rimosa
+  indexed:
+  - Inocybe erubescens
+  - Inocybe geophylla
+  - Suillus granulatus
+- species: Inonotus hispidus
+  indexed:
+  - Fistulina hepatica
+- species: Kuehneromyces mutabilis
+  indexed:
+  - Armillaria nabsnona
+  - Flammulina velutipes
+  - Galerina marginata
+  - Hypholoma capnoides
+  danger_notes:
+  - lookalike: Galerina marginata
+    note: K. mutabilis is edible; G. marginata is deadly. Grow in similar habitats on wood.
+- species: Laccaria amethystina
+  indexed:
+  - Cortinarius rigens
+  - Cortinarius violaceus
+  - Laccaria laccata
+  - Mycena pura
+- species: Laccaria bicolor
+  indexed:
+  - Laccaria amethystina
+  - Laccaria laccata
+  - Laccaria trichodermophora
+- species: Laccaria laccata
+  indexed:
+  - Laccaria amethystina
+  - Laccaria bicolor
+  - Laccaria fraterna
+  - Laccaria proxima
+  - Laccaria tortilis
+- species: Laccaria proxima
+  indexed:
+  - Laccaria amethystina
+  - Laccaria bicolor
+  - Laccaria laccata
+  - Laccaria tortilis
+- species: Lactarius alpinus
+  indexed:
+  - Lactarius glyciosmus
+  - Lactarius helvus
+  - Lactarius lilacinus
+  - Lactarius mammosus
+  - Lactarius rufus
+- species: Lactarius badiosanguineus
+  indexed:
+  - Lactarius hepaticus
+  - Lactarius rufus
+- species: Lactarius blennius
+  indexed:
+  - Lactarius circellatus
+  - Lactarius pyrogalus
+  - Lactarius turpis
+- species: Lactarius camphoratus
+  indexed:
+  - Lactarius fragilis
+  - Lactarius subdulcis
+  - Lactarius tabidus
+- species: Lactarius chrysorrheus
+  indexed:
+  - Lactarius maculatipes
+  - Lactarius quietus
+  - Lactarius vinaceorufescens
+  - Lactarius xanthogalactus
+- species: Lactarius deliciosus
+  indexed:
+  - Lactarius deterrimus
+  - Lactarius sanguifluus
+  - Lactarius torminosus
+  danger_notes:
+  - lookalike: Lactarius torminosus
+    note: L. deliciosus is edible; L. torminosus is toxic raw. Similar Lactarius appearance.
+- species: Lactarius deterrimus
+  indexed:
+  - Lactarius deliciosus
+  - Lactarius fennoscandicus
+  - Lactarius sanguifluus
+  - Lactarius semisanguifluus
+  - Lactarius torminosus
+  - Lactarius zonarius
+- species: Lactarius fulvissimus
+  indexed:
+  - Lactarius quietus
+- species: Lactarius glyciosmus
+  indexed:
+  - Lactarius alpinus
+  - Lactarius helvus
+  - Lactarius mammosus
+  - Lactarius quietus
+- species: Lactarius helvus
+  indexed:
+  - Lactarius alpinus
+  - Lactarius glyciosmus
+  - Lactarius lilacinus
+  - Lactarius mammosus
+- species: Lactarius nanus
+  indexed:
+  - Lactarius alpinus
+- species: Lactarius piperatus
+  indexed:
+  - Lactarius deceptivus
+  - Lactarius pubescens
+  - Lactarius vellereus
+  - Russula delica
+- species: Lactarius pubescens
+  indexed:
+  - Lactarius mairei
+  - Lactarius scoticus
+  - Lactarius tesquorum
+  - Lactarius torminosus
+- species: Lactarius pyrogalus
+  indexed:
+  - Lactarius glyciosmus
+- species: Lactarius quietus
+  indexed:
+  - Lactarius rufus
+- species: Lactarius repraesentaneus
+  indexed:
+  - Lactarius pubescens
+  - Lactarius scrobiculatus
+  - Lactarius tabidus
+  - Lactarius torminosus
+  - Lactarius uvidus
+- species: Lactarius rufus
+  indexed:
+  - Lactarius subdulcis
+  - Lactarius xanthogalactus
+- species: Lactarius salmonicolor
+  indexed:
+  - Lactarius deliciosus
+  - Lactarius deterrimus
+- species: Lactarius sanguifluus
+  indexed:
+  - Lactarius semisanguifluus
+- species: Lactarius scrobiculatus
+  indexed:
+  - Lactarius blennius
+  - Lactarius evosmus
+  - Lactarius intermedius
+  - Lactarius pubescens
+  - Lactarius repraesentaneus
+  - Lactarius salmonicolor
+  - Lactarius torminosus
+- species: Lactarius semisanguifluus
+  indexed:
+  - Lactarius deterrimus
+- species: Lactarius serifluus
+  indexed:
+  - Lactarius subdulcis
+- species: Lactarius subdulcis
+  indexed:
+  - Cortinarius decipiens
+  - Lactarius blennius
+  - Lactarius fulvissimus
+  - Lactarius hepaticus
+  - Lactarius quietus
+  - Lactarius tabidus
+- species: Lactarius tabidus
+  indexed:
+  - Lactarius subdulcis
+- species: Lactarius torminosus
+  indexed:
+  - Lactarius cilicioides
+  - Lactarius controversus
+  - Lactarius deliciosus
+  - Lactarius mairei
+  - Lactarius pubescens
+  - Lactarius scrobiculatus
+  - Lactarius tesquorum
+  - Paxillus involutus
+  danger_notes:
+  - lookalike: Lactarius deliciosus
+    note: L. deliciosus is edible; L. torminosus is toxic raw. Similar Lactarius appearance.
+- species: Lactarius vellereus
+  indexed:
+  - Lactarius controversus
+  - Lactarius piperatus
+- species: Lactarius volemus
+  indexed:
+  - Lactarius corrugis
+  - Lactarius hygrophoroides
+- species: Lactifluus piperatus
+  indexed:
+  - Lactarius controversus
+  - Lactifluus vellereus
+  - Russula chloroides
+  - Russula delica
+- species: Lactifluus vellereus
+  indexed:
+  - Lactifluus piperatus
+- species: Laetiporus sulphureus
+  indexed:
+  - Cerioporus squamosus
+  - Laetiporus cincinnatus
+  - Laetiporus huroniensis
+  - Meripilus giganteus
+- species: Leccinum aurantiacum
+  indexed:
+  - Leccinum albostipitatum
+  - Leccinum insigne
+  - Leccinum rufum
+  - Leccinum versipelle
+  - Leccinum vulpinum
+- species: Leccinum holopus
+  indexed:
+  - Leccinum albellum
+  - Leccinum scabrum
+- species: Leccinum scabrum
+  indexed:
+  - Leccinum cyaneobasileucum
+  - Leccinum versipelle
+- species: Leccinum versipelle
+  indexed:
+  - Leccinum scabrum
+- species: Lentinellus cochleatus
+  indexed:
+  - Hohenbuehelia petaloides
+  - Pleurotus cornucopiae
+- species: Lepiota brunneoincarnata
+  indexed:
+  - Lepiota cristata
+  - Lepiota fuscovinacea
+  - Lepiota ignivolvata
+  - Lepiota subincarnata
+  - Macrolepiota procera
+- species: Lepiota clypeolaria
+  indexed:
+  - Lepiota ignivolvata
+  - Lepiota magnispora
+  - Lepiota xanthophylla
+- species: Lepiota cristata
+  indexed:
+  - Lepiota castanea
+  - Lepiota felina
+  - Lepiota ignivolvata
+  - Leucoagaricus rubrotinctus
+  - Marasmius oreades
+- species: Lepista flaccida
+  indexed:
+  - Clitocybe gibba
+  - Lepista multiformis
+- species: Lepista nuda
+  indexed:
+  - Cortinarius violaceus
+  - Lepista glaucocana
+  - Lepista personata
+  - Lepista sordida
+- species: Lepista saeva
+  indexed:
+  - Lepista nuda
+- species: Leucopaxillus giganteus
+  indexed:
+  - Clitocybe geotropa
+  - Clitocybe gibba
+  - Clitocybe robusta
+  - Infundibulicybe geotropa
+  - Infundibulicybe gibba
+  - Lactarius vellereus
+- species: Lycoperdon echinatum
+  indexed:
+  - Lycoperdon mammiforme
+  - Lycoperdon nigrescens
+  - Lycoperdon perlatum
+  - Lycoperdon pulcherrimum
+- species: Lycoperdon excipuliforme
+  indexed:
+  - Amanita phalloides
+  - Lycoperdon molle
+  - Lycoperdon perlatum
+- species: Lycoperdon mammiforme
+  indexed:
+  - Lycoperdon echinatum
+  - Lycoperdon perlatum
+- species: Lycoperdon perlatum
+  indexed:
+  - Amanita muscaria
+  - Amanita phalloides
+  - Calvatia excipuliformis
+  - Lycoperdon echinatum
+  - Lycoperdon mammiforme
+  - Lycoperdon molle
+  - Lycoperdon nigrescens
+  - Lycoperdon pulcherrimum
+  - Lycoperdon pyriforme
+  - Lycoperdon umbrinum
+  - Scleroderma citrinum
+- species: Lycoperdon pyriforme
+  indexed:
+  - Amanita bisporigera
+  - Amanita muscaria
+  - Amanita phalloides
+  - Lycoperdon lividum
+  - Lycoperdon subincarnatum
+  - Scleroderma citrinum
+- species: Lyophyllum connatum
+  indexed:
+  - Amanita virosa
+  - Tricholoma album
+- species: Lyophyllum decastes
+  indexed:
+  - Armillaria mellea
+  - Connopus acervatus
+  - Hypsizygus tessulatus
+  - Lyophyllum connatum
+  - Lyophyllum fumosum
+  - Macrocystidia cucumis
+- species: Macrolepiota excoriata
+  indexed:
+  - Chlorophyllum rhacodes
+  - Macrolepiota konradii
+  - Macrolepiota mastoidea
+  - Macrolepiota procera
+- species: Macrolepiota mastoidea
+  indexed:
+  - Chlorophyllum rhacodes
+  - Macrolepiota procera
+- species: Macrolepiota procera
+  indexed:
+  - Chlorophyllum molybdites
+  - Chlorophyllum rhacodes
+  - Cystoderma amianthinum
+  - Lepiota brunneoincarnata
+  - Macrolepiota excoriata
+  - Macrolepiota konradii
+  - Macrolepiota mastoidea
+  danger_notes:
+  - lookalike: Chlorophyllum molybdites
+    note: M. procera is edible; C. molybdites is toxic. Nearly identical appearance.
+- species: Marasmius oreades
+  indexed:
+  - Agaricus campestris
+  - Agrocybe praecox
+  - Chlorophyllum molybdites
+  - Clitocybe dealbata
+  - Clitocybe rivulosa
+- species: Marasmius rotula
+  indexed:
+  - Gymnopus androsaceus
+  - Marasmius bulliardi
+  - Marasmius capillaris
+  - Marasmius fulvoferrugineus
+  - Marasmius pulcherripes
+  - Marasmius siccus
+- species: Melanoleuca melaleuca
+  indexed:
+  - Melanoleuca polioleuca
+- species: Meripilus giganteus
+  indexed:
+  - Bondarzewia mesenterica
+  - Grifola frondosa
+  - Laetiporus sulphureus
+  - Meripilus sumstinei
+  - Polyporus squamosus
+  - Polyporus umbellatus
+- species: Morchella elata
+  indexed:
+  - Gyromitra esculenta
+  - Helvella crispa
+  - Morchella esculenta
+- species: Morchella esculenta
+  indexed:
+  - Gyromitra esculenta
+  - Helvella crispa
+  - Morchella elata
+  danger_notes:
+  - lookalike: Gyromitra esculenta
+    note: M. esculenta is choice edible; G. esculenta is toxic (potentially deadly). Both are spring fungi.
+- species: Morchella semilibera
+  indexed:
+  - Gyromitra esculenta
+- species: Mycena crocata
+  indexed:
+  - Mycena galopus
+  - Mycena haematopus
+  - Mycena sanguinolenta
+- species: Mycena galericulata
+  indexed:
+  - Mycena arcangeliana
+  - Mycena haematopus
+  - Mycena inclinata
+  - Mycena maculata
+  - Mycena polygramma
+  - Mycena tintinnabulum
+- species: Mycena haematopus
+  indexed:
+  - Mycena arcangeliana
+  - Mycena crocata
+  - Mycena galopus
+  - Mycena polygramma
+  - Mycena sanguinolenta
+- species: Mycena polygramma
+  indexed:
+  - Mycena arcangeliana
+  - Mycena inclinata
+- species: Mycena pura
+  indexed:
+  - Mycena pelianthina
+  - Mycena rosea
+- species: Mycena rosea
+  indexed:
+  - Mycena pelianthina
+  - Mycena pura
+- species: Nectria cinnabarina
+  indexed:
+  - Nectria coccinea
+- species: Neoboletus luridiformis
+  indexed:
+  - Imperator rhodopurpureus
+  - Rubroboletus dupainii
+  - Rubroboletus pulcherrimus
+  - Rubroboletus satanas
+  - Suillellus luridus
+  - Suillellus queletii
+- species: Omphalotus olearius
+  indexed:
+  - Cantharellus cibarius
+  - Cortinarius rubellus
+  - Hygrophoropsis aurantiaca
+  - Omphalotus illudens
+  danger_notes:
+  - lookalike: Cantharellus cibarius
+    note: C. cibarius is choice edible; O. olearius is toxic. Similar orange color and shape.
+- species: Otidea onotica
+  indexed:
+  - Otidea bufonia
+  - Otidea leporina
+  - Wynnea americana
+- species: Panaeolus semiovatus
+  indexed:
+  - Stropharia semiglobata
+  - Volvariella speciosa
+- species: Panellus stipticus
+  indexed:
+  - Crepidotus mollis
+  - Sarcomyxa serotina
+  - Tapinella panuoides
+- species: Paxillus filamentosus
+  indexed:
+  - Paxillus involutus
+- species: Paxillus involutus
+  indexed:
+  - Lactarius turpis
+  - Paxillus filamentosus
+  - Paxillus obscurisporus
+  - Paxillus rubicundulus
+  - Paxillus vernalis
+  - Tapinella atrotomentosa
+- species: Peziza badia
+  indexed:
+  - Peziza badioconfusa
+  - Peziza phyllogena
+- species: Peziza vesiculosa
+  indexed:
+  - Peziza fimeti
+- species: Phallus hadriani
+  indexed:
+  - Phallus impudicus
+- species: Phallus impudicus
+  indexed:
+  - Mutinus caninus
+  - Phallus hadriani
+- species: Phellinus igniarius
+  indexed:
+  - Fomes fomentarius
+- species: Phellodon tomentosus
+  indexed:
+  - Coltricia cinnamomea
+  - Phellodon atratus
+  - Phellodon confluens
+  - Sarcodon fuscoindicus
+- species: Phlebia radiata
+  indexed:
+  - Meruliporia incrassata
+  - Serpula lacrymans
+- species: Pholiota adiposa
+  indexed:
+  - Armillaria mellea
+  - Kuehneromyces mutabilis
+  - Pholiota alnicola
+  - Pholiota aurivella
+  - Pholiota squarrosa
+- species: Pholiota aurivella
+  indexed:
+  - Pholiota alnicola
+  - Pholiota gummosa
+  - Pholiota limonella
+- species: Pholiota flammans
+  indexed:
+  - Pholiota adiposa
+  - Pholiota squarrosa
+- species: Pholiota squarrosa
+  indexed:
+  - Armillaria mellea
+  - Leucopholiota decorosa
+  - Pholiota adiposa
+  - Pholiota aurivella
+  - Pholiota flammans
+- species: Phylloporus pelletieri
+  indexed:
+  - Phylloporus rhodoxanthus
+- species: Pisolithus arhizus
+  indexed:
+  - Pisolithus arenarius
+- species: Pleurotus cornucopiae
+  indexed:
+  - Pleurotus dryinus
+  - Pleurotus ostreatus
+- species: Pleurotus ostreatus
+  indexed:
+  - Lentinellus ursinus
+  - Panellus serotinus
+  - Pleurotus cornucopiae
+  - Pleurotus dryinus
+  - Pleurotus populinus
+  - Pleurotus pulmonarius
+- species: Pleurotus pulmonarius
+  indexed:
+  - Pleurotus ostreatus
+  - Pleurotus populinus
+- species: Pluteus cervinus
+  indexed:
+  - Pluteus atromarginatus
+  - Pluteus petasatus
+  - Pluteus umbrosus
+- species: Pluteus salicinus
+  indexed:
+  - Pluteus cervinus
+  - Pluteus umbrosus
+- species: Polyporus squamosus
+  indexed:
+  - Piptoporus betulinus
+- species: Polyporus umbellatus
+  indexed:
+  - Grifola frondosa
+  - Meripilus giganteus
+  - Sparassis crispa
+- species: Postia caesia
+  indexed:
+  - Cyanosporus subcaesius
+  - Tyromyces chioneus
+- species: Psathyrella candolleana
+  indexed:
+  - Psathyrella incerta
+  - Psathyrella piluliformis
+- species: Psathyrella piluliformis
+  indexed:
+  - Galerina marginata
+  - Kuehneromyces mutabilis
+- species: Pseudoclitocybe cyathiformis
+  indexed:
+  - Clitocybe rivulosa
+- species: Psilocybe cubensis
+  indexed:
+  - Galerina marginata
+- species: Psilocybe semilanceata
+  indexed:
+  - Inocybe geophylla
+  - Panaeolus foenisecii
+  - Panaeolus semiovatus
+  - Psilocybe mexicana
+  - Psilocybe pelliculosa
+  - Psilocybe samuiensis
+  - Psilocybe strictipes
+- species: Psilocybe serbica
+  indexed:
+  - Psilocybe arcana
+  - Psilocybe bohemica
+  - Psilocybe moravica
+- species: Ramaria botrytis
+  indexed:
+  - Ramaria araiospora
+  - Ramaria caulifloriformis
+  - Ramaria fennica
+  - Ramaria formosa
+  - Ramaria pallida
+  - Ramaria rielii
+  - Ramaria rubrievanescens
+  - Ramaria rubripermanens
+  - Ramaria strasseri
+- species: Ramaria flava
+  indexed:
+  - Clavaria amoena
+  - Ramaria formosa
+  - Ramaria stricta
+- species: Ramaria formosa
+  indexed:
+  - Ramaria flava
+  - Ramaria flavescens
+  - Ramaria stricta
+- species: Ramaria pallida
+  indexed:
+  - Clavulina cristata
+  - Clavulina rugosa
+  - Ramaria botrytis
+  - Ramaria gracilis
+- species: Ramaria stricta
+  indexed:
+  - Ramaria formosa
+- species: Rhizopogon luteolus
+  indexed:
+  - Pisolithus arhizus
+  - Rhizopogon rubescens
+- species: Rhodocollybia butyracea
+  indexed:
+  - Connopus acervatus
+  - Gymnopus dryophilus
+  - Gymnopus ocior
+  - Rhodocollybia maculata
+- species: Rhodocollybia maculata
+  indexed:
+  - Rhodocollybia butyracea
+- species: Rickenella fibula
+  indexed:
+  - Cantharellus minor
+  - Hygrocybe cantharellus
+  - Mycena acicula
+  - Xeromphalina campanella
+  - Xeromphalina kauffmanii
+- species: Rubroboletus satanas
+  indexed:
+  - Caloboletus calopus
+  - Neoboletus luridiformis
+  - Rubroboletus legaliae
+  - Rubroboletus pulchrotinctus
+  - Rubroboletus rhodoxanthus
+  - Rubroboletus rubrosanguineus
+  - Suillellus luridus
+- species: Russula adusta
+  indexed:
+  - Russula albonigra
+  - Russula densifolia
+  - Russula nigricans
+- species: Russula albonigra
+  indexed:
+  - Russula adusta
+  - Russula densifolia
+  - Russula dissimulans
+  - Russula nigricans
+- species: Russula amoenolens
+  indexed:
+  - Russula cerolens
+  - Russula pectinatoides
+- species: Russula atropurpurea
+  indexed:
+  - Russula fragilis
+  - Russula vesca
+  - Russula xerampelina
+- species: Russula aurea
+  indexed:
+  - Amanita caesarea
+  - Russula aquosa
+  - Russula maculata
+  - Russula melliolens
+  - Russula vinosa
+- species: Russula badia
+  indexed:
+  - Russula integra
+- species: Russula cessans
+  indexed:
+  - Russula aquosa
+  - Russula lilacina
+  - Russula sanguinea
+- species: Russula chloroides
+  indexed:
+  - Lactarius piperatus
+  - Russula delica
+- species: Russula claroflava
+  indexed:
+  - Russula ochroleuca
+- species: Russula cyanoxantha
+  indexed:
+  - Russula variata
+  - Russula virescens
+  - Russula xerampelina
+- species: Russula delica
+  indexed:
+  - Lactarius piperatus
+  - Lactarius vellereus
+  - Lactifluus piperatus
+  - Russula brevipes
+  - Russula chloroides
+- species: Russula densifolia
+  indexed:
+  - Russula acrifolia
+  - Russula adusta
+  - Russula albonigra
+  - Russula dissimulans
+  - Russula nigricans
+- species: Russula emetica
+  indexed:
+  - Russula mairei
+  - Russula nobilis
+  - Russula vesca
+  - Russula virescens
+- species: Russula fellea
+  indexed:
+  - Russula ochroleuca
+- species: Russula foetens
+  indexed:
+  - Russula grata
+  - Russula illota
+  - Russula laurocerasi
+- species: Russula fragilis
+  indexed:
+  - Russula atropurpurea
+- species: Russula gracillima
+  indexed:
+  - Russula betularum
+  - Russula fragilis
+  - Russula grisea
+- species: Russula grisea
+  indexed:
+  - Russula cyanoxantha
+  - Russula ionochlora
+  - Russula parazurea
+- species: Russula integra
+  indexed:
+  - Russula badia
+- species: Russula ionochlora
+  indexed:
+  - Amanita phalloides
+- species: Russula laurocerasi
+  indexed:
+  - Russula fragrantissima
+- species: Russula mustelina
+  indexed:
+  - Russula foetens
+  - Russula heterophylla
+- species: Russula nigricans
+  indexed:
+  - Russula albonigra
+  - Russula densifolia
+- species: Russula nobilis
+  indexed:
+  - Russula emetica
+- species: Russula ochroleuca
+  indexed:
+  - Russula claroflava
+- species: Russula olivacea
+  indexed:
+  - Russula aeruginea
+  - Russula heterophylla
+  - Russula vesca
+- species: Russula parazurea
+  indexed:
+  - Russula aurea
+  - Russula cyanoxantha
+- species: Russula queletii
+  indexed:
+  - Russula atropurpurea
+  - Russula integra
+  - Russula sanguinea
+  - Russula sardonia
+  - Russula torulosa
+  - Russula xerampelina
+- species: Russula sanguinea
+  indexed:
+  - Russula tenuiceps
+  - Russula torulosa
+- species: Russula sardonia
+  indexed:
+  - Russula atropurpurea
+  - Russula queletii
+  - Russula torulosa
+- species: Russula sororia
+  indexed:
+  - Russula amoenolens
+  - Russula pectinatoides
+- species: Russula torulosa
+  indexed:
+  - Russula queletii
+  - Russula sanguinea
+  - Russula sardonia
+  - Russula xerampelina
+- species: Russula turci
+  indexed:
+  - Russula amethystina
+  - Russula aurea
+- species: Russula vesca
+  indexed:
+  - Russula emetica
+  - Russula xerampelina
+- species: Russula virescens
+  indexed:
+  - Amanita phalloides
+  - Russula aeruginea
+  - Russula cutefracta
+  danger_notes:
+  - lookalike: Amanita phalloides
+    note: R. virescens is edible; A. phalloides is deadly. Green-capped species confusion.
+- species: Russula xerampelina
+  indexed:
+  - Russula sanguinea
+- species: Sarcodon imbricatus
+  indexed:
+  - Sarcodon scabrosus
+  - Strobilomyces strobilaceus
+- species: Sarcoporia polyspora
+  indexed:
+  - Fuscopostia fragilis
+  - Skeletocutis amorpha
+- species: Sarcoscypha coccinea
+  indexed:
+  - Aleuria aurantia
+  - Sarcoscypha austriaca
+  - Sarcoscypha dudley
+  - Sarcoscypha occidentalis
+- species: Sarcosphaera coronaria
+  indexed:
+  - Geopora sumneriana
+  - Peziza ammophila
+- species: Schizophyllum commune
+  indexed:
+  - Plicaturopsis crispa
+- species: Scleroderma areolatum
+  indexed:
+  - Lycoperdon mammiforme
+  - Lycoperdon perlatum
+  - Scleroderma floridanum
+  - Scleroderma michiganense
+  - Scleroderma verrucosum
+- species: Scleroderma citrinum
+  indexed:
+  - Lycoperdon mammiforme
+  - Lycoperdon perlatum
+  - Scleroderma areolatum
+- species: Scleroderma verrucosum
+  indexed:
+  - Lycoperdon mammiforme
+  - Lycoperdon perlatum
+  - Scleroderma areolatum
+  - Scleroderma cepa
+  - Scleroderma citrinum
+- species: Sparassis crispa
+  indexed:
+  - Grifola frondosa
+  - Sparassis spathulata
+- species: Stereum hirsutum
+  indexed:
+  - Stereum complicatum
+  - Stereum gausapatum
+  - Stereum subtomentosum
+  - Trametes versicolor
+- species: Strobilomyces strobilaceus
+  indexed:
+  - Strobilomyces confusus
+- species: Stropharia aeruginosa
+  indexed:
+  - Clitocybe odora
+  - Stropharia caerulea
+  - Stropharia coronilla
+  - Stropharia cyanea
+  - Stropharia pseudocyanea
+  - Stropharia rugosoannulata
+- species: Stropharia hornemannii
+  indexed:
+  - Panaeolus semiovatus
+- species: Stropharia rugosoannulata
+  indexed:
+  - Cortinarius praestans
+  - Stropharia hornemannii
+- species: Suillellus luridus
+  indexed:
+  - Neoboletus luridiformis
+  - Neoboletus sinensis
+  - Rubroboletus pulcherrimus
+  - Rubroboletus rhodoxanthus
+  - Rubroboletus satanas
+  - Suillellus comptus
+  - Suillellus mendax
+  - Suillellus queletii
+- species: Suillus bovinus
+  indexed:
+  - Suillus granulatus
+  - Suillus grevillei
+  - Suillus luteus
+  - Suillus variegatus
+- species: Suillus collinitus
+  indexed:
+  - Suillus bellini
+  - Suillus granulatus
+  - Suillus luteus
+  - Suillus mediterraneensis
+- species: Suillus granulatus
+  indexed:
+  - Suillus bellini
+  - Suillus bovinus
+  - Suillus brevipes
+  - Suillus collinitus
+  - Suillus grevillei
+  - Suillus luteus
+  - Suillus mediterraneensis
+  - Suillus weaverae
+- species: Suillus grevillei
+  indexed:
+  - Suillus clintonianus
+  - Suillus granulatus
+- species: Suillus luteus
+  indexed:
+  - Suillus borealis
+  - Suillus collinitus
+  - Suillus granulatus
+  - Suillus grevillei
+- species: Suillus tridentinus
+  indexed:
+  - Suillus bresadolae
+  - Suillus grevillei
+  - Suillus viscidus
+- species: Suillus variegatus
+  indexed:
+  - Suillus grevillei
+  - Suillus plorans
+  - Suillus tomentosus
+- species: Suillus viscidus
+  indexed:
+  - Suillus grevillei
+- species: Tapinella atrotomentosa
+  indexed:
+  - Paxillus involutus
+  - Paxillus rubicundulus
+  - Tapinella panuoides
+- species: Tapinella panuoides
+  indexed:
+  - Hygrophoropsis aurantiaca
+  - Lentinellus ursinus
+  - Paxillus involutus
+  - Phyllotopsis nidulans
+- species: Trametes gibbosa
+  indexed:
+  - Daedaleopsis confragosa
+  - Trametes betulina
+  - Trametes elegans
+  - Trametes hirsuta
+  - Trametes pubescens
+  - Trametes suaveolens
+- species: Trametes versicolor
+  indexed:
+  - Ganoderma applanatum
+  - Phaeolus schweinitzii
+  - Stereum ostrea
+  - Stereum subtomentosum
+- species: Tremella foliacea
+  indexed:
+  - Tremella aurantia
+  - Tremella mesenterica
+- species: Tremella mesenterica
+  indexed:
+  - Dacrymyces chrysospermus
+  - Guepiniopsis alpina
+  - Tremella aurantia
+- species: Tricholoma album
+  indexed:
+  - Amanita phalloides
+- species: Tricholoma argyraceum
+  indexed:
+  - Tricholoma scalpturatum
+- species: Tricholoma caligatum
+  indexed:
+  - Tricholoma magnivelare
+  - Tricholoma matsutake
+  - Tricholoma murrillianum
+- species: Tricholoma columbetta
+  indexed:
+  - Amanita phalloides
+  - Amanita virosa
+  - Calocybe gambosa
+  - Tricholoma album
+  - Tricholoma inamoenum
+- species: Tricholoma equestre
+  indexed:
+  - Cortinarius splendens
+  - Entoloma luridum
+  - Tricholoma sulphureum
+- species: Tricholoma focale
+  indexed:
+  - Armillaria mellea
+  - Tricholoma caligatum
+  - Tricholoma fracticum
+- species: Tricholoma fracticum
+  indexed:
+  - Tricholoma ustaloides
+- species: Tricholoma fulvum
+  indexed:
+  - Tricholoma equestre
+- species: Tricholoma imbricatum
+  indexed:
+  - Tricholoma vaccinum
+- species: Tricholoma josserandii
+  indexed:
+  - Entoloma nitidum
+  - Omphalotus olearius
+  - Tricholoma pardinum
+  - Tricholoma portentosum
+  - Tricholoma terreum
+- species: Tricholoma lascivum
+  indexed:
+  - Tricholoma album
+- species: Tricholoma pardinum
+  indexed:
+  - Tricholoma argyraceum
+  - Tricholoma atrosquamosum
+  - Tricholoma bresadolanum
+  - Tricholoma equestre
+  - Tricholoma huronense
+  - Tricholoma nigrum
+  - Tricholoma orirubens
+  - Tricholoma portentosum
+  - Tricholoma resplendens
+  - Tricholoma smithii
+  - Tricholoma terreum
+  - Tricholoma venenatum
+  - Tricholoma virgatum
+- species: Tricholoma portentosum
+  indexed:
+  - Tricholoma equestre
+  - Tricholoma josserandii
+  - Tricholoma pardinum
+  - Tricholoma sejunctum
+  - Tricholoma virgatum
+- species: Tricholoma saponaceum
+  indexed:
+  - Clitocybe nebularis
+  - Tricholoma terreum
+- species: Tricholoma scalpturatum
+  indexed:
+  - Tricholoma sciodes
+- species: Tricholoma sciodes
+  indexed:
+  - Tricholoma bresadolanum
+  - Tricholoma pardinum
+  - Tricholoma portentosum
+  - Tricholoma scalpturatum
+  - Tricholoma terreum
+  - Tricholoma virgatum
+- species: Tricholoma stans
+  indexed:
+  - Tricholoma albobrunneum
+  - Tricholoma pessundatum
+- species: Tricholoma sulphureum
+  indexed:
+  - Tricholoma equestre
+- species: Tricholoma terreum
+  indexed:
+  - Tricholoma atrosquamosum
+  - Tricholoma josserandii
+  - Tricholoma orirubens
+  - Tricholoma pardinum
+  - Tricholoma scalpturatum
+  - Tricholoma sciodes
+  - Tricholoma tigrinum
+  - Tricholoma virgatum
+- species: Tricholoma ustale
+  indexed:
+  - Tricholoma fulvum
+  - Tricholoma ustaloides
+- species: Tricholoma vaccinum
+  indexed:
+  - Tricholoma imbricatum
+- species: Tricholoma virgatum
+  indexed:
+  - Tricholoma sciodes
+  - Tricholoma terreum
+- species: Tubaria furfuracea
+  indexed:
+  - Tubaria dispersa
+- species: Tuber aestivum
+  indexed:
+  - Tuber brumale
+  - Tuber magnatum
+  - Tuber melanosporum
+  - Tuber uncinatum
+- species: Tuber borchii
+  indexed:
+  - Tuber foetidum
+- species: Tuber brumale
+  indexed:
+  - Tuber aestivum
+  - Tuber melanosporum
+- species: Tuber magnatum
+  indexed:
+  - Tuber borchii
+- species: Tuber melanosporum
+  indexed:
+  - Tuber aestivum
+  - Tuber indicum
+  - Tuber magnatum
+- species: Tylopilus felleus
+  indexed:
+  - Boletus aereus
+  - Boletus edulis
+  - Boletus reticulatus
+  - Boletus subtomentosus
+  - Tylopilus brevisporus
+  - Tylopilus ferrugineus
+  - Tylopilus indecisus
+  - Tylopilus rhoadsiae
+  - Tylopilus rubrobrunneus
+  - Tylopilus variobrunneus
+  danger_notes:
+  - lookalike: Boletus edulis
+    note: B. edulis is choice edible; T. felleus is extremely bitter (inedible). Similar cap and stem.
+- species: Verpa bohemica
+  indexed:
+  - Morchella populiphila
+  - Morchella punctipes
+  - Morchella semilibera
+  - Verpa conica
+- species: Volvariella bombycina
+  indexed:
+  - Amanita virosa
+  - Pluteus cervinus
+  - Volvopluteus gloiocephalus
+- species: Volvariella volvacea
+  indexed:
+  - Amanita phalloides
+- species: Xerocomellus chrysenteron
+  indexed:
+  - Imleria badia
+  - Pseudoboletus parasiticus
+  - Xerocomellus cisalpinus
+  - Xerocomellus diffractus
+  - Xerocomellus pruinatus
+- species: Xerocomellus cisalpinus
+  indexed:
+  - Boletus badius
+  - Hortiboletus rubellus
+  - Pseudoboletus parasiticus
+  - Xerocomellus chrysenteron
+  - Xerocomellus porosporus
+  - Xerocomellus pruinatus
+- species: Xerocomellus pruinatus
+  indexed:
+  - Boletus chrysenteron
+  - Hortiboletus bubalinus
+  - Xerocomellus chrysenteron
+  - Xerocomellus cisalpinus
+- species: Xerocomus ferrugineus
+  indexed:
+  - Xerocomus illudens
+  - Xerocomus subtomentosus
+  - Xerocomus tenax
+- species: Xerocomus subtomentosus
+  indexed:
+  - Xerocomellus chrysenteron
+  - Xerocomus ferrugineus
+  - Xerocomus silwoodensis
+- species: Xylaria hypoxylon
+  indexed:
+  - Calocera viscosa
+  - Xylaria carpophila
+- species: Xylaria polymorpha
+  indexed:
+  - Xylaria longipes

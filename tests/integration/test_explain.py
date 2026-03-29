@@ -25,7 +25,7 @@ def test_explanation_for_amanita_caesarea():
         )
         if species is None:
             pytest.skip("Amanita caesarea not in DB — run --reconcile first")
-        if species.embedding_morphological is None:
+        if species.embedding_macro_visual is None:
             pytest.skip("Amanita caesarea not embedded — run --embed first")
     finally:
         session.close()
