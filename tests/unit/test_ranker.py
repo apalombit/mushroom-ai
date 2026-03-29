@@ -8,6 +8,10 @@ import pytest
 from ingestion.normalize import load_vocabulary
 from similarity.ranker import (
     RANKER_FEATURES,
+    _feature_fingerprint,
+    _meta_path,
+    _save_meta,
+    _validate_meta,
     build_training_data,
     compute_pairwise_features,
     optimize_ranker,
@@ -278,12 +282,8 @@ class TestScoreCandidates:
             vocab,
             model=mini_model,
         )
-        single_0 = score_candidates(
-            features_amanita, [features_boletus], vocab, model=mini_model
-        )
-        single_1 = score_candidates(
-            features_amanita, [features_amanita], vocab, model=mini_model
-        )
+        single_0 = score_candidates(features_amanita, [features_boletus], vocab, model=mini_model)
+        single_1 = score_candidates(features_amanita, [features_amanita], vocab, model=mini_model)
         assert batch[0] == pytest.approx(single_0[0])
         assert batch[1] == pytest.approx(single_1[0])
 
@@ -308,7 +308,8 @@ class TestTrainRankerParams:
 
         species_data = {
             "Amanita muscaria": {
-                "features": sample_features_json, "group": "agaricoid",
+                "features": sample_features_json,
+                "group": "agaricoid",
             },
             "Amanita caesarea": {"features": third, "group": "agaricoid"},
             "Boletus edulis": {"features": features_boletus, "group": "boletoid"},
@@ -324,18 +325,14 @@ class TestTrainRankerParams:
     def test_train_params_override(self, training_data):
         X, y, genera = training_data
         custom_params = {"max_depth": 3, "num_leaves": 4}
-        metrics = train_ranker(
-            X, y, genera, n_folds=2, params=custom_params, save_model=False
-        )
+        metrics = train_ranker(X, y, genera, n_folds=2, params=custom_params, save_model=False)
         assert "auc_mean" in metrics
         assert metrics["n_samples"] == len(y)
 
     def test_train_save_model_false(self, training_data, tmp_path):
         X, y, genera = training_data
         model_path = tmp_path / "should_not_exist.txt"
-        metrics = train_ranker(
-            X, y, genera, n_folds=2, model_path=model_path, save_model=False
-        )
+        metrics = train_ranker(X, y, genera, n_folds=2, model_path=model_path, save_model=False)
         assert "auc_mean" in metrics
         assert not model_path.exists()
         assert metrics["feature_importance"] == {}
@@ -364,7 +361,8 @@ class TestTrainingDataVariants:
 
         species_data = {
             "Amanita muscaria": {
-                "features": sample_features_json, "group": "agaricoid",
+                "features": sample_features_json,
+                "group": "agaricoid",
             },
             "Amanita caesarea": {"features": third, "group": "agaricoid"},
             "Boletus edulis": {"features": features_boletus, "group": "boletoid"},
@@ -381,18 +379,14 @@ class TestTrainingDataVariants:
         _, y_normal, _ = build_training_data(
             species_data, edges, vocab, neg_ratio=2, symmetric=False
         )
-        _, y_sym, _ = build_training_data(
-            species_data, edges, vocab, neg_ratio=2, symmetric=True
-        )
+        _, y_sym, _ = build_training_data(species_data, edges, vocab, neg_ratio=2, symmetric=True)
         pos_normal = int(y_normal.sum())
         pos_sym = int(y_sym.sum())
         assert pos_sym == 2 * pos_normal
 
     def test_symmetric_preserves_shape(self, species_and_edges, vocab):
         species_data, edges = species_and_edges
-        X_sym, _, _ = build_training_data(
-            species_data, edges, vocab, neg_ratio=2, symmetric=True
-        )
+        X_sym, _, _ = build_training_data(species_data, edges, vocab, neg_ratio=2, symmetric=True)
         assert X_sym.shape[1] == len(RANKER_FEATURES)
 
     def test_hard_neg_mining(self, species_and_edges, vocab):
@@ -400,13 +394,12 @@ class TestTrainingDataVariants:
 
         species_data, edges = species_and_edges
         # Train a mini model first
-        X, y, genera = build_training_data(
-            species_data, edges, vocab, neg_ratio=2
-        )
+        X, y, genera = build_training_data(species_data, edges, vocab, neg_ratio=2)
         dataset = lgb.Dataset(X, label=y, feature_name=RANKER_FEATURES)
         model = lgb.train(
             {"objective": "binary", "num_leaves": 4, "verbose": -1, "seed": 42},
-            dataset, num_boost_round=10,
+            dataset,
+            num_boost_round=10,
         )
 
         # Build with hard negatives (50/50 mix: 1 hard + 1 random per anchor)
@@ -421,3 +414,58 @@ class TestTrainingDataVariants:
         neg_mean = np.nanmean(X_hard[y_hard == 0], axis=0)
         gap = float(np.nanmean(pos_mean - neg_mean))
         assert gap > 0, f"Feature gap should be positive, got {gap}"
+
+
+class TestModelFingerprint:
+    """Feature fingerprint prevents stale model from being silently loaded."""
+
+    def test_fingerprint_deterministic(self):
+        assert _feature_fingerprint() == _feature_fingerprint()
+
+    def test_save_and_validate_matching(self, tmp_path):
+        model_path = tmp_path / "model.txt"
+        model_path.write_text("dummy")
+        _save_meta(model_path)
+
+        meta_file = _meta_path(model_path)
+        assert meta_file.exists()
+
+        # Should not raise
+        _validate_meta(model_path)
+
+    def test_validate_stale_raises(self, tmp_path):
+        import json
+
+        model_path = tmp_path / "model.txt"
+        model_path.write_text("dummy")
+
+        # Write meta with a wrong fingerprint
+        meta = {
+            "feature_fingerprint": "stale_hash",
+            "feature_count": 0,
+            "features": [],
+        }
+        _meta_path(model_path).write_text(json.dumps(meta))
+
+        with pytest.raises(RuntimeError, match="stale"):
+            _validate_meta(model_path)
+
+    def test_missing_meta_warns(self, tmp_path, caplog):
+        model_path = tmp_path / "model.txt"
+        model_path.write_text("dummy")
+
+        # No meta file — should warn but not raise
+        with caplog.at_level("WARNING"):
+            _validate_meta(model_path)
+        assert "cannot verify" in caplog.text.lower()
+
+    def test_meta_contains_features(self, tmp_path):
+        import json
+
+        model_path = tmp_path / "model.txt"
+        model_path.write_text("dummy")
+        _save_meta(model_path)
+
+        meta = json.loads(_meta_path(model_path).read_text())
+        assert meta["features"] == RANKER_FEATURES
+        assert meta["feature_count"] == len(RANKER_FEATURES)
