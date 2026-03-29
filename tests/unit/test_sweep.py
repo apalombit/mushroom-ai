@@ -13,11 +13,25 @@ from evaluation.sweep import (
 from similarity.weights import WEIGHT_FIELDS
 
 
-def _make_candidate(name: str, sims: dict[str, float], body_form_match: bool = True):
+def _make_candidate(
+    name: str,
+    sims: dict[str, float],
+    body_form_match: bool = True,
+    hymenium_match: bool = True,
+    size_class_match: bool = True,
+    jaccard_sim: float = 0.0,
+):
     """Helper: build a CandidateScores with defaults for missing WEIGHT_FIELDS."""
     full_sims = {f: 0.0 for f in WEIGHT_FIELDS}
     full_sims.update(sims)
-    return CandidateScores(scientific_name=name, body_form_match=body_form_match, sims=full_sims)
+    return CandidateScores(
+        scientific_name=name,
+        body_form_match=body_form_match,
+        hymenium_match=hymenium_match,
+        size_class_match=size_class_match,
+        sims=full_sims,
+        jaccard_sim=jaccard_sim,
+    )
 
 
 def _uniform_weights() -> dict[str, float]:
@@ -132,6 +146,52 @@ class TestRescore:
         assert result.total == 2
         assert result.hits_at[1] == 1
         assert result.recall_at[1] == 0.5
+
+    def test_alpha_one_ignores_jaccard(self):
+        """alpha=1.0 means pure embedding — jaccard_sim should not affect ranking."""
+        cache = [
+            QueryCache(
+                query_name="A",
+                target_name="B",
+                candidates=[
+                    _make_candidate("B", {"ecological": 0.5}, jaccard_sim=1.0),
+                    _make_candidate("C", {"ecological": 0.9}, jaccard_sim=0.0),
+                ],
+            )
+        ]
+        w = {f: 0.0 for f in WEIGHT_FIELDS}
+        w["ecological"] = 1.0
+        result = rescore(cache, w, body_form_filter=False, alpha=1.0)
+        # C has higher embedding score, so B (target) is NOT rank 1
+        assert result.recall_at[1] == 0.0
+
+    def test_alpha_blends_jaccard(self):
+        """alpha < 1.0 blends embedding and Jaccard scores."""
+        cache = [
+            QueryCache(
+                query_name="A",
+                target_name="B",
+                candidates=[
+                    # B: low embedding, high Jaccard
+                    _make_candidate("B", {"ecological": 0.2}, jaccard_sim=0.9),
+                    # C: high embedding, low Jaccard
+                    _make_candidate("C", {"ecological": 0.8}, jaccard_sim=0.1),
+                ],
+            )
+        ]
+        w = {f: 0.0 for f in WEIGHT_FIELDS}
+        w["ecological"] = 1.0
+        # alpha=0.3 → 0.3*0.2 + 0.7*0.9 = 0.69 for B vs 0.3*0.8 + 0.7*0.1 = 0.31 for C
+        result = rescore(cache, w, body_form_filter=False, alpha=0.3)
+        assert result.recall_at[1] == 1.0
+
+    def test_alpha_stored_in_weights(self):
+        """Alpha value is recorded in the SweepResult weights dict."""
+        cache = [
+            QueryCache(query_name="A", target_name="B", candidates=[])
+        ]
+        result = rescore(cache, _uniform_weights(), body_form_filter=False, alpha=0.4)
+        assert result.weights["alpha"] == 0.4
 
 
 # ---------------------------------------------------------------------------

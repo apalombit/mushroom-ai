@@ -36,6 +36,12 @@ class Settings(BaseSettings):
     # Similarity weights
     weight_numeric: float = 0.10
     weight_body_form_filter: bool = False
+    weight_hymenium_filter: bool = False
+    weight_size_class_filter: bool = False
+    weight_morpho_pool_required: bool = True
+    weight_morphotype_prefilter: bool = False
+    weight_dangerous_filter: bool = False
+    morphotype_min_match: float = 0.6
     # Per-group embedding weights (None = use equal-split default)
     weight_size: float | None = None
     weight_shape: float | None = None
@@ -83,6 +89,9 @@ class Settings(BaseSettings):
     weight_trees: float | None = None
     weight_growth: float | None = None
     weight_taxonomic: float | None = None
+
+    # Ranker
+    ranker_model_path: str = "data/models/ranker_model.txt"
 
     # App
     log_level: str = "INFO"

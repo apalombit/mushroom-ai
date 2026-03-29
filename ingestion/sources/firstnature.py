@@ -16,6 +16,8 @@ from pathlib import Path
 import requests
 from bs4 import BeautifulSoup
 
+from ingestion.sources._image_utils import filter_content_images
+
 SOURCE_NAME = "first-nature"
 CACHE_DIR = Path("data/cache")
 RATE_LIMIT_SECONDS = 1.0
@@ -118,6 +120,7 @@ def fetch_species_page(scientific_name: str, aliases: list[str] | None = None) -
         logger.debug("Empty content for %s (first-nature)", scientific_name)
         return None
 
-    result = {"text": text, "url": used_url}
+    image_urls = filter_content_images(soup.find_all("img"), used_url)
+    result = {"text": text, "url": used_url, "image_urls": image_urls}
     _save_cache(scientific_name, result)
     return result

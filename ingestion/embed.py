@@ -50,8 +50,14 @@ def embed_species(session: Session, species: ReconciledSpecies) -> None:
         col = f"embedding_{group_name}"
         setattr(species, col, _embed(text))
 
-    # Populate body form for gating
+    # Populate gating columns from features_json
     species.overall_body_form = _get_nested(features, "overall_body_form")
+    species.hymenium_type = _get_nested(features, "hymenium.type")
+    species.overall_size_class = _get_nested(features, "overall_size_class")
+
+    from similarity.morphotype import compute_morphotype_signature
+
+    species.morphotype_signature = compute_morphotype_signature(features)
 
     species.embedded_at = datetime.utcnow()
     session.commit()

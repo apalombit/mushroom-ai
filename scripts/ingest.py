@@ -25,6 +25,7 @@ from ingestion.embed import embed_all
 from ingestion.extract import extract_features_from_text, save_extraction
 from ingestion.reconcile import reconcile_species
 from ingestion.sources import firstnature, funghiitaliani, mushroomexpert, ultimatemushroom
+from ingestion.sources import wikipedia as wikipedia_source
 
 FETCH_SOURCES = [firstnature, mushroomexpert, ultimatemushroom, funghiitaliani]
 
@@ -125,7 +126,10 @@ def run_extract(species_list: list[dict], force: bool = False) -> None:
                 continue
             try:
                 features = extract_features_from_text(name, page["text"], source_name=source.SOURCE_NAME)
-                save_extraction(features, page["url"], page["text"], source.SOURCE_NAME)
+                save_extraction(
+                    features, page["url"], page["text"], source.SOURCE_NAME,
+                    image_urls=page.get("image_urls", []),
+                )
                 ok += 1
                 logger.info("Extracted [%s]: %s", source.SOURCE_NAME, name)
             except Exception as e:
@@ -194,6 +198,103 @@ def run_reconcile(species_list: list[dict]) -> None:
     )
 
 
+def run_refetch_images(species_list: list[dict]) -> None:
+    """Re-fetch images for species that have cached text but no image_urls."""
+    all_sources = FETCH_SOURCES + [wikipedia_source]
+    updated = 0
+
+    for entry in species_list:
+        name = entry["scientific_name"]
+        aliases = entry.get("aliases", [])
+        for source in all_sources:
+            page = source.fetch_species_page(name, aliases=aliases)
+            if page is None or "image_urls" in page:
+                continue
+            # Re-fetch the page to get images (bypasses cache)
+            cache_path = source._cache_path(name)
+            if cache_path.exists():
+                cache_path.unlink()
+            new_page = source.fetch_species_page(name, aliases=aliases)
+            if new_page and new_page.get("image_urls"):
+                updated += 1
+                logger.info(
+                    "Refetched images [%s]: %s → %d images",
+                    source.SOURCE_NAME, name, len(new_page["image_urls"]),
+                )
+
+    print(f"Refetched images for {updated} (species×source) entries.")
+
+
+def run_backfill_images(species_list: list[dict]) -> None:
+    """Backfill image_urls from caches into Layer 1 + reconcile to Layer 2.
+
+    No LLM calls — just reads image_urls from cached pages, updates
+    source_observations, then re-reconciles affected species.
+    """
+    all_sources = FETCH_SOURCES + [wikipedia_source]
+    session = get_session()
+    try:
+        updated_species: set[str] = set()
+        updated_obs = 0
+
+        for entry in species_list:
+            name = entry["scientific_name"]
+            aliases = entry.get("aliases", [])
+            for source in all_sources:
+                page = source.fetch_species_page(name, aliases=aliases)
+                if page is None:
+                    continue
+                image_urls = page.get("image_urls", [])
+                if not image_urls:
+                    continue
+
+                obs = (
+                    session.query(SourceObservation)
+                    .filter_by(
+                        scientific_name=name,
+                        source_name=source.SOURCE_NAME,
+                    )
+                    .first()
+                )
+                if obs is None:
+                    continue
+                if obs.image_urls == image_urls:
+                    continue
+
+                obs.image_urls = image_urls
+                updated_obs += 1
+                updated_species.add(name)
+                logger.info(
+                    "Backfilled images [%s]: %s → %d URLs",
+                    source.SOURCE_NAME, name, len(image_urls),
+                )
+
+        session.commit()
+        print(
+            f"Updated {updated_obs} source observations "
+            f"across {len(updated_species)} species."
+        )
+
+        # Reconcile affected species to push images to Layer 2
+        if updated_species:
+            print(f"Reconciling {len(updated_species)} species...")
+            ok, failed = 0, []
+            for name in sorted(updated_species):
+                try:
+                    reconcile_species(session, name)
+                    ok += 1
+                except Exception as e:
+                    logger.error("Reconcile failed for %s: %s", name, e)
+                    failed.append(name)
+            print(
+                f"Reconciled {ok}/{len(updated_species)} species"
+                + (f" ({len(failed)} failed)" if failed else "")
+                + "."
+            )
+    finally:
+        session.close()
+
+
 def run_embed() -> None:
     """Stage 5: Embed Layer 2 features → Layer 3 pgvector columns."""
     session = get_session()
@@ -233,6 +334,10 @@ def main() -> None:
     parser.add_argument("--limit", type=int, default=None, help="Process only first N species")
     parser.add_argument("--force-reextract", action="store_true",
                         help="Re-extract even if Layer 1 row already exists")
+    parser.add_argument("--refetch-images", action="store_true",
+                        help="Re-fetch pages missing image_urls in cache")
+    parser.add_argument("--backfill-images", action="store_true",
+                        help="Backfill image_urls from cache to DB (no LLM)")
     args = parser.parse_args()
 
     logging.basicConfig(level=getattr(logging, settings.log_level))
@@ -242,6 +347,14 @@ def main() -> None:
 
     if args.limit:
         species_list = species_list[: args.limit]
+
+    if args.refetch_images:
+        run_refetch_images(species_list)
+        return
+
+    if args.backfill_images:
+        run_backfill_images(species_list)
+        return
 
     if args.fetch_only:
         run_fetch(species_list)

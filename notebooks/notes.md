@@ -1,19 +1,59 @@
 
 
 
-how to improve performances
-- Is features similarity_matrix used at all for likealike search ??
-
-
-
-Summarise the "Known lookalikes" field to extract new pairs ! Are those reliable and coming from "Similar species" rather than "Specie simili" or similar info from relative sources ? Use this as reference pairs we should be able to capture effectively if valid.
-Use known lookalike to build better metric more likely sparse in nature while current is not -- going for a classifier or hierarchical clustering on features (RF ?). some features also compounded depending on type or gate for other -- RF / NN needed to rank similarity ?
-
-Can we use those to design a new search method like a knowledge graph on which build some euristic search ?
 
 
 
 
+job post finding automated from local area in cowork
+* search also people i should write to get involved as consultant
+* search local and for spec roles
+
+
+
+
+
+
+
+
+cv rewriting more concise and first page only direct Q&A :
+
+less R&D or complex catch words that sound scary and more straight interpretation explanation about work and how i go about it - early quick&dirty prototype or mockup (AI) then iterate once expectations/feasibility is clearer (sci lit can give indications but not always are useful/reproducible)
+
+
+* in summary: much more concise with just a few key sentences about my "mantra" like (1 bullet on short sentences):
+
+- i believe R&D activities should always lead to actionable endpoints, if not clear what they are upfront they should be progressively and deliberately defined 
+
+- interpretation trumps accuracy: no matter the modelling approach, i think it matters more to have outcomes that can be interpreted/validated/tested than just getting great results that no-one can understand how
+
+- R&D approach: some project/problems are loosely defined so kitchen-sink attempts to solve are fine to get started but domain expertise is central in finding a valid solution more effectively (or guide more/less promising directions of search)
+
+
+* what i bring to the table
+
+* what kind of projects i've worked with success on
+
+* technical section and next page goes education and other jobs...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+two languages in UI, default english and choose italian as optional
 
 
 
@@ -31,6 +71,8 @@ next steps for production showcase as open tool from browser or app ?
 
 
 
+
+
 visual transformer for feature extraction from images of specific objects
 
 
@@ -38,25 +80,6 @@ visual transformer for feature extraction from images of specific objects
 
 
 
-
-
-
-  Amanita solitaria          Bankera fuligineoalba      Boletus regius                                                              
-  Bondarzewia montana        Cantharellus melanoxeros   Cantharellus subpruinosus
-  Clitocybe cerussata        Cortinarius bicolor        Cortinarius calopus                                                         
-  Cortinarius ionochlorus    Cortinarius paleaceus      Cortinarius phlegmacium
-  Cortinarius rigens         Cortinarius saniosus       Cortinarius sebaceus                                                        
-  Dacryopinax spathularia    Diaporthe eres             Dichomitus squalens                                                         
-  Geastrum sessile           Handkea utriformis         Hericium flagellum                                                          
-  Hygrocybe nigrescens       Hygrophorus gliocyclus     Hygrophorus korhonenii                                                      
-  Imleria suilloides         Inocybe bongardii          Inocybe lanuginosa                                                          
-  Inocybe napipes            Lactarius flexuosus        Lactarius mitissimus                                                        
-  Lactarius necator          Lactifluus volemus         Laricifomes officinalis                                                     
-  Leucopaxillus compactus    Naucoria escharoides       Neoboletus erythropus                                                       
-  Neogyromitra gigas         Oudemansiella radicata     Phellinus pini                                                              
-  Ramaria aurea              Ramaria decurrens          Russula intermedia
-  Russula lilacina           Suillus bellini            Tricholoma albobrunneum                                                     
-  Tricholoma batschii                                       
 
 
 

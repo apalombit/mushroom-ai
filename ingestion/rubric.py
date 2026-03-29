@@ -96,6 +96,12 @@ def get_active_profile() -> str:
 EMBEDDING_GROUPS: dict[str, list[str]] = _load_profile(settings.grouping_profile)
 GROUP_SLOTS = tuple(EMBEDDING_GROUPS.keys())  # derived from active profile, for backward compat
 
+# Non-morphological groups — used for morpho pool priority (Stage 2)
+_NON_MORPHOLOGICAL = {"ecological", "habitat", "trees", "growth", "taxonomic"}
+MORPHOLOGICAL_GROUP_NAMES: frozenset[str] = frozenset(
+    g for g in EMBEDDING_GROUPS if g not in _NON_MORPHOLOGICAL
+)
+
 # ---------------------------------------------------------------------------
 # Backward-compatible union — used by build_comparison_table
 # ---------------------------------------------------------------------------

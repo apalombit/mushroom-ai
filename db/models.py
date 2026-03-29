@@ -64,6 +64,9 @@ class SourceObservation(Base):
     extraction_timestamp = Column(DateTime, default=datetime.utcnow)
     extraction_notes = Column(Text, nullable=True)
 
+    # Reference images from source page
+    image_urls = Column(JSONB, default=list)
+
     # Link to reconciled species
     species_id = Column(Integer, ForeignKey("reconciled_species.id"), nullable=True)
     species = relationship("ReconciledSpecies", back_populates="source_observations")
@@ -109,6 +112,11 @@ def _build_reconciled_species(groups: dict) -> type:
         "source_count": Column(Integer, default=0),
         # Body form — extracted from features_json for fast filtering
         "overall_body_form": Column(String(64), nullable=True, index=True),
+        "hymenium_type": Column(String(64), nullable=True, index=True),
+        "overall_size_class": Column(String(64), nullable=True, index=True),
+        "morphotype_signature": Column(String(256), nullable=True, index=True),
+        # Reference images (deduplicated from sources, max 3)
+        "image_urls": Column(JSONB, default=list),
         # Layer 3 embedding timestamp
         "embedded_at": Column(DateTime, nullable=True),
         # Relationships

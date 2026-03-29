@@ -25,6 +25,8 @@ from pathlib import Path
 import requests
 from bs4 import BeautifulSoup
 
+from ingestion.sources._image_utils import filter_content_images
+
 SOURCE_NAME = "funghiitaliani"
 BASE_URL = "https://www.funghiitaliani.it"
 CACHE_DIR = Path("data/cache")
@@ -238,6 +240,7 @@ def fetch_species_page(scientific_name: str, aliases: list[str] | None = None) -
         logger.debug("Empty content for %s (funghiitaliani)", scientific_name)
         return None
 
-    result = {"text": text, "url": url}
+    image_urls = filter_content_images(source.find_all("img"), url)
+    result = {"text": text, "url": url, "image_urls": image_urls}
     _save_cache(scientific_name, result)
     return result

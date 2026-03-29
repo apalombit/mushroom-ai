@@ -125,6 +125,10 @@ overall_size_class:
     tiny: small
     large to very large: large
     massive: large
+  similarity_matrix:
+    "small-medium": 0.5
+    "medium-large": 0.5
+    "small-large": 0.0
 
 # =============================================================================
 #  CAP SHAPE

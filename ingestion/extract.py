@@ -594,6 +594,7 @@ def save_extraction(
     source_url: str,
     source_text: str,
     source_name: str,
+    image_urls: list[str] | None = None,
 ) -> SourceObservation:
     """
     Upsert extraction result into source_observations (Layer 1).
@@ -618,6 +619,8 @@ def save_extraction(
             existing.source_text_hash = text_hash
             existing.extraction_model = model_string
             existing.extraction_notes = features.extraction_notes
+            if image_urls is not None:
+                existing.image_urls = image_urls
             obs = existing
         else:
             obs = SourceObservation(
@@ -628,6 +631,7 @@ def save_extraction(
                 features_json=features_dict,
                 extraction_model=model_string,
                 extraction_notes=features.extraction_notes,
+                image_urls=image_urls or [],
             )
             session.add(obs)
         session.commit()

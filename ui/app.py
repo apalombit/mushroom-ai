@@ -25,65 +25,14 @@ _PROFILE_FEATURES: dict[str, list[str]] = yaml.safe_load(
 
 API_BASE = "http://localhost:8001"
 
-st.set_page_config(page_title="🍄 Mushroom Lookalikes Finder", layout="wide")
+st.set_page_config(page_title="Mushroom Lookalikes Finder", layout="wide")
 
-st.title("🍄 Mushroom Lookalikes Finder")
+st.title("Mushroom Lookalikes Finder")
 st.markdown("Find species that look similar — and learn how to tell them apart.")
 
-# --- Session state init ---
-if "species_input" not in st.session_state:
-    st.session_state.species_input = ""
-
-# --- Input ---
-col_input, col_context = st.columns([2, 1])
-with col_input:
-    species_name = st.text_input(
-        "Mushroom name (scientific or common)",
-        placeholder="e.g. Amanita caesarea",
-        key="species_input",
-    )
-with col_context:
-    region = st.text_input("Region (optional)", placeholder="e.g. Northern Italy")
-    season = st.selectbox("Season (optional)", ["", "spring", "summer", "autumn", "winter"])
-
-# --- Example species (quick explore) ---
-st.markdown("**Try an example:**")
-examples = ["Amanita caesarea", "Agaricus campestris", "Boletus edulis", "Cantharellus cibarius"]
-example_cols = st.columns(len(examples))
-for i, ex in enumerate(examples):
-    with example_cols[i]:
-        st.button(
-            ex,
-            key=f"ex_{i}",
-            on_click=lambda name=ex: st.session_state.update({"species_input": name}),
-        )
-
-# --- Weight sliders ---
-with st.expander("⚙️ Similarity weights (advanced)"):
-    st.caption("Weights are sent as-is; the API normalizes them to sum to 1.")
-    cols = st.columns(3)
-    group_weights: dict[str, float] = {}
-    for i, group in enumerate(EMBEDDING_GROUPS):
-        default_w = getattr(settings, f"weight_{group}", None) or round(
-            (1.0 - settings.weight_numeric) / len(EMBEDDING_GROUPS), 4
-        )
-        features = _PROFILE_FEATURES.get(group, [])
-        tooltip = ", ".join(features) if features else group
-        with cols[i % 3]:
-            group_weights[group] = st.slider(
-                group.replace("_", " ").title(),
-                0.0, 0.5, float(round(default_w, 4)), 0.001,
-                help=tooltip,
-                key=f"w_{group}",
-            )
-    st.divider()
-    w_numeric = st.slider(
-        "Numeric (size/measurements)", 0.0, 0.5, float(settings.weight_numeric), 0.001,
-        key="w_numeric",
-    )
-    body_form_filter = st.checkbox(
-        "Body-form filter", value=False, help="Exclude species with incompatible body form"
-    )
+# ---------------------------------------------------------------------------
+# Helpers
+# ---------------------------------------------------------------------------
 
 _EDIBILITY_ICON = {
     "edible": "🟢",
@@ -100,6 +49,53 @@ def edibility_badge(edibility: str | None) -> str:
         return "❓ unknown"
     icon = _EDIBILITY_ICON.get(edibility, "❓")
     return f"{icon} {edibility}"
+
+
+def _render_source_links(sources: list[dict] | None) -> None:
+    """Render compact source reference links."""
+    if not sources:
+        return
+    links = []
+    for src in sources:
+        name = src.get("source_name", "")
+        url = src.get("source_url")
+        if url:
+            links.append(f"[{name}]({url})")
+        elif name:
+            links.append(name)
+    if links:
+        st.caption("🔗 " + " · ".join(links))
+
+
+def _render_image_thumbnails(image_refs: list, height_px: int = 200) -> None:
+    """Render uniform-sized image thumbnails with source attribution."""
+    if not image_refs:
+        return
+    cols = st.columns(len(image_refs))
+    for col, ref in zip(cols, image_refs):
+        with col:
+            if isinstance(ref, str):
+                url, source_name, source_url = ref, "", None
+            elif isinstance(ref, dict):
+                url = ref.get("image_url", "")
+                source_name = ref.get("source_name", "")
+                source_url = ref.get("source_url")
+            else:
+                url = getattr(ref, "image_url", "")
+                source_name = getattr(ref, "source_name", "")
+                source_url = getattr(ref, "source_url", None)
+            html = (
+                f'<a href="{url}" target="_blank" title="Click to view full size">'
+                f'<img src="{url}" '
+                f'style="max-height:{height_px}px;max-width:100%;'
+                f'object-fit:contain;border-radius:6px;cursor:zoom-in;" />'
+                f'</a>'
+            )
+            st.markdown(html, unsafe_allow_html=True)
+            if source_url and source_name:
+                st.caption(f"[{source_name}]({source_url})")
+            elif source_name:
+                st.caption(source_name)
 
 
 def _show_section(title: str, data: dict, fields: dict[str, str]) -> None:
@@ -151,17 +147,10 @@ def _render_species_features(s: dict) -> None:
     if meta:
         st.caption(" · ".join(meta))
 
-    # Source links
-    source_links = []
-    for src in s.get("sources") or []:
-        name = src.get("source_name", "")
-        url = src.get("source_url")
-        if url:
-            source_links.append(f"[{name}]({url})")
-        elif name:
-            source_links.append(name)
-    if source_links:
-        st.caption("🔗 " + " · ".join(source_links))
+    _render_source_links(s.get("sources"))
+
+    # Species images
+    _render_image_thumbnails(s.get("image_urls", []))
 
     col_morph, col_eco = st.columns(2)
 
@@ -367,126 +356,371 @@ def _render_species_features(s: dict) -> None:
         st.caption(f"📝 Extraction notes: {notes}")
 
 
-# --- Search ---
-if st.button("Find Lookalikes", type="primary", disabled=not species_name):
-    with st.spinner("Searching..."):
-        payload = {
-            "species_name": species_name,
-            "region": region or None,
-            "season": season or None,
-            "weights": group_weights,
-            "weight_numeric": w_numeric,
-            "body_form_filter": body_form_filter,
-            "top_k": 10,
-        }
-        try:
-            resp = requests.post(f"{API_BASE}/api/v1/lookalikes", json=payload, timeout=60)
-            if resp.status_code == 404:
-                detail = resp.json().get("detail", "Species not found")
-                st.error(f"❌ {detail}")
-                st.stop()
-            resp.raise_for_status()
-            data = resp.json()
-        except requests.ConnectionError:
-            st.error("Cannot connect to backend. Run: `make serve`")
-            st.stop()
-        except requests.HTTPError as e:
-            st.error(f"API error: {e}")
-            st.stop()
+# ---------------------------------------------------------------------------
+# Tabs
+# ---------------------------------------------------------------------------
 
-    # --- Safety warning ---
-    safety = data.get("explanation_safety_warning")
-    if safety:
-        st.error(f"⚠️ **Safety Warning:** {safety}")
+tab_search, tab_index = st.tabs(["🔍 Find Lookalikes", "📋 Species Index"])
 
-    # --- At-a-glance summary ---
-    summary = data.get("explanation_summary")
-    if summary:
-        st.info(summary)
+# ===========================================================================
+# Tab 1: Find Lookalikes
+# ===========================================================================
+with tab_search:
+    # --- Session state init ---
+    if "species_input" not in st.session_state:
+        st.session_state.species_input = ""
 
-    # --- Notable confusions ---
-    notable = data.get("explanation_notable_pairs", [])
-    if notable:
-        st.markdown("**Key confusions:**")
-        for pair in notable:
-            st.markdown(f"- {pair}")
+    # --- Input ---
+    col_input, col_context = st.columns([2, 1])
+    with col_input:
+        species_name = st.text_input(
+            "Mushroom name (scientific or common)",
+            placeholder="e.g. Amanita caesarea",
+            key="species_input",
+        )
+    with col_context:
+        region = st.text_input("Region (optional)", placeholder="e.g. Northern Italy")
+        season = st.selectbox("Season (optional)", ["", "spring", "summer", "autumn", "winter"])
 
-    st.divider()
-    st.markdown(
-        f"**{len(data['candidates'])} lookalikes found** "
-        f"(compared {data['species_count_in_db']} species in database)"
+    # --- Example species (quick explore) ---
+    st.markdown("**Try an example:**")
+    examples = [
+        "Amanita caesarea",
+        "Agaricus campestris",
+        "Boletus edulis",
+        "Cantharellus cibarius",
+    ]
+    example_cols = st.columns(len(examples))
+    for i, ex in enumerate(examples):
+        with example_cols[i]:
+            st.button(
+                ex,
+                key=f"ex_{i}",
+                on_click=lambda name=ex: st.session_state.update({"species_input": name}),
+            )
+
+    # --- Search mode toggle ---
+    dangerous_mode = st.toggle(
+        "Dangerous lookalikes only",
+        value=False,
+        help="Show only lookalikes with opposite edibility (safe vs dangerous).",
     )
 
-    # --- Ranked candidates ---
-    for i, cand in enumerate(data["candidates"], 1):
-        name = cand["scientific_name"]
-        edib = edibility_badge(cand.get("edibility"))
-        overall = cand["similarity_overall"]
-        common = ", ".join(cand.get("common_names") or [])
-        header = f"{i}. **{name}** {edib} — similarity: {overall:.1%}"
-        if common:
-            header += f" ({common})"
-
-        with st.expander(header):
-            group_rows = [
-                {"Group": g, "Score": f"{v:.1%}"}
-                for g, v in sorted(
-                    cand["group_similarities"].items(), key=lambda x: -x[1]
+    # --- Weight sliders ---
+    with st.expander("⚙️ Similarity weights (advanced)"):
+        st.caption("Weights are sent as-is; the API normalizes them to sum to 1.")
+        cols = st.columns(3)
+        group_weights: dict[str, float] = {}
+        for i, group in enumerate(EMBEDDING_GROUPS):
+            default_w = getattr(settings, f"weight_{group}", None) or round(
+                (1.0 - settings.weight_numeric) / len(EMBEDDING_GROUPS), 4
+            )
+            features = _PROFILE_FEATURES.get(group, [])
+            tooltip = ", ".join(features) if features else group
+            with cols[i % 3]:
+                group_weights[group] = st.slider(
+                    group.replace("_", " ").title(),
+                    0.0,
+                    0.5,
+                    float(round(default_w, 4)),
+                    0.001,
+                    help=tooltip,
+                    key=f"w_{group}",
                 )
-            ]
-            group_rows.append({"Group": "numeric", "Score": f"{cand['similarity_numeric']:.1%}"})
-            st.dataframe(group_rows, use_container_width=True, hide_index=True)
+        st.divider()
+        w_numeric = st.slider(
+            "Numeric (size/measurements)",
+            0.0,
+            0.5,
+            float(settings.weight_numeric),
+            0.001,
+            key="w_numeric",
+        )
 
-            comparisons = cand.get("feature_comparisons", [])
-            if comparisons:
-                st.markdown("**Feature comparison:**")
-                rows = []
-                for fc in comparisons:
-                    rows.append(
+        st.divider()
+        st.markdown("**Embedding / Jaccard blend**")
+        alpha = st.slider(
+            "Alpha",
+            0.0,
+            1.0,
+            0.5,
+            0.05,
+            help="1.0 = pure embedding, 0.0 = pure Jaccard, 0.5 = equal blend",
+            key="alpha",
+        )
+
+        st.divider()
+        st.markdown("**Filters & candidate pool**")
+        filter_cols = st.columns(3)
+        with filter_cols[0]:
+            body_form_filter = st.checkbox(
+                "Body-form filter",
+                value=settings.weight_body_form_filter,
+                help="Exclude species with incompatible body form",
+            )
+        with filter_cols[1]:
+            hymenium_filter = st.checkbox(
+                "Hymenium filter",
+                value=settings.weight_hymenium_filter,
+                help="Exclude species with incompatible hymenium type",
+            )
+        with filter_cols[2]:
+            size_class_filter = st.checkbox(
+                "Size class filter",
+                value=settings.weight_size_class_filter,
+                help="Exclude species with incompatible size class",
+            )
+        pool_cols = st.columns(2)
+        with pool_cols[0]:
+            morpho_pool_required = st.checkbox(
+                "Morpho pool required",
+                value=settings.weight_morpho_pool_required,
+                help="Candidates must appear in at least one morphological embedding group",
+            )
+        with pool_cols[1]:
+            morphotype_prefilter = st.checkbox(
+                "Morphotype prefilter",
+                value=settings.weight_morphotype_prefilter,
+                help="Pre-filter candidates by morphotype signature match",
+            )
+
+        st.divider()
+        aggregation_strategy = st.radio(
+            "Aggregation strategy",
+            options=["learned_ranker", "weighted_avg", "rrf", "contrastive_gate"],
+            format_func={
+                "weighted_avg": "Weighted Average",
+                "rrf": "RRF",
+                "contrastive_gate": "Contrastive + Gate",
+                "learned_ranker": "GBDT Ranker",
+            }.get,
+            horizontal=True,
+        )
+        z_threshold = 0.0
+        if aggregation_strategy == "contrastive_gate":
+            z_threshold = st.slider(
+                "Z-score gate threshold",
+                -1.0,
+                2.0,
+                0.0,
+                0.1,
+                help=(
+                    "Groups below this z-score are excluded from scoring. "
+                    "0.0 = above-average only."
+                ),
+            )
+
+    # --- Search ---
+    if st.button("Find Lookalikes", type="primary", disabled=not species_name):
+        with st.spinner("Searching..."):
+            payload = {
+                "species_name": species_name,
+                "region": region or None,
+                "season": season or None,
+                "weights": group_weights,
+                "weight_numeric": w_numeric,
+                "body_form_filter": body_form_filter,
+                "hymenium_filter": hymenium_filter,
+                "size_class_filter": size_class_filter,
+                "alpha": alpha,
+                "morpho_pool_required": morpho_pool_required,
+                "morphotype_prefilter": morphotype_prefilter,
+                "dangerous_filter": dangerous_mode,
+                "top_k": 10,
+                "aggregation_strategy": aggregation_strategy,
+                "contrastive_z_threshold": z_threshold,
+            }
+            try:
+                resp = requests.post(f"{API_BASE}/api/v1/lookalikes", json=payload, timeout=60)
+                if resp.status_code == 404:
+                    detail = resp.json().get("detail", "Species not found")
+                    st.error(f"❌ {detail}")
+                    st.stop()
+                resp.raise_for_status()
+                data = resp.json()
+            except requests.ConnectionError:
+                st.error("Cannot connect to backend. Run: `make serve`")
+                st.stop()
+            except requests.HTTPError as e:
+                st.error(f"API error: {e}")
+                st.stop()
+
+        # --- No-edibility warning for dangerous mode ---
+        if dangerous_mode and not data.get("query_species_edibility"):
+            st.warning("No edibility data for this species — filter had no effect.")
+
+        # --- Query species images ---
+        _render_image_thumbnails(data.get("query_species_image_urls", []))
+
+        # --- Safety warning ---
+        safety = data.get("explanation_safety_warning")
+        if safety:
+            st.error(f"⚠️ **Safety Warning:** {safety}")
+
+        # --- At-a-glance summary ---
+        summary = data.get("explanation_summary")
+        if summary:
+            st.info(summary)
+
+        # --- Notable confusions ---
+        notable = data.get("explanation_notable_pairs", [])
+        if notable:
+            st.markdown("**Key confusions:**")
+            for pair in notable:
+                st.markdown(f"- {pair}")
+
+        st.divider()
+        mode_label = " dangerous" if dangerous_mode else ""
+        st.markdown(
+            f"**{len(data['candidates'])}{mode_label} lookalikes found** "
+            f"(compared {data['species_count_in_db']} species in database)"
+        )
+
+        # --- Ranked candidates (card layout) ---
+        for i, cand in enumerate(data["candidates"], 1):
+            name = cand["scientific_name"]
+            edib_text = cand.get("edibility") or "unknown"
+            overall = cand["similarity_overall"]
+            common = ", ".join(cand.get("common_names") or [])
+
+            with st.container(border=True):
+                # Header row: name | edibility | similarity
+                col_name, col_edib, col_sim = st.columns([3, 1, 1])
+                with col_name:
+                    st.markdown(f"#### {i}. {name}")
+                    if common:
+                        st.caption(common)
+                with col_edib:
+                    if edib_text in ("deadly", "toxic"):
+                        st.error(edibility_badge(edib_text))
+                    elif edib_text in ("inedible", "conditionally edible"):
+                        st.warning(edibility_badge(edib_text))
+                    elif edib_text in ("edible", "choice"):
+                        st.success(edibility_badge(edib_text))
+                    else:
+                        st.info(edibility_badge(edib_text))
+                with col_sim:
+                    st.metric("Similarity", f"{overall:.0%}")
+                    st.progress(min(overall, 1.0))
+
+                # Candidate images
+                _render_image_thumbnails(cand.get("image_urls", []))
+
+                # Source reference links (always visible)
+                _render_source_links(cand.get("sources"))
+
+                # Top distinguishing features (upfront)
+                comparisons = cand.get("feature_comparisons", [])
+                diffs = [
+                    fc
+                    for fc in comparisons
+                    if not fc["is_similar"] and fc["query_value"] and fc["candidate_value"]
+                ]
+                if diffs:
+                    st.markdown("**Key differences:**")
+                    for fc in diffs[:3]:
+                        feat = fc["feature_name"].replace(".", " > ")
+                        st.markdown(
+                            f"- **{feat}**: {species_name} = *{fc['query_value']}* "
+                            f"vs {name} = *{fc['candidate_value']}*"
+                        )
+
+                # Detailed breakdown (collapsed)
+                with st.expander("Show detailed breakdown"):
+                    group_rows = [
+                        {"Group": g, "Score": f"{v:.1%}"}
+                        for g, v in sorted(cand["group_similarities"].items(), key=lambda x: -x[1])
+                    ]
+                    group_rows.append(
+                        {"Group": "numeric", "Score": f"{cand['similarity_numeric']:.1%}"}
+                    )
+                    group_rows.append(
                         {
-                            "Feature": fc["feature_name"],
-                            "Group": fc["feature_group"],
-                            species_name: fc["query_value"] or "—",
-                            name: fc["candidate_value"] or "—",
-                            "Similar": "✓" if fc["is_similar"] else "✗",
+                            "Group": "jaccard",
+                            "Score": f"{cand.get('similarity_jaccard', 0):.1%}",
                         }
                     )
-                st.dataframe(rows, use_container_width=True)
+                    st.dataframe(group_rows, use_container_width=True, hide_index=True)
 
-# --- Species index expander ---
-with st.expander("📋 Species currently indexed in the database"):
+                    if comparisons:
+                        st.markdown("**Full feature comparison:**")
+                        rows = []
+                        for fc in comparisons:
+                            rows.append(
+                                {
+                                    "Feature": fc["feature_name"],
+                                    "Group": fc["feature_group"],
+                                    species_name: fc["query_value"] or "—",
+                                    name: fc["candidate_value"] or "—",
+                                    "Similar": "✓" if fc["is_similar"] else "✗",
+                                }
+                            )
+                        st.dataframe(rows, use_container_width=True)
+
+
+# ===========================================================================
+# Tab 2: Species Index
+# ===========================================================================
+with tab_index:
+    st.subheader("Species Index")
+    idx_search = st.text_input(
+        "Search by name...", placeholder="e.g. Amanita or Caesar", key="idx_search"
+    )
+
     try:
-        r = requests.get(f"{API_BASE}/api/v1/species?limit=1000", timeout=10)
+        r = requests.get(f"{API_BASE}/api/v1/species/summary", timeout=10)
         if r.ok:
-            species_list = r.json()
-            st.caption(f"{len(species_list)} species in database")
-            for s in species_list:
-                common = ", ".join(s["common_names"] or [])
-                header = f"*{s['scientific_name']}*"
-                if common:
-                    header += f" — {common}"
-                header += f"  {edibility_badge(s.get('edibility'))}"
-                with st.expander(header):
-                    _render_species_features(s)
-    except Exception:
+            all_species = r.json()
+
+            # Client-side filter
+            if idx_search:
+                term = idx_search.lower()
+                all_species = [
+                    s
+                    for s in all_species
+                    if term in s["scientific_name"].lower()
+                    or any(term in cn.lower() for cn in (s.get("common_names") or []))
+                ]
+
+            st.caption(f"Showing {len(all_species)} species")
+
+            # Compact table view
+            table_rows = []
+            for s in all_species:
+                common = ", ".join(s.get("common_names") or [])
+                table_rows.append(
+                    {
+                        "Species": s["scientific_name"],
+                        "Common names": common,
+                        "Edibility": edibility_badge(s.get("edibility")),
+                    }
+                )
+            if table_rows:
+                st.dataframe(table_rows, use_container_width=True, hide_index=True)
+
+            # Detail view: select a species to see full profile
+            species_names = [s["scientific_name"] for s in all_species]
+            if species_names:
+                selected = st.selectbox(
+                    "Select a species for full profile",
+                    options=[""] + species_names,
+                    key="idx_select",
+                )
+                if selected:
+                    with st.spinner(f"Loading profile for {selected}..."):
+                        profile_resp = requests.get(
+                            f"{API_BASE}/api/v1/species/{selected}", timeout=10
+                        )
+                    if profile_resp.ok:
+                        _render_species_features(profile_resp.json())
+                    else:
+                        st.warning("Could not load full profile.")
+        else:
+            st.warning("Could not load species list.")
+    except requests.ConnectionError:
         st.warning("Could not load species list — is the API running?")
-
-# --- Known associations expander ---
-with st.expander("🔗 Known dangerous confusions (ground truth pairs)"):
-    try:
-        r = requests.get(f"{API_BASE}/api/v1/associations", timeout=10)
-        if r.ok:
-            rows = [
-                {
-                    "Species A": p["species_a"],
-                    "Species B": p["species_b"],
-                    "Why it matters": p.get("danger_note") or "—",
-                }
-                for p in r.json()
-            ]
-            st.dataframe(rows, use_container_width=True, hide_index=True)
     except Exception:
-        st.warning("Could not load associations — is the API running?")
+        st.warning("Could not load species list — unexpected error.")
 
 # --- Footer ---
 st.divider()

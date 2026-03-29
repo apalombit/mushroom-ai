@@ -16,7 +16,7 @@ from ingestion.rubric import EMBEDDING_GROUPS
 
 logger = logging.getLogger(__name__)
 
-GROUND_TRUTH_PATH = "data/seed/ground_truth_pairs.yaml"
+GROUND_TRUTH_PATH = "data/seed/known_lookalikes.yaml"
 
 # Old columns/indexes to drop during migration (all 3 old 384-dim columns)
 _OLD_COLUMNS = ["embedding_morphological", "embedding_ecological", "embedding_taxonomic"]
@@ -82,12 +82,12 @@ def _reconcile_embedding_columns() -> None:
             sorted(to_drop),
         )
 
-    if "overall_body_form" not in columns:
-        to_add_extras = ["overall_body_form"]
-    else:
-        to_add_extras = []
+    extra_varchar = ["overall_body_form", "hymenium_type", "overall_size_class"]
+    extra_varchar_long = ["morphotype_signature"]
+    to_add_extras = [c for c in extra_varchar if c not in columns]
+    to_add_extras_long = [c for c in extra_varchar_long if c not in columns]
 
-    if to_add or to_add_extras:
+    if to_add or to_add_extras or to_add_extras_long:
         with engine.connect() as conn:
             for col in sorted(to_add):
                 conn.execute(
@@ -99,8 +99,15 @@ def _reconcile_embedding_columns() -> None:
             for col in to_add_extras:
                 conn.execute(
                     text(
-                        "ALTER TABLE reconciled_species "
-                        "ADD COLUMN IF NOT EXISTS overall_body_form VARCHAR(64)"
+                        f"ALTER TABLE reconciled_species "
+                        f"ADD COLUMN IF NOT EXISTS {col} VARCHAR(64)"
+                    )
+                )
+            for col in to_add_extras_long:
+                conn.execute(
+                    text(
+                        f"ALTER TABLE reconciled_species "
+                        f"ADD COLUMN IF NOT EXISTS {col} VARCHAR(256)"
                     )
                 )
             if to_add:
@@ -109,8 +116,25 @@ def _reconcile_embedding_columns() -> None:
             conn.commit()
         if to_add:
             logger.info("Added embedding columns: %s (embedded_at reset)", sorted(to_add))
-        if to_add_extras:
-            logger.info("Added columns: %s", to_add_extras)
+        if to_add_extras or to_add_extras_long:
+            logger.info("Added columns: %s", to_add_extras + to_add_extras_long)
+
+
+def _add_image_columns() -> None:
+    """Add image_urls JSONB columns to both tables if missing."""
+    inspector = inspect(engine)
+
+    for table in ("source_observations", "reconciled_species"):
+        if table not in inspector.get_table_names():
+            continue
+        columns = {col["name"] for col in inspector.get_columns(table)}
+        if "image_urls" not in columns:
+            with engine.connect() as conn:
+                conn.execute(
+                    text(f"ALTER TABLE {table} ADD COLUMN IF NOT EXISTS image_urls JSONB")
+                )
+                conn.commit()
+            logger.info("Added image_urls column to %s", table)
 
 
 def _ensure_embedding_indexes() -> None:
@@ -130,33 +154,49 @@ def _ensure_embedding_indexes() -> None:
 
 
 def load_ground_truth_pairs(path: str = GROUND_TRUTH_PATH) -> None:
-    """Load ground truth pairs from YAML into the database (upsert — skip duplicates)."""
+    """Load ground truth pairs from known_lookalikes.yaml into the database (upsert).
+
+    Generates one GroundTruthPair per (species, indexed_lookalike) edge.
+    Attaches danger_note from the danger_notes field when available.
+    """
     with open(path) as f:
         data = yaml.safe_load(f)
 
-    pairs = data.get("pairs", [])
+    entries = data.get("lookalikes", [])
     session = get_session()
     try:
         loaded = 0
-        for pair in pairs:
-            existing = (
-                session.query(GroundTruthPair)
-                .filter_by(species_a=pair["species_a"], species_b=pair["species_b"])
-                .first()
-            )
-            if existing is None:
-                session.add(
-                    GroundTruthPair(
-                        species_a=pair["species_a"],
-                        species_b=pair["species_b"],
-                        danger_note=pair.get("danger_note"),
-                        source=pair.get("source"),
-                        notes=pair.get("notes"),
-                    )
+        total = 0
+        for entry in entries:
+            species = entry["species"]
+            # Build danger note lookup for this species
+            danger_map: dict[str, str] = {}
+            for dn in entry.get("danger_notes", []):
+                danger_map[dn["lookalike"]] = dn["note"]
+
+            for lookalike in entry.get("indexed", []):
+                if lookalike == species:
+                    continue
+                total += 1
+                # Canonical ordering: alphabetical
+                a, b = sorted([species, lookalike])
+                existing = (
+                    session.query(GroundTruthPair)
+                    .filter_by(species_a=a, species_b=b)
+                    .first()
                 )
-                loaded += 1
+                if existing is None:
+                    session.add(
+                        GroundTruthPair(
+                            species_a=a,
+                            species_b=b,
+                            danger_note=danger_map.get(lookalike),
+                            source="known_lookalikes",
+                        )
+                    )
+                    loaded += 1
         session.commit()
-        logger.info("Loaded %d new ground truth pairs (%d total in file).", loaded, len(pairs))
+        logger.info("Loaded %d new ground truth pairs (%d edges in file).", loaded, total)
     finally:
         session.close()
 
@@ -187,6 +227,9 @@ def main():
 
     # Reconcile embedding columns to match active profile (add missing, warn orphaned)
     _reconcile_embedding_columns()
+
+    # Add image_urls columns if missing
+    _add_image_columns()
 
     # Create all tables (only creates tables that don't exist yet)
     Base.metadata.create_all(engine)

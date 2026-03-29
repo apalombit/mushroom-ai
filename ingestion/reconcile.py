@@ -171,6 +171,30 @@ def reconcile_species(session: Session, scientific_name: str, group: str | None 
         needs_review = result.needs_review
         review_notes = result.review_notes
 
+    # Collect images: 1 per source, prioritized, max 3
+    _SOURCE_PRIORITY = [
+        "mushroomexpert", "funghiitaliani",
+        "ultimate-mushroom", "first-nature", "wikipedia",
+    ]
+    obs_by_source = {obs.source_name: obs for obs in observations}
+    seen_urls: set[str] = set()
+    all_image_refs: list[dict] = []
+    for src in _SOURCE_PRIORITY:
+        if len(all_image_refs) >= 3:
+            break
+        obs = obs_by_source.get(src)
+        if not obs or not obs.image_urls:
+            continue
+        url = obs.image_urls[0]
+        if url in seen_urls:
+            continue
+        seen_urls.add(url)
+        all_image_refs.append({
+            "image_url": url,
+            "source_name": obs.source_name,
+            "source_url": obs.source_url,
+        })
+
     now = datetime.utcnow()
 
     if existing:
@@ -187,6 +211,7 @@ def reconcile_species(session: Session, scientific_name: str, group: str | None 
         existing.group = group
         existing.reconciled_at = now
         existing.source_count = len(observations)
+        existing.image_urls = all_image_refs
         row = existing
     else:
         row = ReconciledSpecies(
@@ -204,6 +229,7 @@ def reconcile_species(session: Session, scientific_name: str, group: str | None 
             review_notes=review_notes,
             reconciled_at=now,
             source_count=len(observations),
+            image_urls=all_image_refs,
         )
         session.add(row)
 

@@ -13,6 +13,8 @@ from api.schemas import (
     LookalikeResponse,
     SourceLink,
     SpeciesProfile,
+    SpeciesSummary,
+    normalize_image_refs,
 )
 from db.connection import get_session
 from db.models import GroundTruthPair, ReconciledSpecies, SourceObservation
@@ -43,6 +45,12 @@ async def find_lookalikes(request: LookalikeRequest):
         weights=request.weights,
         numeric=request.weight_numeric,
         body_form_filter=request.body_form_filter,
+        hymenium_filter=request.hymenium_filter,
+        size_class_filter=request.size_class_filter,
+        alpha=request.alpha,
+        morpho_pool_required=request.morpho_pool_required,
+        morphotype_prefilter=request.morphotype_prefilter,
+        dangerous_filter=request.dangerous_filter,
     )
 
     session = get_session()
@@ -57,6 +65,8 @@ async def find_lookalikes(request: LookalikeRequest):
                 top_k=request.top_k,
                 region=request.region,
                 season=request.season,
+                strategy=request.aggregation_strategy,
+                z_threshold=request.contrastive_z_threshold,
             )
         except ValueError as e:
             raise HTTPException(status_code=404, detail=str(e))
@@ -75,6 +85,32 @@ async def find_lookalikes(request: LookalikeRequest):
         except Exception as e:
             logger.warning("Explanation generation failed: %s", e)
 
+        # Batch-load image URLs for all candidates
+        candidate_names = [c["scientific_name"] for c in comparison_table]
+        image_rows = (
+            session.query(
+                ReconciledSpecies.scientific_name,
+                ReconciledSpecies.image_urls,
+            )
+            .filter(ReconciledSpecies.scientific_name.in_(candidate_names))
+            .all()
+        )
+        images_by_name = {
+            r.scientific_name: normalize_image_refs(r.image_urls) for r in image_rows
+        }
+
+        # Batch-load source links for all candidates
+        source_rows = (
+            session.query(SourceObservation)
+            .filter(SourceObservation.scientific_name.in_(candidate_names))
+            .all()
+        )
+        sources_by_name: dict[str, list[SourceLink]] = {}
+        for obs in source_rows:
+            sources_by_name.setdefault(obs.scientific_name, []).append(
+                SourceLink(source_name=obs.source_name, source_url=obs.source_url)
+            )
+
         # Build response
         response_candidates = []
         for cand in comparison_table:
@@ -87,8 +123,11 @@ async def find_lookalikes(request: LookalikeRequest):
                     edibility=cand.get("edibility"),
                     group_similarities=group_sims,
                     similarity_numeric=cand["similarity_numeric"],
+                    similarity_jaccard=cand.get("similarity_jaccard", 0.0),
                     similarity_overall=cand["similarity_overall"],
                     feature_comparisons=feature_comps,
+                    image_urls=images_by_name.get(cand["scientific_name"], []),
+                    sources=sources_by_name.get(cand["scientific_name"], []),
                 )
             )
 
@@ -98,13 +137,41 @@ async def find_lookalikes(request: LookalikeRequest):
         return LookalikeResponse(
             query_species=request.species_name,
             query_species_edibility=query_species.edibility,
+            query_species_image_urls=normalize_image_refs(query_species.image_urls),
             weights_used=weights.as_dict(),
             candidates=response_candidates,
             explanation_summary=explanation_summary,
             explanation_notable_pairs=explanation_notable_pairs,
             explanation_safety_warning=explanation_safety_warning,
+            aggregation_strategy=request.aggregation_strategy,
             species_count_in_db=total_species,
         )
+    finally:
+        session.close()
+
+
+@router.get("/species/summary", response_model=list[SpeciesSummary])
+async def list_species_summary():
+    """Lightweight species list: names + edibility only. No features or sources."""
+    session = get_session()
+    try:
+        rows = (
+            session.query(
+                ReconciledSpecies.scientific_name,
+                ReconciledSpecies.common_names,
+                ReconciledSpecies.edibility,
+            )
+            .order_by(ReconciledSpecies.scientific_name)
+            .all()
+        )
+        return [
+            SpeciesSummary(
+                scientific_name=r.scientific_name,
+                common_names=r.common_names or [],
+                edibility=r.edibility,
+            )
+            for r in rows
+        ]
     finally:
         session.close()
 
@@ -153,6 +220,7 @@ def _species_profile(session, row: ReconciledSpecies) -> SpeciesProfile:
         genus=row.genus,
         edibility=row.edibility,
         features=row.features_json or {},
+        image_urls=normalize_image_refs(row.image_urls),
         source_count=row.source_count or 0,
         needs_review=row.needs_review or False,
         reconciliation_confidence=row.reconciliation_confidence,
