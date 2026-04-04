@@ -1,0 +1,449 @@
+# Italian translations for morphological vocabulary canonical values
+# Structure: feature_key -> { english_value: italian_translation }
+# _shared section for values used across multiple features (colors)
+
+_shared:
+  # Base colors
+  white: "bianco"
+  cream: "crema"
+  yellow: "giallo"
+  orange: "arancione"
+  red: "rosso"
+  pink: "rosa"
+  brown: "marrone"
+  tan: "nocciola"
+  grey: "grigio"
+  olive: "oliva"
+  green: "verde"
+  purple: "viola"
+  blue: "blu"
+  black: "nero"
+  # Common qualifiers
+  "yes": "sì"
+  "no": "no"
+  "true": "sì"
+  "false": "no"
+  none: "nessuno"
+  absent: "assente"
+  present: "presente"
+  # Seasons
+  spring: "primavera"
+  summer: "estate"
+  autumn: "autunno"
+  winter: "inverno"
+
+hymenium_type:
+  gills: "lamelle"
+  ridges: "pieghe"
+  pores: "pori"
+  teeth: "aculei"
+  smooth: "liscio"
+  gleba: "gleba"
+  alveolate: "alveolato"
+
+overall_body_form:
+  agaricoid: "agarocoide"
+  boletoid: "boletoide"
+  cantharelloid: "cantarelloide"
+  hydnoid: "idnoide"
+  polyporoid: "polipooride"
+  gasteroid: "gasteroide"
+  clavarioid: "clavarioide"
+  corticioid: "corticioide"
+  secotioid: "secotioide"
+  hypogeous: "ipogeo"
+  tremelloid: "tremelloide"
+
+overall_size_class:
+  small: "piccolo"
+  medium: "medio"
+  large: "grande"
+
+cap_shape:
+  convex: "convesso"
+  flat: "piano"
+  conical: "conico"
+  campanulate: "campanulato"
+  parabolic: "parabolico"
+  umbonate: "umbonato"
+  depressed: "depresso"
+  infundibuliform: "imbutiforme"
+  irregular: "irregolare"
+  globose: "globoso"
+  ovoid: "ovoide"
+
+bruising_color:
+  none: "nessuno"
+  blue: "blu"
+  blue_green: "blu-verde"
+  black: "nero"
+  brown: "marrone"
+  red: "rosso"
+  yellow: "giallo"
+  orange: "arancione"
+  pink: "rosa"
+  grey: "grigio"
+  green: "verde"
+  lilac: "lilla"
+
+gill_attachment:
+  remote: "remote"
+  free: "libere"
+  adnexed: "annesse"
+  adnate: "adnate"
+  sinuate: "sinuate"
+  subdecurrent: "subdecorrenti"
+  decurrent: "decorrenti"
+  seceding: "secedenti"
+
+gill_spacing:
+  crowded: "fitte"
+  close: "ravvicinate"
+  subdistant: "subdistanti"
+  distant: "distanti"
+
+gill_edge_texture:
+  smooth: "liscio"
+  serrate: "seghettato"
+  eroded: "eroso"
+  undulating: "ondulato"
+  fimbriate: "fimbriato"
+
+gill_thickness:
+  thin: "sottili"
+  thick: "spesse"
+
+gill_texture:
+  waxy: "ceroso"
+  brittle: "fragile"
+  normal: "normale"
+
+stem_shape:
+  equal: "cilindrico"
+  clavate: "clavato"
+  obclavate: "obclavato"
+  bulbous: "bulboso"
+  attenuated: "attenuato"
+  ventricose: "ventricoso"
+  compressed: "compresso"
+  rooting: "radicante"
+
+cap_surface_moisture:
+  dry: "secco"
+  moist: "umido"
+  subviscid: "subviscido"
+  viscid: "viscido"
+  glutinous: "glutinoso"
+  gelatinous: "gelatinoso"
+  hygrophanous: "igrofano"
+
+surface_texture:
+  smooth: "liscio"
+  fibrillose: "fibrilloso"
+  silky: "sericeo"
+  velvety: "vellutato"
+  tomentose: "tomentoso"
+  floccose: "fioccoso"
+  scaly: "squamoso"
+  squarrose: "squarroso"
+  warty: "verrucoso"
+  reticulate: "reticolato"
+  pruinose: "pruinoso"
+  areolate: "areolato"
+  pitted: "alveolato"
+  wrinkled: "rugoso"
+
+scales_or_warts:
+  scales: "squame"
+  warts: "verruche"
+  both: "entrambi"
+
+cap_color_pattern:
+  uniform: "uniforme"
+  darker at center: "più scuro al centro"
+  two-toned: "bicolore"
+  mottled: "screziato"
+  streaked: "striato"
+
+cap_margin:
+  inrolled: "involuto"
+  incurved: "incurvato"
+  decurved: "decurvato"
+  entire: "intero"
+  wavy: "ondulato"
+  striate: "striato"
+  appendiculate: "appendicolato"
+  rimose: "rimoso"
+  split: "fessurato"
+  lobed: "lobato"
+  fringed: "frangiato"
+  uplifted: "rialzato"
+
+stem_interior:
+  hollow: "cavo"
+  solid: "pieno"
+  stuffed: "farcito"
+
+stipe_attachment_position:
+  central: "centrale"
+  eccentric: "eccentrico"
+  lateral: "laterale"
+  absent: "assente"
+
+stem_reticulation:
+  none: "assente"
+  partial: "parziale"
+  full: "completo"
+
+stem_consistency:
+  firm: "sodo"
+  fibrous: "fibroso"
+  spongy: "spugnoso"
+  brittle: "fragile"
+  cartilaginous: "cartilagineo"
+
+flesh_odor:
+  none: "neutro"
+  pleasant: "gradevole"
+  fruity: "fruttato"
+  farinaceous: "farinoso"
+  anise: "anice"
+  garlic: "aglio"
+  phenolic: "fenolico"
+  coal_tar: "catrame"
+  raphanoid: "rafanoide"
+  fishy: "di pesce"
+  sweet: "dolce"
+  earthy: "terroso"
+  almond: "mandorla"
+  turpentine: "trementina"
+  iodine: "iodio"
+  rancid: "rancido"
+  coconut: "cocco"
+  chlorine: "cloro"
+  unpleasant: "sgradevole"
+
+flesh_taste:
+  mild: "mite"
+  bitter: "amaro"
+  acrid: "acre"
+  acidic: "acido"
+  sweet: "dolce"
+  farinaceous: "farinoso"
+  nutty: "di noce"
+  raphanoid: "rafanoide"
+  astringent: "astringente"
+  unpleasant: "sgradevole"
+
+flesh_texture:
+  firm: "sodo"
+  soft: "molle"
+  brittle: "fragile"
+  fragile: "delicato"
+  fibrous: "fibroso"
+  cartilaginous: "cartilagineo"
+  waxy: "ceroso"
+  gelatinous: "gelatinoso"
+  woody: "legnoso"
+
+flesh_hyphal_structure:
+  homoiomerous: "omoiomero"
+  heteromerous: "eteromero"
+
+flesh_cap_stem_consistency:
+  homogeneous: "omogeneo"
+  heterogeneous: "eterogeneo"
+
+flesh_quantity:
+  insubstantial: "esigua"
+  thin: "sottile"
+  moderate: "moderata"
+  thick: "abbondante"
+
+flesh_latex_color:
+  white: "bianco"
+  "white to yellow": "da bianco a giallo"
+  blue: "blu"
+  red: "rosso"
+  orange: "arancione"
+  yellow: "giallo"
+  clear: "trasparente"
+
+spore_print_color:
+  white: "bianco"
+  cream: "crema"
+  pink: "rosa"
+  ochre: "ocra"
+  brown: "marrone"
+  purple_brown: "bruno-porpora"
+  black: "nero"
+  green: "verde"
+  yellow: "giallo"
+
+spore_shape:
+  globose: "globoso"
+  subglobose: "subgloboso"
+  broadly_ellipsoid: "ampiamente ellissoidale"
+  ellipsoid: "ellissoidale"
+  oblong: "oblungo"
+  cylindric: "cilindrico"
+  allantoid: "allantoide"
+  fusiform: "fusiforme"
+  amygdaliform: "amigdaliforme"
+  ovoid: "ovoide"
+  lacrymoid: "lacrimoide"
+
+spore_ornamentation:
+  smooth: "liscio"
+  verrucose: "verrucoso"
+  echinulate: "echinulato"
+  reticulate: "reticolato"
+  ridged: "costolato"
+  striate: "striato"
+  punctate: "punteggiato"
+
+spore_amyloidity:
+  amyloid: "amiloide"
+  inamyloid: "inamiloide"
+  dextrinoid: "destrinoide"
+
+veil_type:
+  partial: "parziale"
+  universal: "universale"
+  cortina: "cortina"
+  both: "entrambi"
+  absent: "assente"
+
+volva_type:
+  saccate: "sacciforme"
+  flaring: "svasata"
+  circumsessile: "circumsessile"
+  zoned: "zonata"
+  friable: "friabile"
+  napiform: "napiforme"
+  absent: "assente"
+
+ring_shape:
+  pendant: "pendente"
+  ascending: "ascendente"
+  flaring: "svasato"
+  sheathing: "guainante"
+  double: "doppio"
+  absent: "assente"
+
+ring_persistence:
+  persistent: "persistente"
+  fugacious: "fugace"
+  ring_zone: "zona anulare"
+
+ring_position:
+  superior: "superiore"
+  median: "mediano"
+  inferior: "inferiore"
+  apical: "apicale"
+
+ring_mobility:
+  fixed: "fisso"
+  movable: "mobile"
+
+growth_habit:
+  solitary: "solitario"
+  scattered: "sparso"
+  gregarious: "gregario"
+  caespitose: "cespitoso"
+  connate: "connato"
+
+trophic_mode:
+  mycorrhizal: "micorrizico"
+  saprotrophic: "saprotrofo"
+  parasitic: "parassita"
+
+substrate:
+  soil: "suolo"
+  dead wood: "legno morto"
+  living tree: "albero vivo"
+  dung: "sterco"
+  leaf litter: "lettiera fogliare"
+  woody debris: "detriti legnosi"
+
+altitude_zone:
+  sea-level: "livello del mare"
+  lowland: "pianura"
+  montane: "montano"
+  subalpine: "subalpino"
+  alpine: "alpino"
+
+growth_position:
+  terrestrial: "terrestre"
+  lignicolous: "lignicolo"
+  coprophilous: "coprofilo"
+
+latex:
+  absent: "assente"
+  white: "bianco"
+  white_to_yellow: "da bianco a giallo"
+  white_to_lilac: "da bianco a lilla"
+  watery: "acquoso"
+  blue: "blu"
+  red: "rosso"
+  orange: "arancione"
+
+chemical_KOH:
+  yellow: "giallo"
+  orange: "arancione"
+  red: "rosso"
+  negative: "negativo"
+  blackening: "annerimento"
+
+chemical_FeSO4:
+  blue-green: "blu-verde"
+  pink: "rosa"
+  grey-green: "grigio-verde"
+  negative: "negativo"
+
+chemical_NH4OH:
+  yellow: "giallo"
+  green: "verde"
+  negative: "negativo"
+
+pileipellis_type:
+  cutis: "cutis"
+  ixocutis: "ixocutis"
+  trichoderm: "tricoderma"
+  ixotrichoderm: "ixotricoderma"
+  hymeniderm: "imeniaderma"
+  epithelium: "epitelio"
+
+basidia_spore_count:
+  4-spored: "4 spore"
+  2-spored: "2 spore"
+  mixed: "misto"
+
+cheilocystidia_shape:
+  narrowly cylindric: "strettamente cilindrico"
+  subclavate: "subclavato"
+  capitate: "capitato"
+  fusoid: "fusoide"
+  absent: "assente"
+
+pleurocystidia_shape:
+  fusoid-ventricose: "fusoide-ventricoso"
+  metuloid: "metuloide"
+  absent: "assente"
+
+pileipellis_terminal_cell_shape:
+  subclavate: "subclavato"
+  capitate: "capitato"
+  rounded: "arrotondato"
+  cylindric: "cilindrico"
+
+cystidia_color_in_KOH:
+  hyaline: "ialino"
+  pale yellow: "giallo pallido"
+  yellow: "giallo"
+  brown: "marrone"
+
+spore_color_in_KOH:
+  hyaline: "ialino"
+  pale yellow: "giallo pallido"
+  brownish: "brunastro"

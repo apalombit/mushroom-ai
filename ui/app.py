@@ -18,6 +18,7 @@ import yaml  # noqa: E402
 
 from config import settings  # noqa: E402
 from ingestion.rubric import EMBEDDING_GROUPS  # noqa: E402
+from ui.i18n import LANGUAGES, common_names_it, t, tv  # noqa: E402
 
 _PROFILE_FEATURES: dict[str, list[str]] = yaml.safe_load(
     (_ROOT / "ingestion" / "profiles" / f"{settings.grouping_profile}.yaml").read_text()
@@ -27,8 +28,18 @@ API_BASE = "http://localhost:8001"
 
 st.set_page_config(page_title="Mushroom Lookalikes Finder", layout="wide")
 
-st.title("Mushroom Lookalikes Finder")
-st.markdown("Find species that look similar — and learn how to tell them apart.")
+# --- Language toggle (sidebar, before any translated content) ---
+if "lang" not in st.session_state:
+    st.session_state.lang = "en"
+st.sidebar.selectbox(
+    "🌐 Language",
+    options=list(LANGUAGES.keys()),
+    format_func=lambda k: LANGUAGES[k],
+    key="lang",
+)
+
+st.title(t("page_title"))
+st.markdown(t("page_subtitle"))
 
 # ---------------------------------------------------------------------------
 # Helpers
@@ -46,9 +57,9 @@ _EDIBILITY_ICON = {
 
 def edibility_badge(edibility: str | None) -> str:
     if not edibility:
-        return "❓ unknown"
+        return "❓ " + t("edibility_unknown")
     icon = _EDIBILITY_ICON.get(edibility, "❓")
-    return f"{icon} {edibility}"
+    return f"{icon} {t('edibility_' + edibility.replace(' ', '_'))}"
 
 
 def _render_source_links(sources: list[dict] | None) -> None:
@@ -89,7 +100,7 @@ def _render_image_thumbnails(image_refs: list, height_px: int = 200) -> None:
                 f'<img src="{url}" '
                 f'style="max-height:{height_px}px;max-width:100%;'
                 f'object-fit:contain;border-radius:6px;cursor:zoom-in;" />'
-                f'</a>'
+                f"</a>"
             )
             st.markdown(html, unsafe_allow_html=True)
             if source_url and source_name:
@@ -108,9 +119,11 @@ def _show_section(title: str, data: dict, fields: dict[str, str]) -> None:
         if val is None or val == [] or val == "":
             continue
         if isinstance(val, list):
-            val = ", ".join(str(v) for v in val if v)
-        if isinstance(val, bool):
-            val = "yes" if val else "no"
+            val = ", ".join(tv(str(v)) for v in val if v)
+        elif isinstance(val, bool):
+            val = t("bool_yes") if val else t("bool_no")
+        elif isinstance(val, str):
+            val = tv(val)
         items.append(f"**{label}:** {val}")
     if items:
         st.markdown(f"*{title}*")
@@ -120,30 +133,44 @@ def _show_section(title: str, data: dict, fields: dict[str, str]) -> None:
 
 def _show_list(label: str, values: list | None) -> None:
     if values:
-        st.markdown(f"**{label}:** {', '.join(str(v) for v in values if v)}")
+        st.markdown(f"**{label}:** {', '.join(tv(str(v)) for v in values if v)}")
+
+
+def _common_names_display(s: dict) -> str:
+    """Return common names string, preferring Italian when lang=it."""
+    lang = st.session_state.get("lang", "en")
+    if lang == "it":
+        it_names = common_names_it(s.get("scientific_name", ""))
+        if it_names:
+            return ", ".join(it_names)
+    return ", ".join(s.get("common_names") or [])
 
 
 def _render_species_features(s: dict) -> None:
     """Render structured features for one species in two columns."""
     features = s.get("features") or {}
     if not features:
-        st.info("No structured features available for this species.")
+        st.info(t("no_features"))
         return
 
     # Metadata strip
     meta = []
-    for label, key in [("Order", "order"), ("Family", "family"), ("Genus", "genus")]:
+    for tkey, key in [
+        ("meta_order", "order"),
+        ("meta_family", "family"),
+        ("meta_genus", "genus"),
+    ]:
         val = s.get(key) or features.get(key)
         if val:
-            meta.append(f"{label}: **{val}**")
+            meta.append(f"{t(tkey)}: **{val}**")
     if s.get("source_count"):
-        meta.append(f"Sources: {s['source_count']}")
+        meta.append(f"{t('meta_sources')}: {s['source_count']}")
     conf = s.get("reconciliation_confidence")
     if conf is not None:
-        meta.append(f"Confidence: {conf:.0%}")
+        meta.append(f"{t('meta_confidence')}: {conf:.0%}")
     synonyms = features.get("synonyms") or []
     if synonyms:
-        meta.append(f"Synonyms: {', '.join(synonyms)}")
+        meta.append(f"{t('meta_synonyms')}: {', '.join(synonyms)}")
     if meta:
         st.caption(" · ".join(meta))
 
@@ -155,212 +182,212 @@ def _render_species_features(s: dict) -> None:
     col_morph, col_eco = st.columns(2)
 
     with col_morph:
-        st.markdown("**🔬 Morphological**")
+        st.markdown(f"**🔬 {t('section_morphological')}**")
 
         _show_section(
-            "Cap",
+            t("section_cap"),
             features.get("cap") or {},
             {
-                "shape": "Shape",
-                "colors": "Colors",
-                "color_faded": "Color (faded)",
-                "surface_moisture": "Surface moisture",
-                "color_pattern": "Pattern",
-                "surface_texture": "Surface",
-                "scales_or_warts": "Scales / warts",
-                "margin_type": "Margin",
-                "margin_lined_at_maturity": "Margin lined at maturity",
-                "central_depression": "Central depression",
-                "diameter_min_cm": "Diam. min (cm)",
-                "diameter_max_cm": "Diam. max (cm)",
+                "shape": t("field_shape"),
+                "colors": t("field_colors"),
+                "color_faded": t("field_color_faded"),
+                "surface_moisture": t("field_surface_moisture"),
+                "color_pattern": t("field_pattern"),
+                "surface_texture": t("field_surface"),
+                "scales_or_warts": t("field_scales_warts"),
+                "margin_type": t("field_margin"),
+                "margin_lined_at_maturity": t("field_margin_lined"),
+                "central_depression": t("field_central_depression"),
+                "diameter_min_cm": t("field_diam_min"),
+                "diameter_max_cm": t("field_diam_max"),
             },
         )
 
         hymenium_type = (features.get("hymenium") or {}).get("type")
         if hymenium_type:
-            st.markdown(f"*Hymenium type:* **{hymenium_type}**")
+            st.markdown(f"*{t('section_hymenium_type')}:* **{tv(hymenium_type)}**")
 
         if hymenium_type == "gills" or (features.get("gills") or {}).get("attachment"):
             _show_section(
-                "Gills",
+                t("section_gills"),
                 features.get("gills") or {},
                 {
-                    "attachment": "Attachment",
-                    "spacing": "Spacing",
-                    "color": "Color",
-                    "color_with_age": "Color with age",
-                    "thickness": "Thickness",
-                    "texture": "Texture",
+                    "attachment": t("field_attachment"),
+                    "spacing": t("field_spacing"),
+                    "color": t("field_color"),
+                    "color_with_age": t("field_color_age"),
+                    "thickness": t("field_thickness"),
+                    "texture": t("field_texture"),
                 },
             )
         if hymenium_type == "pores" or (features.get("pores") or {}).get("color"):
             _show_section(
-                "Pores",
+                t("section_pores"),
                 features.get("pores") or {},
                 {
-                    "color": "Color",
-                    "color_with_age": "Color with age",
-                    "bruising_color": "Bruising",
-                    "density_per_mm": "Density (per mm)",
+                    "color": t("field_color"),
+                    "color_with_age": t("field_color_age"),
+                    "bruising_color": t("field_bruising"),
+                    "density_per_mm": t("field_density"),
                 },
             )
             _show_section(
-                "Tubes",
+                t("section_tubes"),
                 features.get("tubes") or {},
                 {
-                    "depth_mm": "Depth (mm)",
+                    "depth_mm": t("field_depth"),
                 },
             )
 
         _show_section(
-            "Stem",
+            t("section_stem"),
             features.get("stem") or {},
             {
-                "color": "Color",
-                "color_with_age": "Color with age",
-                "surface_texture": "Surface",
-                "reticulation": "Reticulation",
-                "shape": "Shape",
-                "consistency": "Consistency",
-                "hollow_or_solid": "Hollow / solid",
-                "base_color": "Base color",
-                "basal_mycelium_color": "Basal mycelium",
-                "finger_stain_color": "Finger stain",
-                "height_min_cm": "Height min (cm)",
-                "height_max_cm": "Height max (cm)",
-                "diameter_min_cm": "Diam. min (cm)",
-                "diameter_max_cm": "Diam. max (cm)",
+                "color": t("field_color"),
+                "color_with_age": t("field_color_age"),
+                "surface_texture": t("field_surface"),
+                "reticulation": t("field_reticulation"),
+                "shape": t("field_shape"),
+                "consistency": t("field_consistency"),
+                "hollow_or_solid": t("field_hollow_solid"),
+                "base_color": t("field_base_color"),
+                "basal_mycelium_color": t("field_basal_mycelium"),
+                "finger_stain_color": t("field_finger_stain"),
+                "height_min_cm": t("field_height_min"),
+                "height_max_cm": t("field_height_max"),
+                "diameter_min_cm": t("field_diam_min"),
+                "diameter_max_cm": t("field_diam_max"),
             },
         )
         _show_section(
-            "Veil / ring",
+            t("section_veil"),
             features.get("veil") or {},
             {
-                "present": "Present",
-                "type": "Type",
-                "cortina_present": "Cortina",
-                "shape": "Shape",
-                "color": "Color",
+                "present": t("field_present"),
+                "type": t("field_type"),
+                "cortina_present": t("field_cortina"),
+                "shape": t("field_shape"),
+                "color": t("field_color"),
             },
         )
         _show_section(
-            "Volva",
+            t("section_volva"),
             features.get("volva") or {},
             {
-                "present": "Present",
-                "type": "Type",
-                "shape": "Shape",
-                "color": "Color",
+                "present": t("field_present"),
+                "type": t("field_type"),
+                "shape": t("field_shape"),
+                "color": t("field_color"),
             },
         )
         _show_section(
-            "Flesh",
+            t("section_flesh"),
             features.get("flesh") or {},
             {
-                "color": "Color",
-                "bruising_color": "Bruising",
-                "odor": "Odor",
-                "taste": "Taste",
-                "texture": "Texture",
-                "quantity": "Quantity",
+                "color": t("field_color"),
+                "bruising_color": t("field_bruising"),
+                "odor": t("field_odor"),
+                "taste": t("field_taste"),
+                "texture": t("field_texture"),
+                "quantity": t("field_quantity"),
             },
         )
 
         sp = features.get("spore_print_color")
         if sp:
-            st.markdown(f"*Spore print color:* {sp}")
+            st.markdown(f"*{t('section_spore_print')}:* {tv(sp)}")
         sz = features.get("overall_size_class")
         if sz:
-            st.markdown(f"*Overall size:* {sz}")
+            st.markdown(f"*{t('section_overall_size')}:* {tv(sz)}")
 
         _show_section(
-            "Spores (microscopic)",
+            t("section_spores"),
             features.get("spore") or {},
             {
-                "shape": "Shape",
-                "length_min_um": "Length min (µm)",
-                "length_max_um": "Length max (µm)",
-                "width_min_um": "Width min (µm)",
-                "width_max_um": "Width max (µm)",
-                "ornamentation": "Ornamentation",
-                "spine_length_um": "Spine length (µm)",
-                "spine_base_width_um": "Spine base width (µm)",
-                "amyloidity": "Amyloidity",
-                "color_in_KOH": "Color in KOH",
+                "shape": t("field_shape"),
+                "length_min_um": t("field_length_min"),
+                "length_max_um": t("field_length_max"),
+                "width_min_um": t("field_width_min"),
+                "width_max_um": t("field_width_max"),
+                "ornamentation": t("field_ornamentation"),
+                "spine_length_um": t("field_spine_length"),
+                "spine_base_width_um": t("field_spine_base_width"),
+                "amyloidity": t("field_amyloidity"),
+                "color_in_KOH": t("field_color_koh"),
             },
         )
         _show_section(
-            "Microscopic anatomy",
+            t("section_microscopic"),
             features.get("microscopic") or {},
             {
-                "basidia_spore_count": "Basidia",
-                "cheilocystidia_shape": "Cheilocystidia shape",
-                "cheilocystidia_dims_um": "Cheilocystidia dims (µm)",
-                "pleurocystidia_shape": "Pleurocystidia shape",
-                "pleurocystidia_dims_um": "Pleurocystidia dims (µm)",
-                "cystidia_color_in_KOH": "Cystidia in KOH",
-                "pileipellis_type": "Pileipellis type",
-                "pileipellis_element_width_um": "Pileipellis width (µm)",
-                "pileipellis_terminal_cell_shape": "Terminal cell shape",
+                "basidia_spore_count": t("field_basidia"),
+                "cheilocystidia_shape": t("field_cheilocystidia_shape"),
+                "cheilocystidia_dims_um": t("field_cheilocystidia_dims"),
+                "pleurocystidia_shape": t("field_pleurocystidia_shape"),
+                "pleurocystidia_dims_um": t("field_pleurocystidia_dims"),
+                "cystidia_color_in_KOH": t("field_cystidia_koh"),
+                "pileipellis_type": t("field_pileipellis_type"),
+                "pileipellis_element_width_um": t("field_pileipellis_width"),
+                "pileipellis_terminal_cell_shape": t("field_terminal_cell"),
             },
         )
         _show_section(
-            "Chemical reactions",
+            t("section_chemical"),
             features.get("chemical") or {},
             {
-                "KOH_cap": "KOH (cap)",
-                "KOH_flesh": "KOH (flesh)",
-                "NH4OH_cap": "NH₄OH (cap)",
-                "NH4OH_flesh": "NH₄OH (flesh)",
-                "FeSO4_cap": "FeSO₄ (cap)",
-                "FeSO4_flesh": "FeSO₄ (flesh)",
+                "KOH_cap": t("field_koh_cap"),
+                "KOH_flesh": t("field_koh_flesh"),
+                "NH4OH_cap": t("field_nh4oh_cap"),
+                "NH4OH_flesh": t("field_nh4oh_flesh"),
+                "FeSO4_cap": t("field_feso4_cap"),
+                "FeSO4_flesh": t("field_feso4_flesh"),
             },
         )
 
     with col_eco:
-        st.markdown("**🌿 Ecological**")
+        st.markdown(f"**🌿 {t('section_ecological')}**")
         eco = features.get("ecology") or {}
         if eco.get("trophic_mode"):
-            st.markdown(f"**Trophic mode:** {eco['trophic_mode']}")
-        _show_list("Habitat", eco.get("habitat_types"))
+            st.markdown(f"**{t('field_trophic_mode')}:** {tv(eco['trophic_mode'])}")
+        _show_list(t("field_habitat"), eco.get("habitat_types"))
         if eco.get("substrate"):
-            st.markdown(f"**Substrate:** {eco['substrate']}")
-        _show_list("Associated trees", eco.get("associated_trees"))
-        _show_list("Fruiting seasons", eco.get("fruiting_seasons"))
+            st.markdown(f"**{t('field_substrate')}:** {tv(eco['substrate'])}")
+        _show_list(t("field_associated_trees"), eco.get("associated_trees"))
+        _show_list(t("field_fruiting_seasons"), eco.get("fruiting_seasons"))
         if eco.get("fruiting_months"):
-            st.markdown(f"**Fruiting months:** {eco['fruiting_months']}")
-        _show_list("Regions", eco.get("geographic_regions"))
+            st.markdown(f"**{t('field_fruiting_months')}:** {eco['fruiting_months']}")
+        _show_list(t("field_regions"), eco.get("geographic_regions"))
         if eco.get("growth_habit"):
-            st.markdown(f"**Growth habit:** {eco['growth_habit']}")
+            st.markdown(f"**{t('field_growth_habit')}:** {tv(eco['growth_habit'])}")
         if eco.get("growth_position"):
-            st.markdown(f"**Growth position:** {eco['growth_position']}")
+            st.markdown(f"**{t('field_growth_position')}:** {tv(eco['growth_position'])}")
         if eco.get("altitude_notes"):
-            st.markdown(f"**Altitude:** {eco['altitude_notes']}")
+            st.markdown(f"**{t('field_altitude')}:** {eco['altitude_notes']}")
         if eco.get("microhabitat_notes"):
-            st.markdown(f"**Microhabitat:** {eco['microhabitat_notes']}")
+            st.markdown(f"**{t('field_microhabitat')}:** {eco['microhabitat_notes']}")
 
         st.markdown("---")
-        st.markdown("**⚠️ Safety**")
+        st.markdown(f"**⚠️ {t('section_safety')}**")
         edib = s.get("edibility") or features.get("edibility_status") or features.get("edibility")
         if edib:
-            st.markdown(f"**Edibility:** {edibility_badge(edib)}")
+            st.markdown(f"**{t('field_edibility')}:** {edibility_badge(edib)}")
         toxins = features.get("known_toxins") or []
         if toxins:
-            st.markdown(f"**Toxins:** {', '.join(toxins)}")
+            st.markdown(f"**{t('field_toxins')}:** {', '.join(toxins)}")
         lookalikes = features.get("known_lookalikes") or []
         if lookalikes:
-            st.markdown(f"**Known lookalikes:** {', '.join(lookalikes)}")
+            st.markdown(f"**{t('field_known_lookalikes')}:** {', '.join(lookalikes)}")
 
     notes = features.get("extraction_notes")
     if notes:
-        st.caption(f"📝 Extraction notes: {notes}")
+        st.caption(f"📝 {t('field_extraction_notes')}: {notes}")
 
 
 # ---------------------------------------------------------------------------
 # Tabs
 # ---------------------------------------------------------------------------
 
-tab_search, tab_index = st.tabs(["🔍 Find Lookalikes", "📋 Species Index"])
+tab_search, tab_index = st.tabs([f"🔍 {t('tab_search')}", f"📋 {t('tab_index')}"])
 
 # ===========================================================================
 # Tab 1: Find Lookalikes
@@ -374,16 +401,21 @@ with tab_search:
     col_input, col_context = st.columns([2, 1])
     with col_input:
         species_name = st.text_input(
-            "Mushroom name (scientific or common)",
-            placeholder="e.g. Amanita caesarea",
+            t("input_species_label"),
+            placeholder=t("input_species_placeholder"),
             key="species_input",
         )
     with col_context:
-        region = st.text_input("Region (optional)", placeholder="e.g. Northern Italy")
-        season = st.selectbox("Season (optional)", ["", "spring", "summer", "autumn", "winter"])
+        region = st.text_input(t("input_region_label"), placeholder=t("input_region_placeholder"))
+        _SEASONS = ["", "spring", "summer", "autumn", "winter"]
+        season = st.selectbox(
+            t("input_season_label"),
+            _SEASONS,
+            format_func=lambda s: t(f"season_{s}") if s else "",
+        )
 
     # --- Example species (quick explore) ---
-    st.markdown("**Try an example:**")
+    st.markdown(f"**{t('try_example')}**")
     examples = [
         "Amanita caesarea",
         "Agaricus campestris",
@@ -401,14 +433,14 @@ with tab_search:
 
     # --- Search mode toggle ---
     dangerous_mode = st.toggle(
-        "Dangerous lookalikes only",
+        t("toggle_dangerous"),
         value=False,
-        help="Show only lookalikes with opposite edibility (safe vs dangerous).",
+        help=t("toggle_dangerous_help"),
     )
 
     # --- Weight sliders ---
-    with st.expander("⚙️ Similarity weights (advanced)"):
-        st.caption("Weights are sent as-is; the API normalizes them to sum to 1.")
+    with st.expander(f"⚙️ {t('weights_title')}"):
+        st.caption(t("weights_caption"))
         cols = st.columns(3)
         group_weights: dict[str, float] = {}
         for i, group in enumerate(EMBEDDING_GROUPS):
@@ -429,7 +461,7 @@ with tab_search:
                 )
         st.divider()
         w_numeric = st.slider(
-            "Numeric (size/measurements)",
+            t("weight_numeric_label"),
             0.0,
             0.5,
             float(settings.weight_numeric),
@@ -438,81 +470,79 @@ with tab_search:
         )
 
         st.divider()
-        st.markdown("**Embedding / Jaccard blend**")
+        st.markdown(f"**{t('weights_blend_title')}**")
         alpha = st.slider(
             "Alpha",
             0.0,
             1.0,
             0.5,
             0.05,
-            help="1.0 = pure embedding, 0.0 = pure Jaccard, 0.5 = equal blend",
+            help=t("weights_alpha_help"),
             key="alpha",
         )
 
         st.divider()
-        st.markdown("**Filters & candidate pool**")
+        st.markdown(f"**{t('weights_filters_title')}**")
         filter_cols = st.columns(3)
         with filter_cols[0]:
             body_form_filter = st.checkbox(
-                "Body-form filter",
+                t("filter_body_form"),
                 value=settings.weight_body_form_filter,
-                help="Exclude species with incompatible body form",
+                help=t("filter_body_form_help"),
             )
         with filter_cols[1]:
             hymenium_filter = st.checkbox(
-                "Hymenium filter",
+                t("filter_hymenium"),
                 value=settings.weight_hymenium_filter,
-                help="Exclude species with incompatible hymenium type",
+                help=t("filter_hymenium_help"),
             )
         with filter_cols[2]:
             size_class_filter = st.checkbox(
-                "Size class filter",
+                t("filter_size_class"),
                 value=settings.weight_size_class_filter,
-                help="Exclude species with incompatible size class",
+                help=t("filter_size_class_help"),
             )
         pool_cols = st.columns(2)
         with pool_cols[0]:
             morpho_pool_required = st.checkbox(
-                "Morpho pool required",
+                t("filter_morpho_pool"),
                 value=settings.weight_morpho_pool_required,
-                help="Candidates must appear in at least one morphological embedding group",
+                help=t("filter_morpho_pool_help"),
             )
         with pool_cols[1]:
             morphotype_prefilter = st.checkbox(
-                "Morphotype prefilter",
+                t("filter_morphotype"),
                 value=settings.weight_morphotype_prefilter,
-                help="Pre-filter candidates by morphotype signature match",
+                help=t("filter_morphotype_help"),
             )
 
         st.divider()
+        _AGG_LABELS = {
+            "weighted_avg": t("agg_weighted_avg"),
+            "rrf": t("agg_rrf"),
+            "contrastive_gate": t("agg_contrastive_gate"),
+            "learned_ranker": t("agg_learned_ranker"),
+        }
         aggregation_strategy = st.radio(
-            "Aggregation strategy",
+            t("aggregation_strategy"),
             options=["learned_ranker", "weighted_avg", "rrf", "contrastive_gate"],
-            format_func={
-                "weighted_avg": "Weighted Average",
-                "rrf": "RRF",
-                "contrastive_gate": "Contrastive + Gate",
-                "learned_ranker": "GBDT Ranker",
-            }.get,
+            format_func=_AGG_LABELS.get,
             horizontal=True,
         )
         z_threshold = 0.0
         if aggregation_strategy == "contrastive_gate":
             z_threshold = st.slider(
-                "Z-score gate threshold",
+                t("z_threshold_label"),
                 -1.0,
                 2.0,
                 0.0,
                 0.1,
-                help=(
-                    "Groups below this z-score are excluded from scoring. "
-                    "0.0 = above-average only."
-                ),
+                help=t("z_threshold_help"),
             )
 
     # --- Search ---
-    if st.button("Find Lookalikes", type="primary", disabled=not species_name):
-        with st.spinner("Searching..."):
+    if st.button(t("btn_find"), type="primary", disabled=not species_name):
+        with st.spinner(t("searching")):
             payload = {
                 "species_name": species_name,
                 "region": region or None,
@@ -533,21 +563,21 @@ with tab_search:
             try:
                 resp = requests.post(f"{API_BASE}/api/v1/lookalikes", json=payload, timeout=60)
                 if resp.status_code == 404:
-                    detail = resp.json().get("detail", "Species not found")
+                    detail = resp.json().get("detail", t("error_not_found"))
                     st.error(f"❌ {detail}")
                     st.stop()
                 resp.raise_for_status()
                 data = resp.json()
             except requests.ConnectionError:
-                st.error("Cannot connect to backend. Run: `make serve`")
+                st.error(t("error_no_connection"))
                 st.stop()
             except requests.HTTPError as e:
-                st.error(f"API error: {e}")
+                st.error(t("error_api").format(error=e))
                 st.stop()
 
         # --- No-edibility warning for dangerous mode ---
         if dangerous_mode and not data.get("query_species_edibility"):
-            st.warning("No edibility data for this species — filter had no effect.")
+            st.warning(t("no_edibility_warning"))
 
         # --- Query species images ---
         _render_image_thumbnails(data.get("query_species_image_urls", []))
@@ -555,7 +585,7 @@ with tab_search:
         # --- Safety warning ---
         safety = data.get("explanation_safety_warning")
         if safety:
-            st.error(f"⚠️ **Safety Warning:** {safety}")
+            st.error(f"⚠️ **{t('safety_warning_prefix')}** {safety}")
 
         # --- At-a-glance summary ---
         summary = data.get("explanation_summary")
@@ -565,15 +595,15 @@ with tab_search:
         # --- Notable confusions ---
         notable = data.get("explanation_notable_pairs", [])
         if notable:
-            st.markdown("**Key confusions:**")
+            st.markdown(f"**{t('key_confusions')}**")
             for pair in notable:
                 st.markdown(f"- {pair}")
 
         st.divider()
         mode_label = " dangerous" if dangerous_mode else ""
         st.markdown(
-            f"**{len(data['candidates'])}{mode_label} lookalikes found** "
-            f"(compared {data['species_count_in_db']} species in database)"
+            f"**{t('results_found').format(count=len(data['candidates']), mode=mode_label)}** "
+            f"({t('results_compared').format(count=data['species_count_in_db'])})"
         )
 
         # --- Ranked candidates (card layout) ---
@@ -581,7 +611,9 @@ with tab_search:
             name = cand["scientific_name"]
             edib_text = cand.get("edibility") or "unknown"
             overall = cand["similarity_overall"]
-            common = ", ".join(cand.get("common_names") or [])
+
+            # Common names: prefer Italian when lang=it
+            common = _common_names_display(cand)
 
             with st.container(border=True):
                 # Header row: name | edibility | similarity
@@ -600,7 +632,7 @@ with tab_search:
                     else:
                         st.info(edibility_badge(edib_text))
                 with col_sim:
-                    st.metric("Similarity", f"{overall:.0%}")
+                    st.metric(t("similarity_label"), f"{overall:.0%}")
                     st.progress(min(overall, 1.0))
 
                 # Candidate images
@@ -617,7 +649,7 @@ with tab_search:
                     if not fc["is_similar"] and fc["query_value"] and fc["candidate_value"]
                 ]
                 if diffs:
-                    st.markdown("**Key differences:**")
+                    st.markdown(f"**{t('key_differences')}**")
                     for fc in diffs[:3]:
                         feat = fc["feature_name"].replace(".", " > ")
                         st.markdown(
@@ -626,33 +658,36 @@ with tab_search:
                         )
 
                 # Detailed breakdown (collapsed)
-                with st.expander("Show detailed breakdown"):
+                with st.expander(t("show_breakdown")):
                     group_rows = [
-                        {"Group": g, "Score": f"{v:.1%}"}
+                        {t("col_group"): g, t("col_score"): f"{v:.1%}"}
                         for g, v in sorted(cand["group_similarities"].items(), key=lambda x: -x[1])
                     ]
                     group_rows.append(
-                        {"Group": "numeric", "Score": f"{cand['similarity_numeric']:.1%}"}
+                        {
+                            t("col_group"): "numeric",
+                            t("col_score"): f"{cand['similarity_numeric']:.1%}",
+                        }
                     )
                     group_rows.append(
                         {
-                            "Group": "jaccard",
-                            "Score": f"{cand.get('similarity_jaccard', 0):.1%}",
+                            t("col_group"): "jaccard",
+                            t("col_score"): f"{cand.get('similarity_jaccard', 0):.1%}",
                         }
                     )
                     st.dataframe(group_rows, use_container_width=True, hide_index=True)
 
                     if comparisons:
-                        st.markdown("**Full feature comparison:**")
+                        st.markdown(f"**{t('full_comparison')}**")
                         rows = []
                         for fc in comparisons:
                             rows.append(
                                 {
-                                    "Feature": fc["feature_name"],
-                                    "Group": fc["feature_group"],
+                                    t("col_feature"): fc["feature_name"],
+                                    t("col_group"): fc["feature_group"],
                                     species_name: fc["query_value"] or "—",
                                     name: fc["candidate_value"] or "—",
-                                    "Similar": "✓" if fc["is_similar"] else "✗",
+                                    t("col_similar"): "✓" if fc["is_similar"] else "✗",
                                 }
                             )
                         st.dataframe(rows, use_container_width=True)
@@ -662,9 +697,9 @@ with tab_search:
 # Tab 2: Species Index
 # ===========================================================================
 with tab_index:
-    st.subheader("Species Index")
+    st.subheader(t("index_title"))
     idx_search = st.text_input(
-        "Search by name...", placeholder="e.g. Amanita or Caesar", key="idx_search"
+        "Search by name...", placeholder=t("index_search_placeholder"), key="idx_search"
     )
 
     try:
@@ -672,27 +707,33 @@ with tab_index:
         if r.ok:
             all_species = r.json()
 
-            # Client-side filter
+            # Client-side filter (search both English and Italian common names)
             if idx_search:
                 term = idx_search.lower()
-                all_species = [
-                    s
-                    for s in all_species
-                    if term in s["scientific_name"].lower()
-                    or any(term in cn.lower() for cn in (s.get("common_names") or []))
-                ]
+                filtered = []
+                for s in all_species:
+                    if term in s["scientific_name"].lower():
+                        filtered.append(s)
+                        continue
+                    if any(term in cn.lower() for cn in (s.get("common_names") or [])):
+                        filtered.append(s)
+                        continue
+                    it_names = common_names_it(s["scientific_name"])
+                    if any(term in cn.lower() for cn in it_names):
+                        filtered.append(s)
+                all_species = filtered
 
-            st.caption(f"Showing {len(all_species)} species")
+            st.caption(t("index_showing").format(count=len(all_species)))
 
             # Compact table view
             table_rows = []
             for s in all_species:
-                common = ", ".join(s.get("common_names") or [])
+                common = _common_names_display(s)
                 table_rows.append(
                     {
-                        "Species": s["scientific_name"],
-                        "Common names": common,
-                        "Edibility": edibility_badge(s.get("edibility")),
+                        t("col_species"): s["scientific_name"],
+                        t("col_common_names"): common,
+                        t("col_edibility"): edibility_badge(s.get("edibility")),
                     }
                 )
             if table_rows:
@@ -702,29 +743,26 @@ with tab_index:
             species_names = [s["scientific_name"] for s in all_species]
             if species_names:
                 selected = st.selectbox(
-                    "Select a species for full profile",
+                    t("index_select"),
                     options=[""] + species_names,
                     key="idx_select",
                 )
                 if selected:
-                    with st.spinner(f"Loading profile for {selected}..."):
+                    with st.spinner(t("index_loading").format(name=selected)):
                         profile_resp = requests.get(
                             f"{API_BASE}/api/v1/species/{selected}", timeout=10
                         )
                     if profile_resp.ok:
                         _render_species_features(profile_resp.json())
                     else:
-                        st.warning("Could not load full profile.")
+                        st.warning(t("error_load_profile"))
         else:
-            st.warning("Could not load species list.")
+            st.warning(t("error_load_species"))
     except requests.ConnectionError:
-        st.warning("Could not load species list — is the API running?")
+        st.warning(t("error_no_connection_index"))
     except Exception:
-        st.warning("Could not load species list — unexpected error.")
+        st.warning(t("error_unexpected"))
 
 # --- Footer ---
 st.divider()
-st.caption(
-    "⚠️ This tool is for educational purposes only. "
-    "Never eat wild mushrooms based solely on automated identification."
-)
+st.caption(f"⚠️ {t('footer_warning')}")

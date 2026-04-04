@@ -11,6 +11,8 @@ Feature vector (61 dimensions):
 
 from __future__ import annotations
 
+import hashlib
+import json
 import logging
 import random
 from pathlib import Path
@@ -57,6 +59,46 @@ DEFAULT_MODEL_PATH = (
     Path(__file__).resolve().parent.parent / "data" / "models" / "ranker_model.txt"
 )
 
+
+def _feature_fingerprint() -> str:
+    """SHA-256 hex digest of the current RANKER_FEATURES list."""
+    return hashlib.sha256(json.dumps(RANKER_FEATURES).encode()).hexdigest()
+
+
+def _meta_path(model_path: Path) -> Path:
+    return model_path.with_suffix(".meta.json")
+
+
+def _save_meta(model_path: Path) -> None:
+    """Write feature fingerprint alongside the model file."""
+    meta = {
+        "feature_fingerprint": _feature_fingerprint(),
+        "feature_count": len(RANKER_FEATURES),
+        "features": RANKER_FEATURES,
+    }
+    _meta_path(model_path).write_text(json.dumps(meta, indent=2))
+
+
+def _validate_meta(model_path: Path) -> None:
+    """Raise RuntimeError if the saved model's feature schema doesn't match current code."""
+    mp = _meta_path(model_path)
+    if not mp.exists():
+        logger.warning(
+            "No model metadata at %s — cannot verify feature schema. "
+            "Consider retraining: python -m scripts.train_ranker",
+            mp,
+        )
+        return
+    meta = json.loads(mp.read_text())
+    saved = meta.get("feature_fingerprint", "")
+    current = _feature_fingerprint()
+    if saved != current:
+        raise RuntimeError(
+            "Ranker model is stale — feature schema changed since training. "
+            "Retrain: python -m scripts.train_ranker --optimize 200 --symmetric --hard-negatives"
+        )
+
+
 DEFAULT_RANKER_PARAMS: dict = {
     "objective": "binary",
     "metric": "binary_logloss",
@@ -101,9 +143,7 @@ def compute_pairwise_features(
         result[field] = field_breakdown.get(field)
 
     # 2. Numeric range fields
-    for (min_field, max_field), feat_name in zip(
-        NUMERIC_RANGE_FIELDS, _NUMERIC_RANGE_NAMES
-    ):
+    for (min_field, max_field), feat_name in zip(NUMERIC_RANGE_FIELDS, _NUMERIC_RANGE_NAMES):
         a_min = _parse_numeric(_get_nested(features_a, min_field))
         a_max = _parse_numeric(_get_nested(features_a, max_field))
         b_min = _parse_numeric(_get_nested(features_b, min_field))
@@ -114,9 +154,7 @@ def compute_pairwise_features(
         result[feat_name] = category_similarity(cat_a, cat_b, bins)
 
     # 3. Numeric single fields
-    for (field, tolerance), feat_name in zip(
-        NUMERIC_SINGLE_FIELDS, _NUMERIC_SINGLE_NAMES
-    ):
+    for (field, tolerance), feat_name in zip(NUMERIC_SINGLE_FIELDS, _NUMERIC_SINGLE_NAMES):
         a_val = _parse_numeric(_get_nested(features_a, field))
         b_val = _parse_numeric(_get_nested(features_b, field))
         result[feat_name] = single_proximity(a_val, b_val, tolerance)
@@ -202,10 +240,7 @@ def build_training_data(
             species_data[partner]["features"],
             vocab,
         )
-        row = [
-            float("nan") if v is None else v
-            for v in (feats[f] for f in RANKER_FEATURES)
-        ]
+        row = [float("nan") if v is None else v for v in (feats[f] for f in RANKER_FEATURES)]
         rows.append(row)
         labels.append(1)
         genera.append(anchor.split()[0])
@@ -230,10 +265,7 @@ def build_training_data(
                 species_data[c]["features"],
                 vocab,
             )
-            row = [
-                float("nan") if v is None else v
-                for v in (feats[f] for f in RANKER_FEATURES)
-            ]
+            row = [float("nan") if v is None else v for v in (feats[f] for f in RANKER_FEATURES)]
             rows.append(row)
             labels.append(0)
             genera.append(anchor.split()[0])
@@ -249,7 +281,9 @@ def build_training_data(
             feature_gap = float(np.nanmean(pos_mean - neg_mean))
         logger.info(
             "Training data: %d pos, %d neg, avg feature gap=%.4f",
-            int(y.sum()), int(len(y) - y.sum()), feature_gap,
+            int(y.sum()),
+            int(len(y) - y.sum()),
+            feature_gap,
         )
 
     return X, y, genera
@@ -290,8 +324,7 @@ def _compute_hard_negatives(
     for anchor in species_data:
         # Collect non-lookalike candidates
         candidates = [
-            s for s in all_species
-            if s != anchor and tuple(sorted([anchor, s])) not in edge_set
+            s for s in all_species if s != anchor and tuple(sorted([anchor, s])) not in edge_set
         ]
         if not candidates:
             continue
@@ -353,9 +386,7 @@ def train_ranker(
         X_train, X_val = X[train_idx], X[val_idx]
         y_train, y_val = y[train_idx], y[val_idx]
 
-        train_data = lgb.Dataset(
-            X_train, label=y_train, feature_name=RANKER_FEATURES
-        )
+        train_data = lgb.Dataset(X_train, label=y_train, feature_name=RANKER_FEATURES)
         val_data = lgb.Dataset(
             X_val, label=y_val, feature_name=RANKER_FEATURES, reference=train_data
         )
@@ -406,6 +437,7 @@ def train_ranker(
 
         model_path.parent.mkdir(parents=True, exist_ok=True)
         final_model.save_model(str(model_path))
+        _save_meta(model_path)
         logger.info("Model saved to %s", model_path)
 
         result["feature_importance"] = dict(
@@ -448,20 +480,20 @@ def optimize_ranker(
             "feature_fraction": trial.suggest_float("feature_fraction", 0.3, 1.0),
             "bagging_fraction": trial.suggest_float("bagging_fraction", 0.5, 1.0),
             "bagging_freq": trial.suggest_int("bagging_freq", 1, 10),
-            "learning_rate": trial.suggest_float(
-                "learning_rate", 0.005, 0.2, log=True
-            ),
+            "learning_rate": trial.suggest_float("learning_rate", 0.005, 0.2, log=True),
             "reg_alpha": trial.suggest_float("reg_alpha", 1e-3, 5.0, log=True),
             "reg_lambda": trial.suggest_float("reg_lambda", 1e-3, 5.0, log=True),
             "min_split_gain": trial.suggest_float("min_split_gain", 0.0, 1.0),
-            "scale_pos_weight": trial.suggest_float(
-                "scale_pos_weight", 1.0, 10.0
-            ),
+            "scale_pos_weight": trial.suggest_float("scale_pos_weight", 1.0, 10.0),
         }
         metrics = train_ranker(
-            X, y, pair_genera,
-            n_folds=n_folds, seed=seed,
-            params=trial_params, save_model=False,
+            X,
+            y,
+            pair_genera,
+            n_folds=n_folds,
+            seed=seed,
+            params=trial_params,
+            save_model=False,
         )
         return metrics["auc_mean"]
 
@@ -475,9 +507,13 @@ def optimize_ranker(
     # Retrain final model with best params and save
     logger.info("Retraining final model with best params (AUC=%.4f)", best_auc)
     final_metrics = train_ranker(
-        X, y, pair_genera,
-        n_folds=n_folds, seed=seed,
-        params=best_params, save_model=True,
+        X,
+        y,
+        pair_genera,
+        n_folds=n_folds,
+        seed=seed,
+        params=best_params,
+        save_model=True,
     )
 
     return {
@@ -504,9 +540,9 @@ def load_ranker(model_path: Path | None = None):
     path = model_path or DEFAULT_MODEL_PATH
     if not path.exists():
         raise FileNotFoundError(
-            f"Ranker model not found at {path}. "
-            "Train it first: python -m scripts.train_ranker"
+            f"Ranker model not found at {path}. Train it first: python -m scripts.train_ranker"
         )
+    _validate_meta(path)
     _model_cache = lgb.Booster(model_file=str(path))
     return _model_cache
 
