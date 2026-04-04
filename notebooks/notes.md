@@ -51,9 +51,7 @@ less R&D or complex catch words that sound scary and more straight interpretatio
 
 
 
-
-
-two languages in UI, default english and choose italian as optional
+visual transformer for feature extraction from images of specific objects
 
 
 
@@ -65,15 +63,6 @@ two languages in UI, default english and choose italian as optional
 
 next steps for production showcase as open tool from browser or app ?
 
-
-
-
-
-
-
-
-
-visual transformer for feature extraction from images of specific objects
 
 
 
