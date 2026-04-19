@@ -149,3 +149,9 @@ Provider-agnostic via LiteLLM + Instructor. Switch provider/model with `LLM_PROV
 - **API/UI**: fastapi, uvicorn, streamlit
 - **Optimization**: optuna (Jaccard weight search), numpy (Dirichlet sampling for sweeps)
 - **Tracking**: mlflow
+
+
+## Vision Module
+See vision/VISION_PROJECT_PLAN.md for the visual feature extraction pipeline.
+This module extracts morphological features from mushroom images using
+frozen DINOv2 + per-feature classification heads.

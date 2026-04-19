@@ -1,0 +1,59 @@
+# Feature Applicability Matrix
+#
+# Defines which view angles and framing conditions make each morphological
+# feature determinable from an image. Used for context gating (Phase 2b+).
+#
+# "required" views: feature is reliably visible from these angles
+# "optional" views: feature may be partially visible
+# Not listed = feature not determinable from that view → "not_determinable"
+
+hymenium_type:
+  view_angle:
+    required: [underside, side]
+    optional: [detail]
+  framing: [full_specimen, upper_half, detail_macro]
+  subject_count: [single, few]
+
+cap_shape:
+  view_angle:
+    required: [side]
+    optional: [top]
+  framing: [full_specimen, upper_half]
+
+cap_color:
+  view_angle:
+    required: [top, side]
+    optional: [underside]
+  framing: [full_specimen, upper_half, detail_macro]
+
+overall_body_form:
+  view_angle:
+    required: [side, top, underside, habitat]
+  framing: [full_specimen, habitat_distant]
+
+stem_shape:
+  view_angle:
+    required: [side]
+  framing: [full_specimen]
+
+gill_attachment:
+  view_angle:
+    required: [underside]
+    optional: [side]
+  framing: [full_specimen, upper_half, detail_macro]
+
+overall_size_class:
+  view_angle:
+    required: [side]
+  framing: [full_specimen]
+  subject_count: [single, with_hand]
+
+surface_texture:
+  view_angle:
+    required: [top, side, detail]
+  framing: [full_specimen, upper_half, detail_macro]
+
+cap_surface_moisture:
+  view_angle:
+    required: [top, side]
+  framing: [full_specimen, upper_half, detail_macro]

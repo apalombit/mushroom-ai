@@ -1,0 +1,193 @@
+# Vision Feature Registry
+#
+# Derived from data/reference/morphological_vocabulary.yaml.
+# Each entry defines a classification head target.
+#
+# Fields:
+#   classes:     list of canonical values (order = label index)
+#   num_classes: len(classes)
+#   tier:        1 = start here, 2 = add next, 3 = advanced
+#   source:      where canonical values come from in the vocabulary
+
+# ── Tier 1: high visual signal, high impact ──────────────────────────────────
+
+hymenium_type:
+  tier: 1
+  num_classes: 7
+  classes:
+    - gills
+    - ridges
+    - pores
+    - teeth
+    - smooth
+    - gleba
+    - alveolate
+  source: "morphological_vocabulary.yaml → hymenium_type"
+
+overall_body_form:
+  tier: 1
+  num_classes: 11
+  classes:
+    - agaricoid
+    - boletoid
+    - cantharelloid
+    - hydnoid
+    - polyporoid
+    - gasteroid
+    - clavarioid
+    - corticioid
+    - secotioid
+    - hypogeous
+    - tremelloid
+  source: "morphological_vocabulary.yaml → overall_body_form"
+
+cap_shape:
+  tier: 1
+  num_classes: 11
+  classes:
+    - convex
+    - flat
+    - conical
+    - campanulate
+    - parabolic
+    - umbonate
+    - depressed
+    - infundibuliform
+    - irregular
+    - globose
+    - ovoid
+  source: "morphological_vocabulary.yaml → cap_shape"
+
+cap_color:
+  tier: 1
+  num_classes: 14
+  classes:
+    - white
+    - cream
+    - yellow
+    - orange
+    - red
+    - pink
+    - brown
+    - tan
+    - grey
+    - olive
+    - green
+    - purple
+    - blue
+    - black
+  source: "morphological_vocabulary.yaml → color_palette"
+
+# ── Tier 2: moderate complexity ──────────────────────────────────────────────
+
+surface_texture:
+  tier: 2
+  num_classes: 14
+  classes:
+    - smooth
+    - fibrillose
+    - silky
+    - velvety
+    - tomentose
+    - floccose
+    - scaly
+    - squarrose
+    - warty
+    - reticulate
+    - pruinose
+    - areolate
+    - pitted
+    - wrinkled
+  source: "morphological_vocabulary.yaml → surface_texture"
+
+gill_attachment:
+  tier: 2
+  num_classes: 8
+  classes:
+    - remote
+    - free
+    - adnexed
+    - adnate
+    - sinuate
+    - subdecurrent
+    - decurrent
+    - seceding
+  source: "morphological_vocabulary.yaml → gill_attachment"
+
+stem_shape:
+  tier: 2
+  num_classes: 8
+  classes:
+    - equal
+    - clavate
+    - obclavate
+    - bulbous
+    - attenuated
+    - ventricose
+    - compressed
+    - rooting
+  source: "morphological_vocabulary.yaml → stem_shape"
+
+cap_surface_moisture:
+  tier: 2
+  num_classes: 7
+  classes:
+    - dry
+    - moist
+    - subviscid
+    - viscid
+    - glutinous
+    - gelatinous
+    - hygrophanous
+  source: "morphological_vocabulary.yaml → cap_surface_moisture"
+
+# ── Context heads (deferred — train only if needed) ─────────────────────────
+
+view_angle:
+  tier: context
+  num_classes: 6
+  classes:
+    - top
+    - side
+    - underside
+    - cross_section
+    - detail
+    - habitat
+
+framing:
+  tier: context
+  num_classes: 5
+  classes:
+    - full_specimen
+    - upper_half
+    - detail_macro
+    - habitat_distant
+    - cross_section
+
+subject_count:
+  tier: context
+  num_classes: 4
+  classes:
+    - single
+    - few
+    - cluster
+    - with_hand
+
+maturity:
+  tier: context
+  num_classes: 4
+  classes:
+    - button
+    - immature
+    - mature
+    - old
+
+condition:
+  tier: context
+  num_classes: 5
+  classes:
+    - fresh
+    - wet_conditions
+    - damaged
+    - dried
+    - frozen

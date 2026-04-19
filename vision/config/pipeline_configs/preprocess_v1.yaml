@@ -1,0 +1,28 @@
+# Preprocessing Pipeline v1 — Minimal viable preprocessing
+#
+# All steps deterministic. No randomness, no augmentation.
+# ImageNet normalization and center crop are applied at embedding time, not here.
+
+version: "v1"
+description: "Minimal viable preprocessing: format + resize + border removal"
+
+format:
+  target_colorspace: "RGB"
+  output_format: "JPEG"
+  jpeg_quality: 95
+
+filtering:
+  min_short_side_px: 100
+  max_aspect_ratio: 3.0
+  reject_corrupt: true
+
+resize:
+  strategy: "shortest_side"
+  target_short_side: 256
+  interpolation: "LANCZOS"
+
+border_removal:
+  enabled: true
+  method: "constant_edge_detection"
+  threshold_std: 5.0
+  max_crop_fraction: 0.15
