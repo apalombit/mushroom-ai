@@ -40,6 +40,8 @@ data/cache/
 data/images/
 data/vlm_full/
 data/vlm_pilot/
+data/vlm_eval/
+data/vlm_features/
 data/manual_qa/
 data/image_qa_viewer.html
 !data/seed/

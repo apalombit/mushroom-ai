@@ -234,14 +234,25 @@ def structured_vision_completion(
     temperature: float = 0.1,
     max_retries: int = 2,
     model: str | None = None,
+    content_blocks: list[dict] | None = None,
     **kwargs,
 ):
     """Structured multi-modal completion — returns a validated Pydantic model.
 
     Reuses `get_instructor_client()` so Ollama uses MD_JSON mode and cloud
     providers use TOOLS mode automatically.
+
+    If *content_blocks* is provided, it is used as the user-message content
+    directly (for interleaved text + image payloads like few-shot examples).
+    In that case *prompt* and *image_paths* are ignored.
     """
-    messages = _build_vision_messages(prompt, image_paths, system)
+    if content_blocks is not None:
+        messages: list[dict] = []
+        if system:
+            messages.append({"role": "system", "content": system})
+        messages.append({"role": "user", "content": content_blocks})
+    else:
+        messages = _build_vision_messages(prompt, image_paths, system)
     client = get_instructor_client()
     model_str = _get_model_string() if model is None else _override_model_string(model)
 

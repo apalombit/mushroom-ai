@@ -1,0 +1,37 @@
+# Manual corrections from VLM cap_color audit (2026-04-25).
+# 132 errors reviewed on 906 eval images; 57 flagged as gt_wrong.
+#
+# Each entry adds canonical colors that the species legitimately exhibits
+# but that were missing from the reconciled features_json.cap.colors list.
+#
+# Format:  feature_name → species → [colors_to_add]
+
+cap_color:
+  # 8 errors — model predicts olive(8), GT only has green
+  Russula virescens: [olive]
+  # 7 errors — ages from red/yellow to brown/black, GT only has red
+  Hygrocybe conica: [brown]
+  # 6 errors — grey/white earthstar bodies, GT only has brown
+  Geastrum fornicatum: [white, grey]
+  # 6 errors — red-orange jelly, GT only has orange
+  Guepiniopsis alpina: [red]
+  # 6 errors — green+blue+brown lifecycle, GT only has green
+  Hygrocybe psittacina: [blue, brown]
+  # 6 errors — dried caps are brown, GT only has yellow
+  Psilocybe semilanceata: [brown]
+  # 5 errors — pale white/cream outer surface, GT only has pink
+  Geastrum rufescens: [white]
+  # 3 errors — orange-brown tones, GT only has brown
+  Laccaria bicolor: [orange]
+  # 2 errors — grey-green to brownish cap, GT too narrow
+  Amanita echinocephala: [brown, grey]
+  # 2 errors — browns when mature/dried, GT only has white
+  Hericium alpestre: [brown]
+  # 2 errors — tan-brown cap, GT only has white
+  Hydnum albidum: [brown]
+  # 2 errors — orange-red tones, GT only has red
+  Leucoagaricus rubrotinctus: [orange]
+  # 1 error — grey tones on cap, GT only has brown
+  Amanita excelsa: [grey]
+  # 1 error — fades from yellow to brown, GT only has yellow
+  Russula claroflava: [brown]

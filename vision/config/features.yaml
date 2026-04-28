@@ -60,16 +60,14 @@ cap_shape:
 
 cap_color:
   tier: 1
-  num_classes: 14
+  num_classes: 12
   classes:
     - white
-    - cream
     - yellow
     - orange
     - red
     - pink
     - brown
-    - tan
     - grey
     - olive
     - green
