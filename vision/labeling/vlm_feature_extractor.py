@@ -4,7 +4,16 @@ Feature-agnostic: looks up schema + prompts from the registries in
 vlm_feature_schemas and vlm_feature_prompts. Adding a new feature requires
 only a new schema class + prompt pair — no changes here.
 
+Three extraction modes:
+- single-shot (default) — one VLM call, full class enumeration
+- few-shot (use_few_shot=True with reference_images/{feature}/) — interleaved
+  text+image content blocks for in-context exemplars
+- staged (staged=True) — two VLM calls via STAGED_REGISTRY: stage 1 picks a
+  coarse family, stage 2 disambiguates within that family
+
 Output: one JSON sidecar per image at ``{out_dir}/{feature_name}/{image_id}.json``.
+For staged mode the sidecar additionally includes a ``_stage1`` key with the
+stage-1 result for debugging.
 """
 
 import json
@@ -16,10 +25,14 @@ from tqdm import tqdm
 from llm.client import _encode_image_to_data_url, structured_vision_completion
 from vision.labeling.vlm_feature_prompts import PROMPT_REGISTRY
 from vision.labeling.vlm_feature_schemas import FEATURE_REGISTRY
+from vision.labeling.vlm_staged_schemas import STAGED_REGISTRY
 
 logger = logging.getLogger(__name__)
 
 REFERENCE_DIR = Path(__file__).parent / "reference_images"
+
+# Confidence rank for min-confidence merge (lower = more uncertain).
+_CONFIDENCE_RANK: dict[str, int] = {"cannot_tell": 0, "low": 1, "high": 2}
 
 # Per-feature preamble text for few-shot reference images.
 _FEWSHOT_PREAMBLE: dict[str, str] = {
@@ -125,6 +138,99 @@ def extract_feature(
     )
 
 
+def extract_feature_staged(
+    image_path: str | Path,
+    feature_name: str,
+    model_name: str | None = None,
+):
+    """Run two-stage chain-of-inquiry VLM extraction (Path C).
+
+    Stage 1 picks a coarse family (e.g. linear_radial / punctate /
+    featureless_or_internal for hymenium). Stage 2 dispatches on the family
+    value to a within-family disambiguation prompt and returns the leaf class.
+
+    The final result is the same Pydantic model as single-shot extraction
+    (e.g. HymeniumTypeResult), so downstream audit + analysis code works
+    unchanged. Confidence is min(stage1.confidence, stage2.confidence).
+
+    Args:
+        image_path: Path to the image file.
+        feature_name: Feature to extract (must be in STAGED_REGISTRY).
+        model_name: Optional per-call model override.
+
+    Returns:
+        ``(final_result, stage1_result)`` — the merged final model plus the
+        raw stage-1 result for debugging / sidecar metadata.
+
+    Raises:
+        KeyError: If *feature_name* is not in STAGED_REGISTRY.
+    """
+    cfg = STAGED_REGISTRY[feature_name]
+
+    # Stage 1 — coarse family
+    s1 = structured_vision_completion(
+        prompt=cfg.stage1_user,
+        image_paths=[image_path],
+        response_model=cfg.stage1_schema,
+        system=cfg.stage1_system,
+        model=model_name,
+    )
+
+    family_value = getattr(s1, cfg.family_field, None)
+
+    # Stage 1 abstain → null final, no stage 2 call
+    if family_value is None or s1.confidence == "cannot_tell":
+        final = cfg.final_schema(
+            visible=bool(s1.visible),
+            visual_description=s1.visual_description,
+            reasoning=s1.reasoning,
+            confidence="cannot_tell",
+            **{cfg.leaf_field: None},
+        )
+        return final, s1
+
+    if family_value not in cfg.families:
+        raise ValueError(
+            f"Stage 1 returned unknown family {family_value!r} for {feature_name!r}; "
+            f"expected one of {sorted(cfg.families)}"
+        )
+
+    # Stage 2 — within-family disambiguation
+    fam_cfg = cfg.families[family_value]
+    s2 = structured_vision_completion(
+        prompt=fam_cfg.user,
+        image_paths=[image_path],
+        response_model=fam_cfg.schema,
+        system=fam_cfg.system,
+        model=model_name,
+    )
+
+    leaf_value = getattr(s2, cfg.leaf_field, None)
+
+    # Min-confidence merge (lower of the two ranks)
+    final_conf = min(s1.confidence, s2.confidence, key=_CONFIDENCE_RANK.get)
+
+    # Stage 2 abstain or null leaf → final is null
+    if leaf_value is None or s2.confidence == "cannot_tell":
+        final = cfg.final_schema(
+            visible=True,
+            visual_description=s2.visual_description or s1.visual_description,
+            reasoning=s2.reasoning or s1.reasoning,
+            confidence="cannot_tell",
+            **{cfg.leaf_field: None},
+        )
+        return final, s1
+
+    final = cfg.final_schema(
+        visible=True,
+        visual_description=s2.visual_description or s1.visual_description,
+        reasoning=s2.reasoning or s1.reasoning,
+        confidence=final_conf,
+        **{cfg.leaf_field: leaf_value},
+    )
+    return final, s1
+
+
 def extract_feature_batch(
     image_paths: list[str | Path],
     feature_name: str,
@@ -133,6 +239,7 @@ def extract_feature_batch(
     image_ids: list[str] | None = None,
     skip_existing: bool = True,
     use_few_shot: bool = True,
+    staged: bool = False,
 ) -> list[dict]:
     """Extract a feature from a batch of images with JSON sidecar output.
 
@@ -151,7 +258,13 @@ def extract_feature_batch(
         List of result dicts in input order:
         ``{"image_id", "image_path", "result": dict|None, "error": str|None, "skipped": bool}``
     """
-    if feature_name not in FEATURE_REGISTRY:
+    if staged:
+        if feature_name not in STAGED_REGISTRY:
+            raise KeyError(
+                f"No staged config for '{feature_name}'. "
+                f"Available: {sorted(STAGED_REGISTRY)}"
+            )
+    elif feature_name not in FEATURE_REGISTRY:
         raise KeyError(f"Unknown feature '{feature_name}'. Available: {sorted(FEATURE_REGISTRY)}")
 
     feature_dir = Path(out_dir) / feature_name
@@ -182,10 +295,17 @@ def extract_feature_batch(
             continue
 
         try:
-            result = extract_feature(
-                path, feature_name, model_name=model_name, use_few_shot=use_few_shot
-            )
-            payload = result.model_dump()
+            if staged:
+                result, stage1 = extract_feature_staged(
+                    path, feature_name, model_name=model_name
+                )
+                payload = result.model_dump()
+                payload["_stage1"] = stage1.model_dump()
+            else:
+                result = extract_feature(
+                    path, feature_name, model_name=model_name, use_few_shot=use_few_shot
+                )
+                payload = result.model_dump()
             sidecar.write_text(json.dumps(payload, indent=2))
             results.append(
                 {

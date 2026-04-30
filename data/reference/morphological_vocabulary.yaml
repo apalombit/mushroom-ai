@@ -52,9 +52,9 @@ hymenium_type:
     "ridges-teeth": 0.2
     "ridges-pores": 0.05
     "ridges-smooth": 0.0
-    "pores-teeth": 0.1
-    "pores-smooth": 0.0
-    "teeth-smooth": 0.0
+    "pores-teeth": 0.3
+    "pores-smooth": 0.6
+    "teeth-smooth": 0.1
     "gleba-smooth": 0.1
     "alveolate-pores": 0.1
 
@@ -103,12 +103,12 @@ overall_body_form:
     "jelly-like body": "tremelloid"
     "ear fungus": "tremelloid"
   similarity_matrix:
-    "agaricoid-cantharelloid": 0.7
-    "agaricoid-boletoid": 0.6
-    "agaricoid-secotioid": 0.5
-    "boletoid-polyporoid": 0.4
-    "gasteroid-secotioid": 0.5
-    "gasteroid-hypogeous": 0.4
+    "agaricoid-cantharelloid": 0.2
+    "agaricoid-boletoid": 0.4
+    "agaricoid-secotioid": 0.2
+    "boletoid-polyporoid": 0.3
+    "gasteroid-secotioid": 0.3
+    "gasteroid-hypogeous": 0.3
     "hydnoid-cantharelloid": 0.3
     "clavarioid-corticioid": 0.2
     "corticioid-tremelloid": 0.2
@@ -405,19 +405,19 @@ color_palette:
     "white-cream": 0.8
     "yellow-orange": 0.7
     "yellow-cream": 0.6
-    "orange-red": 0.6
+    "orange-red": 0.7
     "orange-brown": 0.5
-    "orange-tan": 0.6
+    "orange-tan": 0.7
     "red-pink": 0.6
     "brown-tan": 0.8
     "brown-olive": 0.4
     "grey-brown": 0.4
     "grey-white": 0.5
     "purple-pink": 0.5
-    "purple-blue": 0.6
-    "olive-green": 0.6
-    "black-brown": 0.4
-    "black-grey": 0.5
+    "purple-blue": 0.7
+    "olive-green": 0.8
+    "black-brown": 0.5
+    "black-grey": 0.6
 
 # =============================================================================
 #  BRUISING / COLOR CHANGE -- shared vocabulary for all bruising fields
@@ -473,17 +473,17 @@ bruising_color:
     "purplish": "lilac"
     "turning lilac": "lilac"
   similarity_matrix:
-    "blue-blue_green": 0.7
+    "blue-blue_green": 0.8
     "blue-black": 0.4
     "blue-green": 0.5
     "red-pink": 0.6
-    "red-orange": 0.5
+    "red-orange": 0.7
     "brown-black": 0.5
     "brown-orange": 0.4
-    "yellow-orange": 0.5
+    "yellow-orange": 0.7
     "grey-black": 0.5
-    "none-brown": 0.1
-    "lilac-pink": 0.5
+    "none-brown": 0.3
+    "lilac-pink": 0.6
     "lilac-grey": 0.3
 
 # =============================================================================

@@ -414,7 +414,23 @@ def main():
         action="store_true",
         help="Disable few-shot reference images even if reference_images/ exists.",
     )
+    parser.add_argument(
+        "--staged",
+        action="store_true",
+        help=(
+            "Use two-stage chain-of-inquiry extraction (Path C). Stage 1 picks "
+            "a coarse family, stage 2 disambiguates within the family. Implies "
+            "--no-few-shot for now (staged + few-shot is not implemented)."
+        ),
+    )
     args = parser.parse_args()
+
+    if args.staged and not args.no_few_shot:
+        # Staged mode is a separate code path; we don't currently support
+        # combining it with few-shot reference images.
+        print(
+            "  --staged implies no few-shot (turning few-shot off for this run)."
+        )
 
     out_dir = Path(args.out) if args.out else DEFAULT_OUT_DIR
     out_dir.mkdir(parents=True, exist_ok=True)
@@ -466,7 +482,8 @@ def main():
             model_name=args.model,
             image_ids=eval_df["image_id"].tolist(),
             skip_existing=args.resume,
-            use_few_shot=not args.no_few_shot,
+            use_few_shot=(not args.no_few_shot) and (not args.staged),
+            staged=args.staged,
         )
 
         n_ok = sum(1 for r in results if r["result"] is not None)
