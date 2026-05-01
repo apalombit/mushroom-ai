@@ -169,10 +169,126 @@ Brown is the most common class — only choose brown when the cap is genuinely b
 if it is more accurately described as grey, yellow, or another color, pick that one."""
 
 # ---------------------------------------------------------------------------
+# ring_presence
+# ---------------------------------------------------------------------------
+
+RING_PRESENCE_SYSTEM = (
+    "You are a mycology assistant analyzing a single mushroom photograph.\n"
+    "Focus ONLY on the upper portion of the stem (stipe), where a ring (annulus) "
+    "would attach.\n"
+    "Report only what you can directly observe — do not infer from species knowledge.\n\n"
+    + _CONFIDENCE_BLOCK
+)
+
+RING_PRESENCE_USER = """\
+Examine this mushroom image and decide whether a RING (annulus) is present on the \
+upper stem.
+
+First describe the upper stem region — anything wrapping the stipe just below the \
+cap, any darker zone or hanging tissue. Then classify.
+
+If the upper portion of the stem is NOT visible at all (e.g., only a top-down cap \
+view, only the underside, or the stem is fully obscured), set \
+confidence=cannot_tell and ring_presence=null.
+
+What counts as a RING:
+- A membranous skirt, collar, or hanging tissue attached to the upper stem — the \
+classic annulus. Clear ring → present at high confidence.
+- A double-layered or cog-wheel ring → present at high confidence.
+- A faint band of darker, fibrillose, or differently-colored tissue around the \
+stem where a ring once was (a "ring zone") → present at low confidence. Even a \
+faded ring counts.
+- Cobweb-like silky fibers stretching from the cap margin to the stem, OR a rusty \
+fibrous band on the upper stem (cortina or its remnant) → present at low \
+confidence.
+
+What does NOT count as a ring (anti-traps):
+- Scales, fibrils, or color zones spread along the WHOLE length of the stem are \
+stem-surface texture, not a ring.
+- A swollen base or bulb at the bottom of the stem is not a ring (that is a base \
+feature, judged separately).
+- Universal-veil patches stuck to the cap are not a ring.
+- Soil, leaves, or debris stuck to the stem are not a ring.
+
+Options (listed rarest first — do not let order bias your choice; pick the option \
+whose description best matches what you actually see):
+
+- present: A ring, ring-zone, or cortina/cortina-zone is visible on the upper stem.
+- absent: The upper stem is clearly visible and bare — no ring, no zone, no \
+fibrous band, no cortina remnant.
+
+Final answer rule (multiple-choice mode):
+Choose the option that best matches what you see. Your ring_presence value must be \
+exactly one of: present | absent | null. \
+Do not default to "absent" when the upper stem is poorly visible — if you can't \
+judge it confidently, set confidence=cannot_tell and ring_presence=null instead."""
+
+
+# ---------------------------------------------------------------------------
+# volva_presence
+# ---------------------------------------------------------------------------
+
+VOLVA_PRESENCE_SYSTEM = (
+    "You are a mycology assistant analyzing a single mushroom photograph.\n"
+    "Focus ONLY on the BASE of the stem (stipe), where a volva — the remnant of the "
+    "universal veil — would be located.\n"
+    "Report only what you can directly observe — do not infer from species knowledge.\n\n"
+    + _CONFIDENCE_BLOCK
+)
+
+VOLVA_PRESENCE_USER = """\
+Examine this mushroom image and decide whether a VOLVA is present at the stem base.
+
+First describe the base of the stem — any cup, sac, ring of scales, patches, or \
+distinctive structure surrounding the very bottom of the stipe. Then classify.
+
+If the BASE of the stem is NOT visible at all (e.g., only a top-down cap view, the \
+base is buried in soil/leaves with the structure obscured, only the cap and upper \
+stem are shown), set confidence=cannot_tell and volva_presence=null.
+
+What counts as a VOLVA:
+- A sac-like or cup-shaped membrane at the base with a free margin separated from \
+the stem — the classic saccate volva of Amanita. Clear sac → present at high \
+confidence.
+- A distinct rim, collar, or sock-like wrapping at the base attached to the stem \
+along its length → present at high confidence.
+- Concentric rings, bands, scales, or warty patches around a bulbous base — \
+universal-veil remnants such as friable, zoned, or napiform forms → present at \
+low confidence.
+- Patches of universal veil tissue stuck to the cap are corroborating evidence — \
+if you also see warts/patches on the cap and a sac/rim/scaly base, lean toward present.
+
+What does NOT count as a volva (anti-traps):
+- A simple swollen bulb at the base with NO sac, NO scales, NO rim, NO adhering \
+veil tissue is just a bulbous stem (bulbous stem shape ≠ volva).
+- A plain tapered or equal stem base with no extra structure → absent.
+- Soil, moss, or leaf litter clinging to the base is not a volva.
+- A ring (annulus) on the upper stem is a separate feature, not a volva.
+
+Options (listed rarest first — do not let order bias your choice; pick the option \
+whose description best matches what you actually see):
+
+- present: A sac, cup, rim, or distinct universal-veil remnants (concentric \
+bands, scales, patches) are visible at the stem base.
+- absent: The base is clearly visible and is either plain or merely bulbous, with \
+NO sac, rim, scales, bands, or adhering veil tissue.
+
+Final answer rule (multiple-choice mode):
+Choose the option that best matches what you see. Your volva_presence value must \
+be exactly one of: present | absent | null. \
+Do not default to "absent" when the stem base is poorly visible — if you can't \
+judge it confidently, set confidence=cannot_tell and volva_presence=null instead. \
+And do not call a plain bulbous base a volva — true volvas have visible \
+membrane, cup, rim, or distinct veil-remnant texture."""
+
+
+# ---------------------------------------------------------------------------
 # Prompt registry — maps feature name → (system_prompt, user_prompt)
 # ---------------------------------------------------------------------------
 
 PROMPT_REGISTRY: dict[str, tuple[str, str]] = {
     "hymenium_type": (HYMENIUM_TYPE_SYSTEM, HYMENIUM_TYPE_USER),
     "cap_color": (CAP_COLOR_SYSTEM, CAP_COLOR_USER),
+    "ring_presence": (RING_PRESENCE_SYSTEM, RING_PRESENCE_USER),
+    "volva_presence": (VOLVA_PRESENCE_SYSTEM, VOLVA_PRESENCE_USER),
 }

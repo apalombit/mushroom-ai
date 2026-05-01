@@ -11,11 +11,57 @@ from sqlalchemy.orm import Session
 _FEATURES_YAML = Path(__file__).resolve().parent.parent / "config" / "features.yaml"
 _CORRECTIONS_YAML = Path(__file__).resolve().parent.parent / "config" / "gt_color_corrections.yaml"
 
+def _derive_ring_presence(raw: object) -> str | None:
+    """Map veil.type → binary ring presence label.
+
+    partial / cortina / universal / both → "present"
+    absent → "absent"
+    null / unknown / missing → None (excluded from eval)
+    """
+    if not isinstance(raw, str):
+        return None
+    val = raw.strip().lower()
+    if val in {"partial", "cortina", "universal", "both"}:
+        return "present"
+    if val == "absent":
+        return "absent"
+    return None
+
+
+def _derive_volva_presence(raw: object) -> str | None:
+    """Map volva.type → binary volva presence label.
+
+    Any non-absent canonical value (saccate, flaring, circumsessile, zoned,
+    friable, napiform) → "present"
+    absent → "absent"
+    null / unknown / missing → None (excluded from eval)
+    """
+    if not isinstance(raw, str):
+        return None
+    val = raw.strip().lower()
+    if val == "absent":
+        return "absent"
+    if val in {"saccate", "flaring", "circumsessile", "zoned", "friable", "napiform"}:
+        return "present"
+    return None
+
+
 # Map feature → how to extract ground truth from reconciled_species.
 # "column" = direct column, "features_json" = nested JSONB path.
+# Optional "derive" = callable applied after raw fetch; returns None to exclude row.
 GROUND_TRUTH_SPEC: dict[str, dict] = {
     "hymenium_type": {"source": "column", "column": "hymenium_type"},
     "cap_color": {"source": "features_json", "path": ["cap", "colors", 0]},
+    "ring_presence": {
+        "source": "features_json",
+        "path": ["veil", "type"],
+        "derive": _derive_ring_presence,
+    },
+    "volva_presence": {
+        "source": "features_json",
+        "path": ["volva", "type"],
+        "derive": _derive_volva_presence,
+    },
 }
 
 # Multi-label spec: feature → how to extract ALL values (list) from features_json.
@@ -52,14 +98,15 @@ def load_ground_truth(
     ).fetchall()
     gt: dict[str, str | None] = {}
     path = spec["path"]
+    derive = spec.get("derive")
     for name, fj in rows:
         val = fj
         try:
             for key in path:
                 val = val[key]
-            gt[name] = val
         except (KeyError, IndexError, TypeError):
-            gt[name] = None
+            val = None
+        gt[name] = derive(val) if derive else val
     return gt
 
 

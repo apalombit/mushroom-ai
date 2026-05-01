@@ -33,6 +33,8 @@ _CLASSES = _load_classes()
 
 HymeniumType = Literal[tuple(_CLASSES["hymenium_type"])]  # type: ignore[valid-type]
 CapColor = Literal[tuple(_CLASSES["cap_color"])]  # type: ignore[valid-type]
+RingPresence = Literal[tuple(_CLASSES["ring_presence"])]  # type: ignore[valid-type]
+VolvaPresence = Literal[tuple(_CLASSES["volva_presence"])]  # type: ignore[valid-type]
 
 Confidence = Literal["high", "low", "cannot_tell"]
 
@@ -123,6 +125,98 @@ class CapColorResult(BaseModel):
         return self
 
 
+class RingPresenceResult(BaseModel):
+    """Per-image ring (annulus) presence with describe-then-classify ordering."""
+
+    visible: bool = Field(
+        ..., description="Is the upper portion of the stem visible in this image?"
+    )
+    visual_description: str | None = Field(
+        None,
+        description=(
+            "Describe the upper stem region: any membranous skirt, collar, "
+            "fibrous zone, or cobweb-like remnants you can see. 1-2 sentences."
+        ),
+    )
+    reasoning: str | None = Field(
+        None,
+        description=(
+            "Does what you see qualify as a ring (annulus, ring-zone, or cortina), "
+            "or is the upper stem clearly bare?"
+        ),
+    )
+    ring_presence: RingPresence | None = Field(
+        None,
+        description="present | absent | null if cannot tell.",
+    )
+    confidence: Confidence = Field(
+        ...,
+        description=(
+            "high=unambiguous, low=uncertain/borderline, "
+            "cannot_tell=upper stem not visible enough to judge"
+        ),
+    )
+
+    @model_validator(mode="after")
+    def enforce_consistency(self) -> "RingPresenceResult":
+        if not self.visible:
+            self.ring_presence = None
+            self.visual_description = None
+            self.reasoning = None
+            self.confidence = "cannot_tell"
+        if self.confidence == "cannot_tell":
+            self.ring_presence = None
+        if self.ring_presence is not None:
+            self.visible = True
+        return self
+
+
+class VolvaPresenceResult(BaseModel):
+    """Per-image volva (basal sac) presence with describe-then-classify ordering."""
+
+    visible: bool = Field(
+        ..., description="Is the base of the stem visible in this image?"
+    )
+    visual_description: str | None = Field(
+        None,
+        description=(
+            "Describe the stem base region: any sac-like cup, free margin, "
+            "concentric bands or scales, adhering veil patches. 1-2 sentences."
+        ),
+    )
+    reasoning: str | None = Field(
+        None,
+        description=(
+            "Does what you see qualify as a volva (saccate cup or universal-veil "
+            "remnants), or is the base just a plain stem or simple swollen bulb?"
+        ),
+    )
+    volva_presence: VolvaPresence | None = Field(
+        None,
+        description="present | absent | null if cannot tell.",
+    )
+    confidence: Confidence = Field(
+        ...,
+        description=(
+            "high=unambiguous, low=uncertain/borderline, "
+            "cannot_tell=stem base not visible enough to judge"
+        ),
+    )
+
+    @model_validator(mode="after")
+    def enforce_consistency(self) -> "VolvaPresenceResult":
+        if not self.visible:
+            self.volva_presence = None
+            self.visual_description = None
+            self.reasoning = None
+            self.confidence = "cannot_tell"
+        if self.confidence == "cannot_tell":
+            self.volva_presence = None
+        if self.volva_presence is not None:
+            self.visible = True
+        return self
+
+
 # ---------------------------------------------------------------------------
 # Feature registry — maps feature name → (schema class, classification field)
 # Adding a new feature: add schema above, register here.
@@ -136,5 +230,13 @@ FEATURE_REGISTRY: dict[str, dict] = {
     "cap_color": {
         "schema": CapColorResult,
         "field": "cap_color",
+    },
+    "ring_presence": {
+        "schema": RingPresenceResult,
+        "field": "ring_presence",
+    },
+    "volva_presence": {
+        "schema": VolvaPresenceResult,
+        "field": "volva_presence",
     },
 }

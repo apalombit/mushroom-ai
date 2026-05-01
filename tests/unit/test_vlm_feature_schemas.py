@@ -6,6 +6,8 @@ from vision.labeling.vlm_feature_schemas import (
     FEATURE_REGISTRY,
     CapColorResult,
     HymeniumTypeResult,
+    RingPresenceResult,
+    VolvaPresenceResult,
 )
 
 # ---------------------------------------------------------------------------
@@ -171,14 +173,141 @@ class TestCapColorGuardrails:
 
 
 # ---------------------------------------------------------------------------
+# RingPresenceResult guardrails
+# ---------------------------------------------------------------------------
+
+
+class TestRingPresenceGuardrails:
+    def test_not_visible_clears_all(self):
+        r = RingPresenceResult(
+            visible=False,
+            visual_description="skirt-like ring",
+            reasoning="clear annulus",
+            ring_presence="present",
+            confidence="high",
+        )
+        assert r.visible is False
+        assert r.ring_presence is None
+        assert r.visual_description is None
+        assert r.reasoning is None
+        assert r.confidence == "cannot_tell"
+
+    def test_cannot_tell_nulls_classification(self):
+        r = RingPresenceResult(
+            visible=True,
+            visual_description="upper stem partly hidden",
+            reasoning="might be a ring zone",
+            ring_presence="present",
+            confidence="cannot_tell",
+        )
+        assert r.ring_presence is None
+
+    def test_valid_present(self):
+        r = RingPresenceResult(
+            visible=True,
+            visual_description="membranous skirt hangs from upper stipe",
+            reasoning="classic pendant annulus",
+            ring_presence="present",
+            confidence="high",
+        )
+        assert r.ring_presence == "present"
+
+    def test_valid_absent(self):
+        r = RingPresenceResult(
+            visible=True,
+            visual_description="upper stem is bare and uniform",
+            reasoning="no ring or zone visible",
+            ring_presence="absent",
+            confidence="high",
+        )
+        assert r.ring_presence == "absent"
+
+    def test_classification_forces_visible(self):
+        r = RingPresenceResult(
+            visible=False,
+            ring_presence="present",
+            confidence="high",
+        )
+        # not visible → clears classification
+        assert r.ring_presence is None
+
+    def test_invalid_class_rejected(self):
+        with pytest.raises(Exception):
+            RingPresenceResult(
+                visible=True,
+                ring_presence="maybe",
+                confidence="high",
+            )
+
+
+# ---------------------------------------------------------------------------
+# VolvaPresenceResult guardrails
+# ---------------------------------------------------------------------------
+
+
+class TestVolvaPresenceGuardrails:
+    def test_not_visible_clears_all(self):
+        r = VolvaPresenceResult(
+            visible=False,
+            visual_description="sac at base",
+            reasoning="saccate volva",
+            volva_presence="present",
+            confidence="high",
+        )
+        assert r.volva_presence is None
+        assert r.visual_description is None
+        assert r.confidence == "cannot_tell"
+
+    def test_cannot_tell_nulls_classification(self):
+        r = VolvaPresenceResult(
+            visible=True,
+            visual_description="base obscured by leaves",
+            reasoning="cannot tell",
+            volva_presence="present",
+            confidence="cannot_tell",
+        )
+        assert r.volva_presence is None
+
+    def test_valid_present(self):
+        r = VolvaPresenceResult(
+            visible=True,
+            visual_description="sac-like cup with free margin at the base",
+            reasoning="classic saccate volva",
+            volva_presence="present",
+            confidence="high",
+        )
+        assert r.volva_presence == "present"
+
+    def test_valid_absent(self):
+        r = VolvaPresenceResult(
+            visible=True,
+            visual_description="plain tapered base, no sac or scales",
+            reasoning="no volva structures",
+            volva_presence="absent",
+            confidence="high",
+        )
+        assert r.volva_presence == "absent"
+
+    def test_invalid_class_rejected(self):
+        with pytest.raises(Exception):
+            VolvaPresenceResult(
+                visible=True,
+                volva_presence="saccate",  # full type, not binary presence
+                confidence="high",
+            )
+
+
+# ---------------------------------------------------------------------------
 # Feature registry
 # ---------------------------------------------------------------------------
 
 
 class TestFeatureRegistry:
-    def test_registry_has_both_features(self):
+    def test_registry_has_all_features(self):
         assert "hymenium_type" in FEATURE_REGISTRY
         assert "cap_color" in FEATURE_REGISTRY
+        assert "ring_presence" in FEATURE_REGISTRY
+        assert "volva_presence" in FEATURE_REGISTRY
 
     def test_registry_schema_field_consistency(self):
         for name, info in FEATURE_REGISTRY.items():

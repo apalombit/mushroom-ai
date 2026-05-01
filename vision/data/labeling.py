@@ -9,6 +9,8 @@ from pathlib import Path
 import yaml
 from sqlalchemy import text
 
+from vision.data.ground_truth import _derive_ring_presence, _derive_volva_presence
+
 # Direct columns on reconciled_species (not in features_json)
 DIRECT_COLUMNS = {"hymenium_type", "overall_body_form"}
 
@@ -20,6 +22,13 @@ JSON_PATHS = {
     "gill_attachment": "gills.attachment",
     "stem_shape": "stem.shape",
     "cap_surface_moisture": "cap.surface_moisture",
+}
+
+# Features whose canonical label is derived from a raw JSON path via a function.
+# Output of derive() is already canonical (no _normalize_to_canonical pass needed).
+JSON_DERIVED: dict[str, tuple[str, callable]] = {
+    "ring_presence": ("veil.type", _derive_ring_presence),
+    "volva_presence": ("volva.type", _derive_volva_presence),
 }
 
 
@@ -110,14 +119,23 @@ def auto_label_from_species(session, features_config_path: str | Path) -> dict[s
             # Resolve value from DB
             if feature_name in DIRECT_COLUMNS:
                 raw_value = sp_data.get(feature_name)
+                canonical = _normalize_to_canonical(
+                    raw_value, feature_name, canonical_classes
+                )
             elif feature_name in JSON_PATHS:
                 raw_value = _resolve_dot_path(
                     sp_data["features_json"], JSON_PATHS[feature_name]
                 )
+                canonical = _normalize_to_canonical(
+                    raw_value, feature_name, canonical_classes
+                )
+            elif feature_name in JSON_DERIVED:
+                path, derive = JSON_DERIVED[feature_name]
+                raw_value = _resolve_dot_path(sp_data["features_json"], path)
+                canonical = derive(raw_value)
             else:
                 continue
 
-            canonical = _normalize_to_canonical(raw_value, feature_name, canonical_classes)
             if canonical is None:
                 continue
 

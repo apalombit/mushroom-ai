@@ -76,6 +76,22 @@ cap_color:
     - black
   source: "morphological_vocabulary.yaml → color_palette"
 
+ring_presence:
+  tier: 1
+  num_classes: 2
+  classes:
+    - present
+    - absent
+  source: "morphological_vocabulary.yaml → veil_type (derived: partial|cortina|universal|both → present)"
+
+volva_presence:
+  tier: 1
+  num_classes: 2
+  classes:
+    - present
+    - absent
+  source: "morphological_vocabulary.yaml → volva_type (derived: any non-absent → present)"
+
 # ── Tier 2: moderate complexity ──────────────────────────────────────────────
 
 surface_texture:
