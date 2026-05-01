@@ -12,19 +12,33 @@ _FEATURES_YAML = Path(__file__).resolve().parent.parent / "config" / "features.y
 _CORRECTIONS_YAML = Path(__file__).resolve().parent.parent / "config" / "gt_color_corrections.yaml"
 
 def _derive_ring_presence(raw: object) -> str | None:
-    """Map veil.type → binary ring presence label.
+    """Map veil dict → binary ring presence label, conservative version.
 
-    partial / cortina / universal / both → "present"
-    absent → "absent"
-    null / unknown / missing → None (excluded from eval)
+    Only count rings that are reliably *visible* in typical field photos:
+    - type ∈ {partial, both} AND ring_persistence != fugacious → "present"
+    - type == "absent" → "absent"
+    - cortina (rarely visible in mature specimens) → exclude
+    - universal-only (volva at base, not a ring on the upper stem) → exclude
+    - ring_persistence == "fugacious" (ring drops off early) → exclude
+    - missing/unknown → exclude
+
+    Excluded species return None so the eval skips them.
+
+    Why this is conservative: an earlier eval against the broader rule
+    (any non-absent type → present) gave 12% recall on "present" because
+    cortinate species (Cortinarius), fugacious species (Armillaria,
+    Strobilomyces, Cystoderma, Agaricus bisporus) almost never show a
+    visible ring in mature photos.  The model was correctly seeing "no
+    ring" but the GT was over-permissive at the species level.
     """
-    if not isinstance(raw, str):
+    if not isinstance(raw, dict):
         return None
-    val = raw.strip().lower()
-    if val in {"partial", "cortina", "universal", "both"}:
-        return "present"
-    if val == "absent":
+    type_val = (raw.get("type") or "").strip().lower()
+    persistence = (raw.get("ring_persistence") or "").strip().lower()
+    if type_val == "absent":
         return "absent"
+    if type_val in {"partial", "both"} and persistence != "fugacious":
+        return "present"
     return None
 
 
@@ -54,7 +68,7 @@ GROUND_TRUTH_SPEC: dict[str, dict] = {
     "cap_color": {"source": "features_json", "path": ["cap", "colors", 0]},
     "ring_presence": {
         "source": "features_json",
-        "path": ["veil", "type"],
+        "path": ["veil"],
         "derive": _derive_ring_presence,
     },
     "volva_presence": {

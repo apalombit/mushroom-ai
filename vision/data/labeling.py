@@ -26,8 +26,9 @@ JSON_PATHS = {
 
 # Features whose canonical label is derived from a raw JSON path via a function.
 # Output of derive() is already canonical (no _normalize_to_canonical pass needed).
+# ring_presence reads the whole veil dict (needs both type and ring_persistence).
 JSON_DERIVED: dict[str, tuple[str, callable]] = {
-    "ring_presence": ("veil.type", _derive_ring_presence),
+    "ring_presence": ("veil", _derive_ring_presence),
     "volva_presence": ("volva.type", _derive_volva_presence),
 }
 
