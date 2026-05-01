@@ -95,6 +95,8 @@ class TestVolvaPrompt:
             "swollen bulb",
             "soil",  # debris at base is not a volva
             "ring",  # the upper-stem ring is a separate feature
+            "earthstar",  # Geastrum split exoperidium is NOT a volva (added v2)
+            "cup fungi",  # cup-without-stipe is not a volva (added v2)
         ]:
             assert cue.lower() in VOLVA_PRESENCE_USER.lower(), (
                 f"missing anti-trap text: {cue!r}"

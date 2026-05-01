@@ -264,6 +264,17 @@ veil tissue is just a bulbous stem (bulbous stem shape ≠ volva).
 - A plain tapered or equal stem base with no extra structure → absent.
 - Soil, moss, or leaf litter clinging to the base is not a volva.
 - A ring (annulus) on the upper stem is a separate feature, not a volva.
+- An EARTHSTAR's outer rays are NOT a volva. Earthstars (Geastrum) have a \
+star-shaped split outer skin that opens out around a central spore sac — the \
+"rays" point outward from the body, not upward like a cup. There is no stem and \
+no basal sac structure; this is an entire fruiting-body morphology, not a \
+volva. If you see a star-shaped pattern of pointed rays radiating outward at \
+ground level around a central spherical or domed structure → absent.
+- A cup-fungus's whole body (Peziza, Discina, Helvella cup forms) is NOT a \
+volva. Cup fungi have no stipe; the cup IS the fruiting body. Volva is only a \
+basal cup AT THE BOTTOM of a stem — there must be a stem rising out of it.
+- Gelatinous or jelly fungi (Tremella, etc.) and bracket/crust fungi growing \
+from wood have no stem-and-base structure → cannot_tell or absent.
 
 Options (listed rarest first — do not let order bias your choice; pick the option \
 whose description best matches what you actually see):

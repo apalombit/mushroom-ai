@@ -16,6 +16,8 @@ _VISIBILITY_REQUIREMENTS: dict[str, str] = {
     "surface_texture": "cap_visible",
     "hymenium_type": "hymenium_visible",
     "gill_attachment": "hymenium_visible",
+    "ring_presence": "stem_upper_visible",
+    "volva_presence": "stem_base_visible",
 }
 
 
