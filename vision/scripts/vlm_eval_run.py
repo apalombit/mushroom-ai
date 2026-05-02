@@ -42,6 +42,7 @@ ALL_FEATURES = [
     "ring_presence",
     "volva_presence",
     "substrate",
+    "surface_texture",
 ]
 
 

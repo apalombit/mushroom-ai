@@ -8,6 +8,7 @@ from vision.labeling.vlm_feature_schemas import (
     HymeniumTypeResult,
     RingPresenceResult,
     SubstrateResult,
+    SurfaceTextureResult,
     VolvaPresenceResult,
 )
 
@@ -378,6 +379,77 @@ class TestSubstrateGuardrails:
 
 
 # ---------------------------------------------------------------------------
+# SurfaceTextureResult guardrails
+# ---------------------------------------------------------------------------
+
+
+class TestSurfaceTextureGuardrails:
+    def test_not_visible_clears_all(self):
+        r = SurfaceTextureResult(
+            visible=False,
+            visual_description="silky sheen",
+            reasoning="appressed fibrils",
+            surface_texture="silky",
+            confidence="high",
+        )
+        assert r.visible is False
+        assert r.surface_texture is None
+        assert r.confidence == "cannot_tell"
+
+    def test_cannot_tell_nulls_classification(self):
+        r = SurfaceTextureResult(
+            visible=True,
+            visual_description="cap soaking wet",
+            reasoning="texture hidden",
+            surface_texture="smooth",
+            confidence="cannot_tell",
+        )
+        assert r.surface_texture is None
+
+    def test_classification_forces_visible(self):
+        r = SurfaceTextureResult(
+            visible=False,
+            surface_texture="scaly",
+            confidence="high",
+        )
+        assert r.surface_texture is None
+        assert r.confidence == "cannot_tell"
+
+    def test_valid_high_confidence(self):
+        r = SurfaceTextureResult(
+            visible=True,
+            visual_description="distinct flat scales",
+            reasoning="scaly",
+            surface_texture="scaly",
+            confidence="high",
+        )
+        assert r.surface_texture == "scaly"
+
+    def test_all_classes_accepted(self):
+        for cls in [
+            "smooth", "fibrillose", "silky", "velvety", "tomentose", "floccose",
+            "scaly", "squarrose", "warty", "reticulate", "pruinose", "areolate",
+            "pitted", "wrinkled",
+        ]:
+            r = SurfaceTextureResult(
+                visible=True,
+                visual_description=f"looks {cls}",
+                reasoning=f"matches {cls}",
+                surface_texture=cls,
+                confidence="high",
+            )
+            assert r.surface_texture == cls
+
+    def test_invalid_class_rejected(self):
+        with pytest.raises(Exception):
+            SurfaceTextureResult(
+                visible=True,
+                surface_texture="bald",  # alias, not canonical
+                confidence="high",
+            )
+
+
+# ---------------------------------------------------------------------------
 # Feature registry
 # ---------------------------------------------------------------------------
 
@@ -389,6 +461,7 @@ class TestFeatureRegistry:
         assert "ring_presence" in FEATURE_REGISTRY
         assert "volva_presence" in FEATURE_REGISTRY
         assert "substrate" in FEATURE_REGISTRY
+        assert "surface_texture" in FEATURE_REGISTRY
 
     def test_registry_schema_field_consistency(self):
         for name, info in FEATURE_REGISTRY.items():

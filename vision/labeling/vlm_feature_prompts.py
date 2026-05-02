@@ -380,6 +380,130 @@ confidence=cannot_tell over a soil guess."""
 
 
 # ---------------------------------------------------------------------------
+# surface_texture (cap)
+# ---------------------------------------------------------------------------
+
+SURFACE_TEXTURE_SYSTEM = (
+    "You are a mycology assistant analyzing a single mushroom photograph.\n"
+    "Focus ONLY on the cap (pileus) surface texture visible in this image.\n"
+    "Report only what you can directly observe — do not infer from species knowledge.\n\n"
+    + _CONFIDENCE_BLOCK
+)
+
+SURFACE_TEXTURE_USER = """\
+Examine this mushroom image and identify the cap (pileus) SURFACE TEXTURE.
+
+First describe what the cap surface looks like in detail — any fibers, scales, \
+hairs, dust, pits, wrinkles, or whether it is featureless and glossy. Note whether \
+the cap appears wet or dry, since wetness can hide fine textures. Then classify.
+
+If the cap is NOT visible at sufficient detail (e.g., distant shot, the cap is \
+fully obscured, only the stem or underside is shown, or the cap is so wet that \
+the surface looks like reflective glaze), set confidence=cannot_tell and \
+surface_texture=null.
+
+Texture classes (listed rarest first — do not let order bias your choice; pick \
+the option whose description best matches what you actually see):
+
+- areolate: Surface cracked into irregular block-like patches, resembling dried \
+mud. The cracks form polygonal islands separated by visible gaps.
+
+- pitted: Small rounded depressions or pits across the surface — like the cap of \
+a morel-shaped fruiting body. Distinct holes, not raised structures.
+
+- reticulate: A raised net-like pattern of ridges forming a mesh or honeycomb \
+across the surface. Most often seen on bolete stems but applicable to caps too.
+
+- pruinose: Covered with a very fine powder, looking frosted or dusted with flour. \
+The surface appears matte and chalky, not fibrous. No discrete fibers or scales.
+
+- warty: Discrete rounded wart-like projections — small bumps or pyramidal lumps \
+sitting on the surface. Typically universal-veil remnants (e.g. Amanita pieces).
+
+- squarrose: Erect, spreading, or recurved scales/fibril tips that point outward \
+or curl back from the surface — especially prominent at the disc.
+
+- floccose: Loose, cottony tufts or patches — more open and fluffy than tomentose, \
+giving a wispy, broken-up appearance rather than a continuous mat.
+
+- wrinkled: Broad longitudinal folds or ridges across the surface (rugose). The \
+folds are part of the flesh itself, not separate structures.
+
+- tomentose: A densely matted, woolly, or felt-like layer of interwoven fibrils. \
+Continuous fuzzy coating, denser and more matted than velvety, more compact and \
+felt-like than floccose.
+
+- silky: Fine, closely appressed fibrils giving a satin-like sheen. The fibrils \
+lie flat against the cap and reflect light to look like silk or satin. Subtler \
+than fibrillose — no individual fibers stand out.
+
+- fibrillose: Covered with fine thread-like fibers (fibrils) arranged radially \
+or irregularly. Distinct individual fibers are visible against the ground color.
+
+- velvety: A compact short layer of fine, soft hairs giving a velvet-like \
+appearance. The surface looks softly fuzzy and matte, like the skin of a peach or \
+like velvet fabric. No discrete scales or radiating fibers.
+
+- scaly: Bearing distinct scales — flat appressed scales or raised tile-like \
+plates of differing color/material from the underlying flesh. Each scale is a \
+separate piece of tissue, not a fiber.
+
+- smooth: No surface fibrils, scales, hairs, pits, warts, or ornamentation \
+(glabrous). The cap looks glossy or matte but completely featureless.
+
+Key distinctions:
+
+- SMOOTH vs SILKY: Smooth has zero structure. Silky has appressed fibrils that \
+give a satin sheen — you can detect a faint directional fiber pattern under \
+oblique light. If in doubt and the surface looks featureless, choose smooth.
+
+- SILKY vs FIBRILLOSE: Silky fibrils are SO appressed they look like a sheen, \
+not individual fibers. Fibrillose has fibers you can pick out individually \
+against the cap color.
+
+- FIBRILLOSE vs VELVETY: Fibrillose fibers radiate or run irregularly and are \
+visible as separate threads. Velvety is a uniform short fuzzy mat with no \
+directional fiber pattern — looks like fabric.
+
+- VELVETY vs TOMENTOSE: Velvety is short, even, finely fuzzy. Tomentose is \
+denser, longer, more woolly/felted — visibly matted.
+
+- TOMENTOSE vs FLOCCOSE: Tomentose is a continuous matted layer. Floccose is \
+broken into loose cottony tufts or patches — more open and fluffy.
+
+- SCALY vs FIBRILLOSE: Scales are distinct flat or raised pieces of tissue. \
+Fibrils are thread-like fibers. If you see discrete chunks/plates/tiles → scaly. \
+If you see threads/fibers → fibrillose.
+
+- SCALY vs SQUARROSE: Squarrose is scaly with the scale tips pointing OUT or \
+curling back — erect/recurved rather than flat. Appressed flat scales → scaly.
+
+- WARTY vs SCALY: Warts are rounded bumps (like Amanita veil remnants — \
+pyramidal or hemispherical). Scales are flat or tile-like pieces.
+
+- WRINKLED vs RETICULATE: Wrinkled has broad folds going one way (often radial). \
+Reticulate has ridges forming a NET pattern — interconnected lines.
+
+- PRUINOSE vs SMOOTH: Pruinose has a chalky/dusty matte coating, like flour. \
+Smooth has no coating at all. If the surface looks frosted or powdered, it is \
+pruinose, not smooth.
+
+Wet-cap caveat: A heavily wet, glossy, or reflective cap can mask fibers, \
+scales, and pruinose dust, making any textured surface look smooth. If the cap \
+is visibly soaked or dripping, prefer confidence=low or cannot_tell over a \
+confident "smooth".
+
+Final answer rule (multiple-choice mode):
+Choose the option whose description most accurately matches what you observe. \
+Your surface_texture value must be exactly one of: \
+areolate | pitted | reticulate | pruinose | warty | squarrose | floccose | \
+wrinkled | tomentose | silky | fibrillose | velvety | scaly | smooth | null. \
+Smooth is the most common class — only choose smooth when the cap is genuinely \
+featureless and dry. When in doubt and the surface has any visible structure, \
+prefer the matching textured class over a smooth guess."""
+
+
+# ---------------------------------------------------------------------------
 # Prompt registry — maps feature name → (system_prompt, user_prompt)
 # ---------------------------------------------------------------------------
 
@@ -389,4 +513,5 @@ PROMPT_REGISTRY: dict[str, tuple[str, str]] = {
     "ring_presence": (RING_PRESENCE_SYSTEM, RING_PRESENCE_USER),
     "volva_presence": (VOLVA_PRESENCE_SYSTEM, VOLVA_PRESENCE_USER),
     "substrate": (SUBSTRATE_SYSTEM, SUBSTRATE_USER),
+    "surface_texture": (SURFACE_TEXTURE_SYSTEM, SURFACE_TEXTURE_USER),
 }

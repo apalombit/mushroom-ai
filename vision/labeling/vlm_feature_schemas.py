@@ -36,6 +36,7 @@ CapColor = Literal[tuple(_CLASSES["cap_color"])]  # type: ignore[valid-type]
 RingPresence = Literal[tuple(_CLASSES["ring_presence"])]  # type: ignore[valid-type]
 VolvaPresence = Literal[tuple(_CLASSES["volva_presence"])]  # type: ignore[valid-type]
 Substrate = Literal[tuple(_CLASSES["substrate"])]  # type: ignore[valid-type]
+SurfaceTexture = Literal[tuple(_CLASSES["surface_texture"])]  # type: ignore[valid-type]
 
 Confidence = Literal["high", "low", "cannot_tell"]
 
@@ -266,6 +267,51 @@ class SubstrateResult(BaseModel):
         return self
 
 
+class SurfaceTextureResult(BaseModel):
+    """Per-image cap surface texture extraction with describe-then-classify ordering."""
+
+    visible: bool = Field(
+        ...,
+        description="Is the cap (pileus) surface visible at sufficient detail to judge texture?",
+    )
+    visual_description: str | None = Field(
+        None,
+        description=(
+            "Describe the cap surface in detail: smooth/glossy, fibers, scales, "
+            "dust-like coating, wrinkles, pits, or other surface structures. "
+            "Note whether the cap looks wet or dry. 1-2 sentences."
+        ),
+    )
+    reasoning: str | None = Field(
+        None,
+        description="Which canonical texture does the description match, and why?",
+    )
+    surface_texture: SurfaceTexture | None = Field(
+        None,
+        description="Classified cap surface texture, or null if cannot tell.",
+    )
+    confidence: Confidence = Field(
+        ...,
+        description=(
+            "high=unambiguous, low=uncertain/borderline, "
+            "cannot_tell=cap surface not visible enough or wet/reflective hides texture"
+        ),
+    )
+
+    @model_validator(mode="after")
+    def enforce_consistency(self) -> "SurfaceTextureResult":
+        if not self.visible:
+            self.surface_texture = None
+            self.visual_description = None
+            self.reasoning = None
+            self.confidence = "cannot_tell"
+        if self.confidence == "cannot_tell":
+            self.surface_texture = None
+        if self.surface_texture is not None:
+            self.visible = True
+        return self
+
+
 # ---------------------------------------------------------------------------
 # Feature registry — maps feature name → (schema class, classification field)
 # Adding a new feature: add schema above, register here.
@@ -291,5 +337,9 @@ FEATURE_REGISTRY: dict[str, dict] = {
     "substrate": {
         "schema": SubstrateResult,
         "field": "substrate",
+    },
+    "surface_texture": {
+        "schema": SurfaceTextureResult,
+        "field": "surface_texture",
     },
 }
