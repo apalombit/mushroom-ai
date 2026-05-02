@@ -36,7 +36,13 @@ PROCESSED_DIR = PROJECT_ROOT / "data" / "images" / "processed" / "v1"
 RAW_DIR = PROJECT_ROOT / "data" / "images" / "raw"
 DEFAULT_OUT_DIR = PROJECT_ROOT / "data" / "vlm_eval"
 
-ALL_FEATURES = ["hymenium_type", "cap_color", "ring_presence", "volva_presence"]
+ALL_FEATURES = [
+    "hymenium_type",
+    "cap_color",
+    "ring_presence",
+    "volva_presence",
+    "substrate",
+]
 
 
 def _center_crop_square(img):

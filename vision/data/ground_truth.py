@@ -76,6 +76,7 @@ GROUND_TRUTH_SPEC: dict[str, dict] = {
         "path": ["volva", "type"],
         "derive": _derive_volva_presence,
     },
+    "substrate": {"source": "features_json", "path": ["ecology", "substrate"]},
 }
 
 # Multi-label spec: feature → how to extract ALL values (list) from features_json.

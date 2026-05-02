@@ -7,6 +7,7 @@ from vision.labeling.vlm_feature_schemas import (
     CapColorResult,
     HymeniumTypeResult,
     RingPresenceResult,
+    SubstrateResult,
     VolvaPresenceResult,
 )
 
@@ -298,6 +299,85 @@ class TestVolvaPresenceGuardrails:
 
 
 # ---------------------------------------------------------------------------
+# SubstrateResult guardrails
+# ---------------------------------------------------------------------------
+
+
+class TestSubstrateGuardrails:
+    def test_not_visible_clears_all(self):
+        r = SubstrateResult(
+            visible=False,
+            visual_description="bare soil",
+            reasoning="ground is plain humus",
+            substrate="soil",
+            confidence="high",
+        )
+        assert r.visible is False
+        assert r.substrate is None
+        assert r.visual_description is None
+        assert r.reasoning is None
+        assert r.confidence == "cannot_tell"
+
+    def test_cannot_tell_nulls_classification(self):
+        r = SubstrateResult(
+            visible=True,
+            visual_description="base hidden by mulch",
+            reasoning="cannot decide between woody debris and soil",
+            substrate="soil",
+            confidence="cannot_tell",
+        )
+        assert r.substrate is None
+
+    def test_classification_forces_visible(self):
+        r = SubstrateResult(
+            visible=False,
+            substrate="dead wood",
+            confidence="high",
+        )
+        assert r.substrate is None
+        assert r.confidence == "cannot_tell"
+
+    def test_valid_high_confidence(self):
+        r = SubstrateResult(
+            visible=True,
+            visual_description="bark and decayed grain visible at the base",
+            reasoning="clearly a fallen log",
+            substrate="dead wood",
+            confidence="high",
+        )
+        assert r.substrate == "dead wood"
+        assert r.confidence == "high"
+
+    def test_all_substrate_classes_accepted(self):
+        for cls in [
+            "soil",
+            "dead wood",
+            "living tree",
+            "leaf litter",
+            "woody debris",
+            "dung",
+        ]:
+            r = SubstrateResult(
+                visible=True,
+                visual_description=f"looks like {cls}",
+                reasoning=f"matches {cls}",
+                substrate=cls,
+                confidence="high",
+            )
+            assert r.substrate == cls
+
+    def test_invalid_class_rejected(self):
+        with pytest.raises(Exception):
+            SubstrateResult(
+                visible=True,
+                visual_description="moss",
+                reasoning="moss-covered ground",
+                substrate="moss",
+                confidence="high",
+            )
+
+
+# ---------------------------------------------------------------------------
 # Feature registry
 # ---------------------------------------------------------------------------
 
@@ -308,6 +388,7 @@ class TestFeatureRegistry:
         assert "cap_color" in FEATURE_REGISTRY
         assert "ring_presence" in FEATURE_REGISTRY
         assert "volva_presence" in FEATURE_REGISTRY
+        assert "substrate" in FEATURE_REGISTRY
 
     def test_registry_schema_field_consistency(self):
         for name, info in FEATURE_REGISTRY.items():

@@ -35,6 +35,7 @@ HymeniumType = Literal[tuple(_CLASSES["hymenium_type"])]  # type: ignore[valid-t
 CapColor = Literal[tuple(_CLASSES["cap_color"])]  # type: ignore[valid-type]
 RingPresence = Literal[tuple(_CLASSES["ring_presence"])]  # type: ignore[valid-type]
 VolvaPresence = Literal[tuple(_CLASSES["volva_presence"])]  # type: ignore[valid-type]
+Substrate = Literal[tuple(_CLASSES["substrate"])]  # type: ignore[valid-type]
 
 Confidence = Literal["high", "low", "cannot_tell"]
 
@@ -217,6 +218,54 @@ class VolvaPresenceResult(BaseModel):
         return self
 
 
+class SubstrateResult(BaseModel):
+    """Per-image substrate extraction with describe-then-classify ordering."""
+
+    visible: bool = Field(
+        ...,
+        description=(
+            "Is enough of the surroundings/attachment point visible to judge the "
+            "substrate the mushroom is growing from?"
+        ),
+    )
+    visual_description: str | None = Field(
+        None,
+        description=(
+            "Describe what the mushroom is growing on or out of: bare soil, leaf "
+            "litter, fallen log, living trunk, twigs/bark chips, dung. Note any "
+            "visible wood structure under leaves. 1-2 sentences."
+        ),
+    )
+    reasoning: str | None = Field(
+        None,
+        description="Which substrate class does the visible evidence match, and why?",
+    )
+    substrate: Substrate | None = Field(
+        None,
+        description="Classified substrate from the canonical list, or null if cannot tell.",
+    )
+    confidence: Confidence = Field(
+        ...,
+        description=(
+            "high=unambiguous, low=uncertain/borderline, "
+            "cannot_tell=substrate not visible enough to classify"
+        ),
+    )
+
+    @model_validator(mode="after")
+    def enforce_consistency(self) -> "SubstrateResult":
+        if not self.visible:
+            self.substrate = None
+            self.visual_description = None
+            self.reasoning = None
+            self.confidence = "cannot_tell"
+        if self.confidence == "cannot_tell":
+            self.substrate = None
+        if self.substrate is not None:
+            self.visible = True
+        return self
+
+
 # ---------------------------------------------------------------------------
 # Feature registry — maps feature name → (schema class, classification field)
 # Adding a new feature: add schema above, register here.
@@ -238,5 +287,9 @@ FEATURE_REGISTRY: dict[str, dict] = {
     "volva_presence": {
         "schema": VolvaPresenceResult,
         "field": "volva_presence",
+    },
+    "substrate": {
+        "schema": SubstrateResult,
+        "field": "substrate",
     },
 }

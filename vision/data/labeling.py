@@ -22,6 +22,7 @@ JSON_PATHS = {
     "gill_attachment": "gills.attachment",
     "stem_shape": "stem.shape",
     "cap_surface_moisture": "cap.surface_moisture",
+    "substrate": "ecology.substrate",
 }
 
 # Features whose canonical label is derived from a raw JSON path via a function.

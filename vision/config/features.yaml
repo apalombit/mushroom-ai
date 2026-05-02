@@ -92,6 +92,18 @@ volva_presence:
     - absent
   source: "morphological_vocabulary.yaml → volva_type (derived: any non-absent → present)"
 
+substrate:
+  tier: 1
+  num_classes: 6
+  classes:
+    - soil
+    - dead wood
+    - living tree
+    - leaf litter
+    - woody debris
+    - dung
+  source: "morphological_vocabulary.yaml → substrate"
+
 # ── Tier 2: moderate complexity ──────────────────────────────────────────────
 
 surface_texture:

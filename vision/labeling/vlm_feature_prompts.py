@@ -294,6 +294,92 @@ membrane, cup, rim, or distinct veil-remnant texture."""
 
 
 # ---------------------------------------------------------------------------
+# substrate
+# ---------------------------------------------------------------------------
+
+SUBSTRATE_SYSTEM = (
+    "You are a mycology assistant analyzing a single mushroom photograph.\n"
+    "Focus ONLY on what the mushroom is growing FROM — the surface, material, or "
+    "object directly underneath or attached to its base.\n"
+    "Report only what you can directly observe — do not infer from species knowledge.\n\n"
+    + _CONFIDENCE_BLOCK
+)
+
+SUBSTRATE_USER = """\
+Examine this mushroom image and identify the SUBSTRATE — what the mushroom is \
+growing from.
+
+First describe the immediate surroundings and the attachment point: what does the \
+ground or surface look like at the base? Is there visible wood, bark, leaves, dung, \
+or bare earth? Then classify.
+
+If the base of the mushroom and its surroundings are NOT visible (e.g., a tight \
+top-down cap-only crop, a detail shot of the cap surface, or the entire base is \
+out of frame), set confidence=cannot_tell and substrate=null.
+
+Substrate classes (listed rarest first — do not let order bias your choice; pick \
+the option whose description best matches what you actually see):
+
+- dung: Growing directly on animal dung, manure, or droppings. The substrate is a \
+recognizable fecal mass or pile, not just brown soil. Coprophilous species.
+
+- woody debris: Growing on small woody material — twigs, bark chips, wood shavings, \
+mulch, or fragments smaller than a fist. Distinguish from dead wood by SIZE: \
+large fallen branches, logs, or stumps are dead wood, not woody debris.
+
+- leaf litter: Growing among loose decomposing leaves and forest-floor debris, \
+with leaves clearly forming the upper layer of the substrate around the base. \
+The mushroom appears to emerge from leaves rather than from bare soil.
+
+- living tree: Growing from the bark, trunk, or exposed roots of a LIVING tree — \
+green foliage above, intact bark, often vertical attachment to a standing trunk. \
+Common for parasitic or wound-pathogen species.
+
+- dead wood: Growing on or from a fallen log, stump, large branch, or rotting \
+wood. The wood structure (bark, grain, cambium layer, decay zone) is visible. \
+Moss-covered logs are still dead wood — examine through the moss for wood. If \
+the mushroom appears to come from soil but you can see wood texture peeking out \
+under leaves or moss, choose dead wood.
+
+- soil: Growing from bare ground, humus, or sparse moss/grass directly on earth, \
+with NO visible wood structure underneath. Mycorrhizal species typically grow on \
+soil even when near trees — proximity to a trunk does not make it living tree if \
+the attachment is at ground level.
+
+Key distinctions:
+
+- DEAD WOOD vs SOIL: If you can see grain, bark, or rotten wood texture anywhere \
+near the base, it is dead wood — even if leaves partially cover it. Mushrooms \
+growing from BURIED wood often look soil-attached at first glance; look for any \
+visible wood under the surrounding leaves.
+
+- DEAD WOOD vs WOODY DEBRIS: Size matters. A fallen branch or chunk you could \
+not lift one-handed is dead wood. Twigs, bark chips, mulch, or scattered \
+fragments are woody debris.
+
+- DEAD WOOD vs LIVING TREE: Living tree has intact bark, often green foliage \
+above, and the mushroom is attached to a vertical living trunk or large root. \
+Dead wood has visible decay, missing bark, soft/punky texture, and is often \
+horizontal (fallen).
+
+- LEAF LITTER vs SOIL: Leaf litter has loose leaves clearly visible AS the top \
+layer the mushroom is emerging from. Soil with a few stray leaves nearby is \
+still soil — the leaves must be the dominant material at the base.
+
+- DUNG vs SOIL: Dung is a recognizable fecal mass, not just dark soil. If you \
+cannot see distinct droppings or a manure pile, choose soil even on rich dark \
+ground.
+
+Final answer rule (multiple-choice mode):
+Choose the option whose description most accurately matches what you observe. \
+Your substrate value must be exactly one of: \
+dung | woody debris | leaf litter | living tree | dead wood | soil | null. \
+Soil is the most common class — only choose soil when you can rule out wood, \
+leaf litter, and dung. When in doubt and the base is poorly visible, prefer \
+confidence=cannot_tell over a soil guess."""
+
+
+# ---------------------------------------------------------------------------
 # Prompt registry — maps feature name → (system_prompt, user_prompt)
 # ---------------------------------------------------------------------------
 
@@ -302,4 +388,5 @@ PROMPT_REGISTRY: dict[str, tuple[str, str]] = {
     "cap_color": (CAP_COLOR_SYSTEM, CAP_COLOR_USER),
     "ring_presence": (RING_PRESENCE_SYSTEM, RING_PRESENCE_USER),
     "volva_presence": (VOLVA_PRESENCE_SYSTEM, VOLVA_PRESENCE_USER),
+    "substrate": (SUBSTRATE_SYSTEM, SUBSTRATE_USER),
 }
