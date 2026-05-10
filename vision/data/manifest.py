@@ -28,6 +28,7 @@ def build_manifest(
     embedding_dir: str | Path,
     preprocess_version: str = "v1",
     quality_filter: bool = True,
+    annotation_type: str = "species_propagated",
 ) -> pd.DataFrame:
     """Build a manifest joining image_registry + image_annotations.
 
@@ -39,6 +40,9 @@ def build_manifest(
         quality_filter: When True, exclude images the VLM graded as unusable
             or where the target feature is not visible.  Uses LEFT JOINs so
             images without VLM grades pass through (graceful degradation).
+        annotation_type: Source of labels — 'species_propagated' (default,
+            label propagated from reconciled_species) or 'vlm_labeled'
+            (per-image label from the VLM teacher pipeline).
 
     Returns:
         DataFrame with columns: image_id, species, feature_value, embedding_path.
@@ -46,16 +50,17 @@ def build_manifest(
     embedding_dir = Path(embedding_dir)
 
     if quality_filter:
-        query, params = _build_filtered_query(feature_name)
+        query, params = _build_filtered_query(feature_name, annotation_type)
     else:
         query = text("""
             SELECT r.image_id, r.species, a.feature_value
             FROM image_registry r
             JOIN image_annotations a ON r.image_id = a.image_id
             WHERE a.feature_name = :feature_name
-              AND a.annotation_type = 'species_propagated'
+              AND a.annotation_type = :annotation_type
+              AND a.feature_value IS NOT NULL
         """)
-        params = {"feature_name": feature_name}
+        params = {"feature_name": feature_name, "annotation_type": annotation_type}
 
     rows = session.execute(query, params).fetchall()
 
@@ -78,9 +83,10 @@ def build_manifest(
                 SELECT COUNT(*) FROM image_registry r
                 JOIN image_annotations a ON r.image_id = a.image_id
                 WHERE a.feature_name = :feature_name
-                  AND a.annotation_type = 'species_propagated'
+                  AND a.annotation_type = :annotation_type
+                  AND a.feature_value IS NOT NULL
             """),
-            {"feature_name": feature_name},
+            {"feature_name": feature_name, "annotation_type": annotation_type},
         ).scalar()
         n_excluded = (unfiltered_rows or 0) - n_from_db
         print(
@@ -100,13 +106,17 @@ def build_manifest(
 
 def _build_filtered_query(
     feature_name: str,
+    annotation_type: str = "species_propagated",
 ) -> tuple[text, dict]:
     """Build SQL with LEFT JOINs for VLM quality + visibility filtering.
 
     Graceful degradation: LEFT JOINs with ``IS NULL OR`` ensure images
     without any VLM grades pass through unchanged.
     """
-    params: dict[str, str] = {"feature_name": feature_name}
+    params: dict[str, str] = {
+        "feature_name": feature_name,
+        "annotation_type": annotation_type,
+    }
 
     # Global exclusions: unusable quality, no subject, absent dominance
     joins = """
@@ -165,7 +175,8 @@ def _build_filtered_query(
         JOIN image_annotations a ON r.image_id = a.image_id
         {joins}
         WHERE a.feature_name = :feature_name
-          AND a.annotation_type = 'species_propagated'
+          AND a.annotation_type = :annotation_type
+          AND a.feature_value IS NOT NULL
         {where_clauses}
     """
 
