@@ -475,7 +475,31 @@ vision/
 
 ---
 
-## 6. Current Status (2026-04-19)
+## 6. Current Status (2026-05-10)
+
+### VLM labelling phase — closed 2026-05-10
+
+VLM extractor pipeline ran across 8 candidate features. Three shipped as
+project defaults; five shelved with documented reasons. Path A (single-shot
+MCQA, 896×896 center-crop, no fewshot) is the project default; Path C
+(staged) only helps when stage 1 is genuinely separable.
+
+| Feature | Status | Result |
+|---------|--------|--------|
+| hymenium_type | **shipped** (Path C) | 89.1% non-null acc on hymenium leaves |
+| cap_color | **shipped** (Path A + fuzzy) | 95% fuzzy match against multi-label GT |
+| volva_presence | **shipped** (Path A v2) | 100% precision on `present` (Amanita-flag), 81% non-null acc |
+| ring_presence | shelved | Species-vs-image GT gap (cortinas/fugacious) |
+| substrate | shelved | Same GT gap (biology ≠ visibility) |
+| surface_texture | shelved | 896×896 resolution ceiling |
+| stem_shape | shelved | Equal-bias on a fuzzy threshold; Path C also failed |
+| cap_shape | shelved | Convex-bias + maturity confound; ViT head from species labels already does 74.8% |
+
+Memory note: `~/.claude/projects/.../memory/project_vlm_phase_close.md`.
+Next phase plan: `~/.claude/plans/snoopy-zooming-chipmunk.md` (Phase 3 — ViT
+head retraining with shipped VLM extractors as teachers).
+
+### Original status snapshot (2026-04-19)
 
 ### What's implemented and working
 
