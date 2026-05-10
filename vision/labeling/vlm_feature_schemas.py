@@ -37,6 +37,8 @@ RingPresence = Literal[tuple(_CLASSES["ring_presence"])]  # type: ignore[valid-t
 VolvaPresence = Literal[tuple(_CLASSES["volva_presence"])]  # type: ignore[valid-type]
 Substrate = Literal[tuple(_CLASSES["substrate"])]  # type: ignore[valid-type]
 SurfaceTexture = Literal[tuple(_CLASSES["surface_texture"])]  # type: ignore[valid-type]
+StemShape = Literal[tuple(_CLASSES["stem_shape"])]  # type: ignore[valid-type]
+CapShape = Literal[tuple(_CLASSES["cap_shape"])]  # type: ignore[valid-type]
 
 Confidence = Literal["high", "low", "cannot_tell"]
 
@@ -312,6 +314,102 @@ class SurfaceTextureResult(BaseModel):
         return self
 
 
+class StemShapeResult(BaseModel):
+    """Per-image stem (stipe) shape extraction with describe-then-classify ordering."""
+
+    visible: bool = Field(
+        ...,
+        description=(
+            "Is enough of the stem visible — including the base — to judge its shape "
+            "in profile?"
+        ),
+    )
+    visual_description: str | None = Field(
+        None,
+        description=(
+            "Describe the stem from apex to base: uniform width, swelling at the "
+            "base, tapering toward the base, swelling in the middle, root-like "
+            "extension into the substrate, lateral flattening. 1-2 sentences."
+        ),
+    )
+    reasoning: str | None = Field(
+        None,
+        description="Which canonical stem shape does this match, and why?",
+    )
+    stem_shape: StemShape | None = Field(
+        None,
+        description="Classified stem shape, or null if cannot tell.",
+    )
+    confidence: Confidence = Field(
+        ...,
+        description=(
+            "high=unambiguous, low=uncertain/borderline, "
+            "cannot_tell=stem (especially the base) not visible enough to judge"
+        ),
+    )
+
+    @model_validator(mode="after")
+    def enforce_consistency(self) -> "StemShapeResult":
+        if not self.visible:
+            self.stem_shape = None
+            self.visual_description = None
+            self.reasoning = None
+            self.confidence = "cannot_tell"
+        if self.confidence == "cannot_tell":
+            self.stem_shape = None
+        if self.stem_shape is not None:
+            self.visible = True
+        return self
+
+
+class CapShapeResult(BaseModel):
+    """Per-image cap (pileus) shape extraction with describe-then-classify ordering."""
+
+    visible: bool = Field(
+        ...,
+        description=(
+            "Is the cap visible from a side or 3/4 angle so its profile shape "
+            "can be judged?"
+        ),
+    )
+    visual_description: str | None = Field(
+        None,
+        description=(
+            "Describe the cap profile: rounded dome, flat plate, cone, bell, "
+            "central bump, central depression, funnel, ball-shaped, egg-shaped, "
+            "irregular. 1-2 sentences."
+        ),
+    )
+    reasoning: str | None = Field(
+        None,
+        description="Which canonical cap shape does the description match, and why?",
+    )
+    cap_shape: CapShape | None = Field(
+        None,
+        description="Classified cap shape, or null if cannot tell.",
+    )
+    confidence: Confidence = Field(
+        ...,
+        description=(
+            "high=unambiguous, low=uncertain/borderline, "
+            "cannot_tell=cap profile not visible enough (e.g., top-down only)"
+        ),
+    )
+
+    @model_validator(mode="after")
+    def enforce_consistency(self) -> "CapShapeResult":
+        if not self.visible:
+            self.cap_shape = None
+            self.visual_description = None
+            self.reasoning = None
+            self.confidence = "cannot_tell"
+        if self.confidence == "cannot_tell":
+            self.cap_shape = None
+        if self.cap_shape is not None:
+            self.visible = True
+        return self
+
+
 # ---------------------------------------------------------------------------
 # Feature registry — maps feature name → (schema class, classification field)
 # Adding a new feature: add schema above, register here.
@@ -341,5 +439,13 @@ FEATURE_REGISTRY: dict[str, dict] = {
     "surface_texture": {
         "schema": SurfaceTextureResult,
         "field": "surface_texture",
+    },
+    "stem_shape": {
+        "schema": StemShapeResult,
+        "field": "stem_shape",
+    },
+    "cap_shape": {
+        "schema": CapShapeResult,
+        "field": "cap_shape",
     },
 }

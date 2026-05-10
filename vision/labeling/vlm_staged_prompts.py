@@ -223,3 +223,174 @@ confidence=cannot_tell and hymenium_type=null.
 
 Your hymenium_type value must be exactly one of: smooth | gleba | null.
 """
+
+
+# ===========================================================================
+# Stem shape — stage 1: coarse family classification
+# ===========================================================================
+
+STEM_SHAPE_STAGE1_SYSTEM = (
+    "You are a mycology assistant analyzing a single mushroom photograph.\n"
+    "Identify the COARSE PROFILE FAMILY of the stem (stipe), looking at how the "
+    "diameter changes from apex to base.\n"
+    "Report only what you can directly observe — do not infer from species knowledge.\n\n"
+    + _CONFIDENCE_BLOCK
+)
+
+
+STEM_SHAPE_STAGE1_USER = """\
+Examine this mushroom image and choose the COARSE FAMILY of the stem (stipe) profile.
+
+First describe the stem from apex to base — does it stay uniform, widen, taper, \
+or do something else distinctive? Then choose the family.
+
+If the stem (especially the BASE) is NOT visible at sufficient detail (cap-only \
+view, base buried in soil/leaves with the lower stem hidden), set \
+confidence=cannot_tell and family=null.
+
+Three families:
+
+- uniform_equal: The stem is roughly cylindrical from apex to base — its diameter \
+stays the same (within ±20%). No bulb, no taper, no swelling, no root. The \
+profile looks like a straight cylinder.
+
+- widening: The stem clearly thickens toward the BASE, ending wider than the \
+apex. The widening can be smooth and gradual (club-shaped) or abrupt (bulb-like). \
+Stage 2 will decide whether it is a smooth gradient or an abrupt swelling.
+
+- other_distinctive: The stem has a distinctive feature OTHER than basal \
+widening: tapering toward the base or apex, a root-like extension into the \
+substrate, swelling in the MIDDLE (not at the base), being widest at the APEX, \
+or being laterally flattened. Stage 2 will pick the specific case.
+
+Important guidance:
+- Choose uniform_equal only when the stem is visibly a uniform cylinder. Slight \
+variations (within ±20%) still count as uniform.
+- Choose widening when the BASE is the widest part of the stem — both bulbous \
+(abrupt) and clavate (gradual) belong here.
+- Choose other_distinctive when the most prominent feature is NOT basal widening \
+— for example tapering to a point at the base, a root extension, a barrel-shaped \
+mid-bulge, or an inverted-club shape with the top heavier than the base.
+- Family classification is easier than identifying the exact class — commit at \
+confidence=low rather than abstaining whenever the stem is reasonably visible. \
+Only set cannot_tell when the base is truly hidden.
+
+Your family value must be exactly one of: \
+uniform_equal | widening | other_distinctive | null."""
+
+
+# ===========================================================================
+# Stem shape — stage 2: uniform_equal (degenerate single-class confirmation)
+# ===========================================================================
+
+STEM_SHAPE_STAGE2_UNIFORM_SYSTEM = (
+    "You are a mycology assistant analyzing a single mushroom photograph.\n"
+    "Stage 1 placed this stem in the uniform_equal family. Confirm that the stem "
+    "is genuinely a uniform cylinder, or abstain.\n\n"
+    + _CONFIDENCE_BLOCK
+)
+
+STEM_SHAPE_STAGE2_UNIFORM_USER = """\
+Stage 1 said the stem looks uniform. Confirm or abstain.
+
+One option:
+
+- equal: Diameter stays roughly constant (within ±20%) from apex to base. No \
+bulb, no taper, no root, no mid-bulge.
+
+If, on a closer look, the stem actually shows a clear taper, basal widening, or \
+other distinctive feature you missed at stage 1, set confidence=cannot_tell and \
+stem_shape=null so the result can be flagged. Do not guess "equal" if you now \
+see a feature.
+
+Your stem_shape value must be exactly one of: equal | null."""
+
+
+# ===========================================================================
+# Stem shape — stage 2: widening (bulbous vs clavate)
+# ===========================================================================
+
+STEM_SHAPE_STAGE2_WIDENING_SYSTEM = (
+    "You are a mycology assistant analyzing a single mushroom photograph.\n"
+    "Stage 1 said the stem widens toward the base. Decide whether the widening "
+    "is ABRUPT (bulbous) or SMOOTH (clavate).\n\n"
+    + _CONFIDENCE_BLOCK
+)
+
+STEM_SHAPE_STAGE2_WIDENING_USER = """\
+This stem is wider at the base than at the apex. Decide: bulbous or clavate?
+
+Two options:
+
+- bulbous: An ABRUPT, distinct swelling at the very base — a bulb-like or \
+onion-like enlargement that begins suddenly. There is a clear discontinuity \
+where the bulb starts; above the bulb the stem may be roughly uniform. The \
+shape change is sharp, not gradual.
+
+- clavate: A SMOOTH, gradual thickening from apex to base. The stem widens \
+continuously over its lower half, like a baseball bat or a club. There is no \
+sharp shoulder where one width ends and another begins — the profile is a \
+smooth gradient.
+
+Distinguishing cue:
+- Place a mental ruler along the stem profile. If the diameter changes \
+continuously along the whole length → clavate. If the diameter is roughly \
+constant for the upper part and then jumps abruptly to a wider bulb → bulbous.
+- A bulb looks like an onion glued onto the bottom. A clavate stem looks like a \
+club tapered at the top.
+
+If the lower stem is not visible enough to judge whether the change is gradual \
+or abrupt, set confidence=cannot_tell and stem_shape=null.
+
+Your stem_shape value must be exactly one of: bulbous | clavate | null."""
+
+
+# ===========================================================================
+# Stem shape — stage 2: other_distinctive (5-way disambiguation)
+# ===========================================================================
+
+STEM_SHAPE_STAGE2_OTHER_SYSTEM = (
+    "You are a mycology assistant analyzing a single mushroom photograph.\n"
+    "Stage 1 said the stem has a distinctive feature OTHER than basal widening. "
+    "Pick the specific case.\n\n"
+    + _CONFIDENCE_BLOCK
+)
+
+STEM_SHAPE_STAGE2_OTHER_USER = """\
+This stem has a distinctive feature that is NOT basal widening. Decide which.
+
+Five options (listed rarest first — pick the one whose description best matches \
+what you actually see):
+
+- compressed: The stem is laterally FLATTENED so its cross-section is oval or \
+elliptic rather than round. Look for a clearly non-circular cross-section from \
+an angle that lets you see the stem's depth.
+
+- rooting: The base extends into a long, root-like pseudorrhiza that PENETRATES \
+deep into the substrate. The stem narrows into a tail-like extension that goes \
+underground. The pseudorrhiza is the key cue — it must enter the soil/wood.
+
+- ventricose: Swollen in the MIDDLE — widest somewhere along the stem's length, \
+not at the base. Narrows toward both the apex and the base. Like a small barrel \
+or spindle.
+
+- obclavate: Inverted club — widest at the APEX (just below the cap), gradually \
+narrowing toward the base. Top-heavy.
+
+- attenuated: The stem TAPERS toward the base, becoming thinner at the bottom \
+than at the apex, but with no underground root extension. Distinct from rooting \
+because the narrowing simply ends at ground level — there is no pseudorrhiza.
+
+Key distinctions:
+- ATTENUATED vs ROOTING: rooting has a visible root-like extension going into \
+the substrate; attenuated does not.
+- VENTRICOSE vs OBCLAVATE: ventricose is widest in the middle and narrows at \
+BOTH ends. Obclavate is widest at the very top and narrows only toward the base.
+- COMPRESSED is about CROSS-SECTION (oval/elliptic), not about profile shape. \
+Only choose compressed if you can clearly see the lateral flattening.
+
+If the lower stem is too obscured to commit to one of these five, set \
+confidence=cannot_tell and stem_shape=null.
+
+Your stem_shape value must be exactly one of: \
+attenuated | rooting | ventricose | obclavate | compressed | null."""

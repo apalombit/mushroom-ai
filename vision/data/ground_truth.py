@@ -78,6 +78,8 @@ GROUND_TRUTH_SPEC: dict[str, dict] = {
     },
     "substrate": {"source": "features_json", "path": ["ecology", "substrate"]},
     "surface_texture": {"source": "features_json", "path": ["cap", "surface_texture"]},
+    "stem_shape": {"source": "features_json", "path": ["stem", "shape"]},
+    "cap_shape": {"source": "features_json", "path": ["cap", "shape"]},
 }
 
 # Multi-label spec: feature → how to extract ALL values (list) from features_json.

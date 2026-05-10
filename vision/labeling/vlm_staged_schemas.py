@@ -18,6 +18,7 @@ from pydantic import BaseModel, Field, model_validator
 from vision.labeling.vlm_feature_schemas import (
     Confidence,
     HymeniumTypeResult,
+    StemShapeResult,
 )
 
 # ---------------------------------------------------------------------------
@@ -234,7 +235,191 @@ HYMENIUM_STAGED_CONFIG = StagedConfig(
 )
 
 
+# ---------------------------------------------------------------------------
+# Stem shape — stage 1: coarse family
+# ---------------------------------------------------------------------------
+
+StemShapeFamily = Literal["uniform_equal", "widening", "other_distinctive"]
+
+# Members of each family — used by analysis to compute stage-1 routing accuracy
+# and to validate the stage-2 leaf class against the stage-1 family selection.
+STEM_SHAPE_FAMILY_MEMBERS: dict[str, set[str]] = {
+    "uniform_equal": {"equal"},
+    "widening": {"bulbous", "clavate"},
+    "other_distinctive": {
+        "attenuated",
+        "rooting",
+        "ventricose",
+        "obclavate",
+        "compressed",
+    },
+}
+
+
+class StemShapeFamilyResult(BaseModel):
+    """Stage 1 — coarse stem shape family classification."""
+
+    visible: bool = Field(
+        ...,
+        description=(
+            "Is enough of the stem visible — including the base — to judge its shape?"
+        ),
+    )
+    visual_description: str | None = Field(
+        None,
+        description=(
+            "Describe the stem profile: uniform, widening toward the base, "
+            "or some other distinctive feature. 1-2 sentences."
+        ),
+    )
+    reasoning: str | None = Field(
+        None,
+        description="Which family does this description match, and why?",
+    )
+    family: StemShapeFamily | None = Field(
+        None,
+        description="Coarse family of the stem profile, or null if cannot tell.",
+    )
+    confidence: Confidence = Field(
+        ...,
+        description=(
+            "high=unambiguous, low=uncertain/borderline, "
+            "cannot_tell=stem (especially the base) not visible enough to judge"
+        ),
+    )
+
+    @model_validator(mode="after")
+    def enforce_consistency(self) -> "StemShapeFamilyResult":
+        if not self.visible:
+            self.family = None
+            self.visual_description = None
+            self.reasoning = None
+            self.confidence = "cannot_tell"
+        if self.confidence == "cannot_tell":
+            self.family = None
+        if self.family is not None:
+            self.visible = True
+        return self
+
+
+# ---------------------------------------------------------------------------
+# Stem shape — stage 2: narrowed within-family schemas
+# ---------------------------------------------------------------------------
+
+StemShapeUniform = Literal["equal"]
+StemShapeWidening = Literal["bulbous", "clavate"]
+StemShapeOther = Literal[
+    "attenuated", "rooting", "ventricose", "obclavate", "compressed"
+]
+
+
+class StemShapeUniformResult(_StagedLeafBase):
+    """Stage 2 — confirms 'equal' (degenerate single-class with abstain option)."""
+
+    stem_shape: StemShapeUniform | None = Field(
+        None, description="equal | null"
+    )
+
+    @model_validator(mode="after")
+    def enforce_consistency(self) -> "StemShapeUniformResult":
+        if not self.visible:
+            self.stem_shape = None
+            self.visual_description = None
+            self.reasoning = None
+            self.confidence = "cannot_tell"
+        if self.confidence == "cannot_tell":
+            self.stem_shape = None
+        if self.stem_shape is not None:
+            self.visible = True
+        return self
+
+
+class StemShapeWideningResult(_StagedLeafBase):
+    """Stage 2 — bulbous vs clavate within the widening family."""
+
+    stem_shape: StemShapeWidening | None = Field(
+        None, description="bulbous | clavate | null"
+    )
+
+    @model_validator(mode="after")
+    def enforce_consistency(self) -> "StemShapeWideningResult":
+        if not self.visible:
+            self.stem_shape = None
+            self.visual_description = None
+            self.reasoning = None
+            self.confidence = "cannot_tell"
+        if self.confidence == "cannot_tell":
+            self.stem_shape = None
+        if self.stem_shape is not None:
+            self.visible = True
+        return self
+
+
+class StemShapeOtherResult(_StagedLeafBase):
+    """Stage 2 — attenuated/rooting/ventricose/obclavate/compressed within other_distinctive."""
+
+    stem_shape: StemShapeOther | None = Field(
+        None,
+        description="attenuated | rooting | ventricose | obclavate | compressed | null",
+    )
+
+    @model_validator(mode="after")
+    def enforce_consistency(self) -> "StemShapeOtherResult":
+        if not self.visible:
+            self.stem_shape = None
+            self.visual_description = None
+            self.reasoning = None
+            self.confidence = "cannot_tell"
+        if self.confidence == "cannot_tell":
+            self.stem_shape = None
+        if self.stem_shape is not None:
+            self.visible = True
+        return self
+
+
+# ---------------------------------------------------------------------------
+# Stem shape staged config
+# ---------------------------------------------------------------------------
+
+from vision.labeling.vlm_staged_prompts import (  # noqa: E402
+    STEM_SHAPE_STAGE1_SYSTEM,
+    STEM_SHAPE_STAGE1_USER,
+    STEM_SHAPE_STAGE2_OTHER_SYSTEM,
+    STEM_SHAPE_STAGE2_OTHER_USER,
+    STEM_SHAPE_STAGE2_UNIFORM_SYSTEM,
+    STEM_SHAPE_STAGE2_UNIFORM_USER,
+    STEM_SHAPE_STAGE2_WIDENING_SYSTEM,
+    STEM_SHAPE_STAGE2_WIDENING_USER,
+)
+
+STEM_SHAPE_STAGED_CONFIG = StagedConfig(
+    stage1_schema=StemShapeFamilyResult,
+    stage1_system=STEM_SHAPE_STAGE1_SYSTEM,
+    stage1_user=STEM_SHAPE_STAGE1_USER,
+    families={
+        "uniform_equal": FamilyConfig(
+            schema=StemShapeUniformResult,
+            system=STEM_SHAPE_STAGE2_UNIFORM_SYSTEM,
+            user=STEM_SHAPE_STAGE2_UNIFORM_USER,
+        ),
+        "widening": FamilyConfig(
+            schema=StemShapeWideningResult,
+            system=STEM_SHAPE_STAGE2_WIDENING_SYSTEM,
+            user=STEM_SHAPE_STAGE2_WIDENING_USER,
+        ),
+        "other_distinctive": FamilyConfig(
+            schema=StemShapeOtherResult,
+            system=STEM_SHAPE_STAGE2_OTHER_SYSTEM,
+            user=STEM_SHAPE_STAGE2_OTHER_USER,
+        ),
+    },
+    final_schema=StemShapeResult,
+    family_field="family",
+    leaf_field="stem_shape",
+)
+
+
 STAGED_REGISTRY: dict[str, StagedConfig] = {
     "hymenium_type": HYMENIUM_STAGED_CONFIG,
-    # Future features (cap_color, gill_attachment, ring_presence, ...) plug in here.
+    "stem_shape": STEM_SHAPE_STAGED_CONFIG,
 }

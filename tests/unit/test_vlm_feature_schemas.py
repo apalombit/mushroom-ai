@@ -5,8 +5,10 @@ import pytest
 from vision.labeling.vlm_feature_schemas import (
     FEATURE_REGISTRY,
     CapColorResult,
+    CapShapeResult,
     HymeniumTypeResult,
     RingPresenceResult,
+    StemShapeResult,
     SubstrateResult,
     SurfaceTextureResult,
     VolvaPresenceResult,
@@ -450,6 +452,149 @@ class TestSurfaceTextureGuardrails:
 
 
 # ---------------------------------------------------------------------------
+# StemShapeResult guardrails
+# ---------------------------------------------------------------------------
+
+
+class TestStemShapeGuardrails:
+    def test_not_visible_clears_all(self):
+        r = StemShapeResult(
+            visible=False,
+            visual_description="bulb at base",
+            reasoning="distinct swelling",
+            stem_shape="bulbous",
+            confidence="high",
+        )
+        assert r.visible is False
+        assert r.stem_shape is None
+        assert r.confidence == "cannot_tell"
+
+    def test_cannot_tell_nulls_classification(self):
+        r = StemShapeResult(
+            visible=True,
+            visual_description="lower stem hidden in soil",
+            reasoning="cannot judge base",
+            stem_shape="equal",
+            confidence="cannot_tell",
+        )
+        assert r.stem_shape is None
+
+    def test_classification_forces_visible(self):
+        r = StemShapeResult(
+            visible=False,
+            stem_shape="clavate",
+            confidence="high",
+        )
+        assert r.stem_shape is None
+        assert r.confidence == "cannot_tell"
+
+    def test_valid_high_confidence(self):
+        r = StemShapeResult(
+            visible=True,
+            visual_description="abrupt onion-shaped swelling at base",
+            reasoning="bulbous",
+            stem_shape="bulbous",
+            confidence="high",
+        )
+        assert r.stem_shape == "bulbous"
+
+    def test_all_classes_accepted(self):
+        for cls in [
+            "equal", "clavate", "obclavate", "bulbous", "attenuated",
+            "ventricose", "compressed", "rooting",
+        ]:
+            r = StemShapeResult(
+                visible=True,
+                visual_description=f"looks {cls}",
+                reasoning=f"matches {cls}",
+                stem_shape=cls,
+                confidence="high",
+            )
+            assert r.stem_shape == cls
+
+    def test_invalid_class_rejected(self):
+        with pytest.raises(Exception):
+            StemShapeResult(
+                visible=True,
+                stem_shape="cylindrical",  # alias, not canonical
+                confidence="high",
+            )
+
+
+# ---------------------------------------------------------------------------
+# CapShapeResult guardrails
+# ---------------------------------------------------------------------------
+
+
+class TestCapShapeGuardrails:
+    def test_not_visible_clears_all(self):
+        r = CapShapeResult(
+            visible=False,
+            visual_description="rounded dome",
+            reasoning="convex",
+            cap_shape="convex",
+            confidence="high",
+        )
+        assert r.visible is False
+        assert r.cap_shape is None
+        assert r.visual_description is None
+        assert r.reasoning is None
+        assert r.confidence == "cannot_tell"
+
+    def test_cannot_tell_nulls_classification(self):
+        r = CapShapeResult(
+            visible=True,
+            visual_description="top-down view, profile not visible",
+            reasoning="cannot judge profile",
+            cap_shape="convex",
+            confidence="cannot_tell",
+        )
+        assert r.cap_shape is None
+
+    def test_classification_forces_visible(self):
+        r = CapShapeResult(
+            visible=False,
+            cap_shape="flat",
+            confidence="high",
+        )
+        assert r.cap_shape is None
+        assert r.confidence == "cannot_tell"
+
+    def test_valid_high_confidence(self):
+        r = CapShapeResult(
+            visible=True,
+            visual_description="distinct funnel-shaped cap with rim above center",
+            reasoning="infundibuliform",
+            cap_shape="infundibuliform",
+            confidence="high",
+        )
+        assert r.cap_shape == "infundibuliform"
+
+    def test_all_classes_accepted(self):
+        for cls in [
+            "convex", "flat", "conical", "campanulate", "parabolic",
+            "umbonate", "depressed", "infundibuliform", "irregular",
+            "globose", "ovoid",
+        ]:
+            r = CapShapeResult(
+                visible=True,
+                visual_description=f"looks {cls}",
+                reasoning=f"matches {cls}",
+                cap_shape=cls,
+                confidence="high",
+            )
+            assert r.cap_shape == cls
+
+    def test_invalid_class_rejected(self):
+        with pytest.raises(Exception):
+            CapShapeResult(
+                visible=True,
+                cap_shape="hemispherical",  # alias, not canonical
+                confidence="high",
+            )
+
+
+# ---------------------------------------------------------------------------
 # Feature registry
 # ---------------------------------------------------------------------------
 
@@ -462,6 +607,8 @@ class TestFeatureRegistry:
         assert "volva_presence" in FEATURE_REGISTRY
         assert "substrate" in FEATURE_REGISTRY
         assert "surface_texture" in FEATURE_REGISTRY
+        assert "stem_shape" in FEATURE_REGISTRY
+        assert "cap_shape" in FEATURE_REGISTRY
 
     def test_registry_schema_field_consistency(self):
         for name, info in FEATURE_REGISTRY.items():

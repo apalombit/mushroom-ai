@@ -504,6 +504,237 @@ prefer the matching textured class over a smooth guess."""
 
 
 # ---------------------------------------------------------------------------
+# stem_shape
+# ---------------------------------------------------------------------------
+
+STEM_SHAPE_SYSTEM = (
+    "You are a mycology assistant analyzing a single mushroom photograph.\n"
+    "Focus ONLY on the overall shape (profile) of the stem (stipe), looking at how "
+    "its diameter changes from the apex (just below the cap) to the base.\n"
+    "Report only what you can directly observe — do not infer from species knowledge.\n\n"
+    + _CONFIDENCE_BLOCK
+)
+
+STEM_SHAPE_USER = """\
+Examine this mushroom image and identify the STEM (stipe) SHAPE in profile.
+
+First describe the stem from top to bottom: does the diameter stay uniform? Is \
+the base swollen, tapered, or extended into a root? Is there a swelling in the \
+middle? Is the cross-section round or laterally flattened? Then classify.
+
+If the stem is NOT visible at sufficient detail (cap-only view, the BASE is \
+buried in soil/leaves and the lower stem is hidden, only the upper stem and \
+cap visible), set confidence=cannot_tell and stem_shape=null. The base \
+specifically is critical — without seeing the base you cannot reliably \
+distinguish equal/clavate/bulbous/attenuated/rooting.
+
+Stem shape classes (listed rarest first — do not let order bias your choice; \
+pick the option whose description best matches what you actually see):
+
+- rooting: The base extends into a long, root-like pseudorrhiza that penetrates \
+deep into the substrate. The stem narrows into a tail-like extension that goes \
+INTO the soil/wood. This is a strong, distinctive feature when present.
+
+- compressed: The stem is laterally flattened so its cross-section is oval or \
+elliptic rather than round. From profile views this can appear normal — only \
+classify compressed if you can clearly see the flattening from an angle.
+
+- ventricose: Swollen in the MIDDLE, narrowing toward both the apex and the \
+base. The widest point is somewhere along the stem's length, not at the base. \
+Like a small barrel or spindle.
+
+- obclavate: Inverted club shape — widest at the apex (just below the cap), \
+gradually narrowing toward the base. Top-heavy, tapering downward.
+
+- attenuated: The stem tapers, becoming thinner toward the base (or sometimes \
+toward the apex). The narrowing is gradual along the lower half. Distinct from \
+rooting because there is NO root-like extension into the substrate — the \
+narrowing simply ends at ground level.
+
+- clavate: Club-shaped — the stem gradually thickens toward the base. The base \
+is wider than the apex but not abruptly bulbous; the widening is a smooth \
+gradient along the lower half of the stem.
+
+- bulbous: A distinct, ABRUPT swelling at the very base of the stem, forming a \
+bulb-like or onion-like enlargement. The bulb is clearly different from the \
+rest of the stem and the transition is sharp, not gradual.
+
+- equal: Uniform diameter from apex to base — a roughly cylindrical stem with no \
+swelling, taper, or distinctive base shape. The width at the top matches the \
+width at the bottom.
+
+Key distinctions:
+
+- EQUAL vs CLAVATE: Equal stems stay the same width top-to-bottom. Clavate \
+stems gradually thicken downward — the base is noticeably wider than the apex, \
+with a smooth gradient over the lower half. If the change is barely visible or \
+within ±20% width variation, choose equal.
+
+- CLAVATE vs BULBOUS: Clavate has a SMOOTH GRADIENT thickening toward the base. \
+Bulbous has an ABRUPT swelling — a clear discontinuity where the bulb begins. \
+A bulb looks like an onion stuck on the bottom; a clavate stem looks like a club.
+
+- ATTENUATED vs ROOTING: Both narrow toward the base, but rooting extends into \
+the substrate as a visible root-like tail penetrating the soil/wood. \
+Attenuated simply tapers and stops at ground level with no underground extension.
+
+- ATTENUATED vs EQUAL: Choose attenuated only if there is a clear taper visible \
+along ≥30% of the stem's length. Slight irregularities or perspective foreshortening \
+can make any stem look slightly tapered — when uncertain, prefer equal.
+
+- VENTRICOSE vs CLAVATE / EQUAL: Ventricose has the MAXIMUM WIDTH in the middle \
+of the stem with narrowing at BOTH ends. If the stem is widest at the base, \
+choose clavate. If it is uniformly wide, choose equal.
+
+- BULBOUS without volva: A bulbous base is a stem-shape feature; whether the \
+bulb has a volva (sac, cup, scales, bands) is a separate feature. A plain bulb \
+with no veil remnants is still bulbous for shape purposes.
+
+Buried-base caveat: If the lower portion of the stem disappears into soil, \
+leaves, moss, or wood and you cannot see whether the buried part swells, tapers, \
+or has a root, set confidence=cannot_tell. Do not guess equal just because the \
+visible upper portion is uniform.
+
+Final answer rule (multiple-choice mode):
+Choose the option whose description most accurately matches what you observe. \
+Your stem_shape value must be exactly one of: \
+rooting | compressed | ventricose | obclavate | attenuated | clavate | bulbous | \
+equal | null. \
+Equal is the most common class — only choose equal when the stem is visibly \
+uniform from top to bottom. When in doubt and the base shape is poorly visible, \
+prefer confidence=cannot_tell over an equal guess."""
+
+
+# ---------------------------------------------------------------------------
+# cap_shape
+# ---------------------------------------------------------------------------
+
+CAP_SHAPE_SYSTEM = (
+    "You are a mycology assistant analyzing a single mushroom photograph.\n"
+    "Focus ONLY on the overall PROFILE shape of the cap (pileus) visible in this "
+    "image — its silhouette from the side.\n"
+    "Report only what you can directly observe — do not infer from species knowledge.\n\n"
+    + _CONFIDENCE_BLOCK
+)
+
+CAP_SHAPE_USER = """\
+Examine this mushroom image and identify the CAP (pileus) SHAPE in profile.
+
+First describe the cap silhouette: is the top a rounded dome, a flat plate, a \
+cone, a bell, an egg, a ball? Is there a distinct central bump? A central \
+depression? Does it form a funnel? Then classify.
+
+Side-view requirement (critical): cap shape requires a side or 3/4 angle so \
+that the profile is visible. A pure top-down photo cannot distinguish convex \
+from flat from depressed — set visible=false and confidence=cannot_tell. Do \
+NOT guess convex from a top-down view just because most caps are convex.
+
+Maturity caveat: the SAME species can be convex (button) → flat (mature) → \
+depressed (overmature). Classify the visible specimen AS PHOTOGRAPHED, not the \
+species' typical mature form. If multiple caps of different ages are in the \
+frame, classify the dominant/most-visible specimen.
+
+Cap shape classes (listed rarest first — do not let order bias your choice; \
+pick the option whose description best matches what you actually see):
+
+- ovoid: Distinctly egg-shaped — taller than wide, with a rounded apex. Often \
+seen in very young specimens before the cap expands. The whole cap is an oval \
+with the long axis vertical.
+
+- globose: Spherical or near-spherical — a ball-shape attached to (or sitting \
+on) the substrate. Puffballs and very young button stages can look globose. \
+The cap is roughly as tall as it is wide.
+
+- irregular: No coherent geometric profile — lobed, contorted, asymmetric, or \
+fused with neighboring caps so that no single shape is recognizable. Use only \
+when the cap genuinely has no regular shape; do NOT use as a fallback for \
+"hard to classify".
+
+- infundibuliform: Funnel-shaped — the cap edges rise CLEARLY ABOVE the center, \
+forming a deep cup or funnel that channels water toward the stem. The center \
+is well below the rim. Seen in mature Craterellus, mature Clitocybe, etc.
+
+- depressed: A central dimple or shallow concavity, but the cap edges are \
+roughly LEVEL with or only slightly above the center. The depression is a \
+saucer-like sunken middle, not a deep funnel.
+
+- umbonate: An otherwise flat or convex cap with a DISTINCT raised central \
+bump (umbo) at the apex. The umbo is a well-defined bump, often \
+nipple-shaped. If the bump is barely there or you have to squint to see it, \
+prefer convex.
+
+- parabolic: Tall and arched — the profile is HIGHER THAN WIDE, like a tall \
+narrow dome or a parabola. The cap is clearly taller than its diameter. \
+Distinct from convex (which is wider than tall).
+
+- campanulate: Bell-shaped — sides nearly straight or slightly outward-curved, \
+narrowing toward the stem, like an upside-down bell. The cap silhouette \
+matches a bell or a flared skirt. Common in Coprinus / Mycena / Panaeolus.
+
+- conical: A clean cone — straight sides converging to a point at the apex. \
+Distinct from campanulate (which has curved bell-like flaring sides) and from \
+umbonate (which has a flat/convex base with a small bump on top).
+
+- flat: A plane disc with a roughly flat top — neither dome nor depression, no \
+central bump or dimple. Common in mature Russula, mature Lactarius, mature \
+Pleurotus.
+
+- convex: A rounded dome — wider than tall, smoothly curved on top with no \
+central bump and no central depression. The most common cap shape. The cap \
+silhouette resembles a hemisphere or a half-egg lying on its side.
+
+Key distinctions:
+
+- CONVEX vs FLAT: Convex has a clearly rounded top; flat is a plane disc. If \
+the cap is even slightly domed, choose convex.
+
+- CONVEX vs UMBONATE: Umbonate requires a DISTINCT central bump on an \
+otherwise flat or convex base. A barely-noticeable rise → convex.
+
+- CONVEX vs PARABOLIC: Parabolic is taller than wide (vertical bell/dome). \
+Convex is wider than tall (low rounded dome).
+
+- DEPRESSED vs INFUNDIBULIFORM: Both have a sunken center. Depressed has cap \
+edges ROUGHLY LEVEL with or only slightly above the center — a saucer dimple. \
+Infundibuliform has cap edges CLEARLY RISING above the center — a deep \
+funnel that could hold water. If the cap clearly forms a funnel, choose \
+infundibuliform; if it's just a shallow dimple, choose depressed.
+
+- CONICAL vs CAMPANULATE: Conical has straight sides meeting at an apex (a \
+geometric cone). Campanulate has curved sides like a bell — sides are not \
+straight. Bell-shaped curve → campanulate; straight cone → conical.
+
+- CONICAL vs PARABOLIC: Conical is straight-sided; parabolic is curved. If \
+the silhouette is a smoothly arched dome that is taller than wide, choose \
+parabolic. If the sides are straight lines converging to a point, choose \
+conical.
+
+- GLOBOSE vs OVOID: Globose is spherical (height ≈ width). Ovoid is taller \
+than wide and egg-shaped. If the shape is recognizably an egg with a more \
+pointed top, choose ovoid; if it is a ball, choose globose.
+
+- IRREGULAR — use sparingly: only when the cap genuinely has no coherent \
+geometric profile (lobed, contorted, fused). Do not use as a fallback for \
+"too hard to classify"; prefer confidence=cannot_tell when the shape is \
+unclear.
+
+Top-down caveat: From a strict top-down photo you cannot distinguish convex / \
+flat / depressed / umbonate / infundibuliform — they all look like a circle. \
+If you only see a top-down view, set visible=false and confidence=cannot_tell. \
+Do NOT default to convex from a top-down view.
+
+Final answer rule (multiple-choice mode):
+Choose the option whose description most accurately matches what you observe. \
+Your cap_shape value must be exactly one of: \
+ovoid | globose | irregular | infundibuliform | depressed | umbonate | \
+parabolic | campanulate | conical | flat | convex | null. \
+Convex is the most common class — only choose convex when the cap is \
+genuinely a low rounded dome. When in doubt and the profile is poorly \
+visible (top-down crop, distant photo), prefer confidence=cannot_tell over a \
+convex guess."""
+
+
+# ---------------------------------------------------------------------------
 # Prompt registry — maps feature name → (system_prompt, user_prompt)
 # ---------------------------------------------------------------------------
 
@@ -514,4 +745,6 @@ PROMPT_REGISTRY: dict[str, tuple[str, str]] = {
     "volva_presence": (VOLVA_PRESENCE_SYSTEM, VOLVA_PRESENCE_USER),
     "substrate": (SUBSTRATE_SYSTEM, SUBSTRATE_USER),
     "surface_texture": (SURFACE_TEXTURE_SYSTEM, SURFACE_TEXTURE_USER),
+    "stem_shape": (STEM_SHAPE_SYSTEM, STEM_SHAPE_USER),
+    "cap_shape": (CAP_SHAPE_SYSTEM, CAP_SHAPE_USER),
 }

@@ -43,6 +43,8 @@ ALL_FEATURES = [
     "volva_presence",
     "substrate",
     "surface_texture",
+    "stem_shape",
+    "cap_shape",
 ]
 
 

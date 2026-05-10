@@ -18,6 +18,7 @@ _VISIBILITY_REQUIREMENTS: dict[str, str] = {
     "gill_attachment": "hymenium_visible",
     "ring_presence": "stem_upper_visible",
     "volva_presence": "stem_base_visible",
+    "stem_shape": "stem_base_visible",
 }
 
 
