@@ -5,41 +5,30 @@
 
 
 
-job post finding automated from local area in claude cowork
-* search also people i should write to get involved as consultant
-* search local and for spec roles
 
 
 
 
+## Reference notebooks (keep updated)
 
-cv rewriting more concise and first page only direct Q&A :
-
-less R&D or complex catch words that sound scary and more straight interpretation explanation about work and how i go about it - early quick&dirty prototype or mockup (AI) then iterate once expectations/feasibility is clearer (sci lit can give indications but not always are useful/reproducible)
-
-
-* in summary: much more concise with just a few key sentences about my "mantra" like (1 bullet on short sentences):
-
-- i believe R&D activities should always lead to actionable endpoints, if not clear what they are upfront they should be progressively and deliberately defined 
-
-- interpretation trumps accuracy: no matter the modelling approach, i think it matters more to have outcomes that can be interpreted/validated/tested than just getting great results that no-one can understand how
-
-- R&D approach: some project/problems are loosely defined so kitchen-sink attempts to solve are fine to get started but domain expertise is central in finding a valid solution more effectively (or guide more/less promising directions of search)
-
-* what i bring to the table
-
-* what kind of projects i've worked with success on
-
-* technical section and next page goes education and other jobs...
-
-
-
-
-
+- `vision/notebooks/03_vlm_pipeline_walkthrough.ipynb` — exact prompt walkthrough for one feature on one image. Shows visibility gate, Path A composition (system + few-shot anchors + user), Path C staged chain (stage 1 family → stage 2 leaf with min-confidence merge), and a side-by-side GT vs Path A vs Path C row. **Use this when revisiting why a feature shipped or shelved, or to reason about where prompt engineering vs visual anchors helps.** Default config walks `hymenium_type` (the only feature exercising both anchors and staging).
 
 
 
 next steps for production showcase as open tool from browser or app ?
+
+
+
+
+
+
+
+
+
+
+job post finding automated from local area in claude cowork
+* search also people i should write to get involved as consultant
+* search local and for spec roles
 
 
 
