@@ -528,12 +528,20 @@ frozen DINOv2-base CLS embeddings.
 
 ### Tier 1 training results (2026-04-19)
 
-| Feature | Images | Classes | Test Acc | Macro F1 | Weighted F1 | Best Epoch |
-|---------|--------|---------|----------|----------|-------------|------------|
-| hymenium_type | 3,952 | 6 | 90.5% | 0.635 | 0.90 | 3 |
-| overall_body_form | 11,655 | 10 | 85.6% | 0.505 | 0.85 | 3 |
-| cap_shape | 9,176 | 9 | 74.8% | 0.314 | 0.74 | 1 |
-| cap_color | 3,885 | 12 | 43.8% | 0.280 | 0.46 | 3 |
+| Feature | Images | Classes | Test Acc | Macro F1 | Weighted F1 | Best Epoch | Labels |
+|---------|--------|---------|----------|----------|-------------|------------|--------|
+| hymenium_type | 3,952 | 6 | 90.5% | 0.635 | 0.90 | 3 | species_propagated |
+| overall_body_form | 11,655 | 10 | 85.6% | 0.505 | 0.85 | 3 | species_propagated |
+| cap_shape | 9,176 | 9 | 74.8% | 0.314 | 0.74 | 1 | species_propagated |
+| cap_color | 3,885 | 12 | 43.8% | 0.280 | 0.46 | 3 | species_propagated |
+| volva_presence | 5,349 | 2 | 82.7% | 0.753 | 0.83 | 3 | vlm_labeled (2026-05-31) |
+
+**Volva head — first VLM-teacher-labelled head (2026-05-31):** trained on 7,310 VLM sidecars
+(0.98-dedup pool, 1,961 abstentions skipped → 5,349 usable labels across 632 species). Test
+accuracy 82.7%, macro-F1 0.753 — highest macro-F1 of any head trained so far. Per-class:
+`present` p/r/F1 = 0.64/0.60/0.62 (184 test), `absent` 0.88/0.90/0.89 (603 test). Species-propagated
+baseline doesn't exist for volva (would have been ~99% "present" for all Amanitas regardless of
+image — the exact noise the per-image VLM labels fix).
 
 **Key observations:**
 - hymenium_type and overall_body_form work well — structural features

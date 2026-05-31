@@ -6,10 +6,10 @@ image into ``image_annotations`` with:
 
 - annotation_type = 'vlm_labeled'
 - feature_name    = the feature being ingested
-- feature_value   = sidecar's classification field (may be NULL when the VLM
-                    abstained — those rows are still written with NULL value
-                    and confidence 0.0 so downstream filters can treat them
-                    consistently)
+- feature_value   = sidecar's classification field; rows with a NULL value
+                    (VLM abstained / cannot_tell) are skipped — the DB has a
+                    NOT NULL constraint on this column and abstentions add
+                    no training signal anyway
 - confidence      = high → 1.0, low → 0.5, cannot_tell → 0.0
 - annotator       = model name (e.g. 'gemma4:31b-cloud')
 
@@ -88,6 +88,7 @@ def main() -> None:
 
     n_ok = 0
     n_skipped_error = 0
+    n_skipped_abstain = 0
     n_inserted = 0
 
     with get_session() as session:
@@ -103,6 +104,10 @@ def main() -> None:
                 continue
 
             value = payload.get(field)
+            if value is None:
+                n_skipped_abstain += 1
+                continue
+
             confidence = _CONFIDENCE_TO_FLOAT.get(payload.get("confidence"), 0.0)
             image_id = sc.stem
 
@@ -131,7 +136,8 @@ def main() -> None:
         session.commit()
 
     print(
-        f"Done. parsed={n_ok} inserted={n_inserted} skipped_error={n_skipped_error}"
+        f"Done. parsed={n_ok} inserted={n_inserted} "
+        f"skipped_error={n_skipped_error} skipped_abstain={n_skipped_abstain}"
     )
 
 
