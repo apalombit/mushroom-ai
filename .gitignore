@@ -48,3 +48,6 @@ data/image_qa_viewer.html
 
 # MLflow DB
 mlflow.db
+
+# Private notes (kept local, not tracked)
+notebooks/notes.md
