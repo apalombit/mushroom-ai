@@ -32,7 +32,7 @@ import pandas as pd  # noqa: E402
 from PIL import Image  # noqa: E402
 
 from db.connection import get_session  # noqa: E402
-from vision.data.manifest import _build_filtered_query  # noqa: E402
+from vision.data.manifest import _build_filtered_query, build_full_pool_query  # noqa: E402
 from vision.labeling.vlm_feature_extractor import extract_feature_batch  # noqa: E402
 from vision.labeling.vlm_feature_schemas import FEATURE_REGISTRY  # noqa: E402
 from vision.labeling.vlm_staged_schemas import STAGED_REGISTRY  # noqa: E402
@@ -42,15 +42,19 @@ PROCESSED_DIR_DEFAULT = PROJECT_ROOT / "data" / "images" / "processed" / "v1"
 DEFAULT_OUT_ROOT = PROJECT_ROOT / "data" / "vlm_labels"
 
 
-def _candidate_image_ids(session, feature: str) -> pd.DataFrame:
+def _candidate_image_ids(session, feature: str, full_pool: bool = False) -> pd.DataFrame:
     """Return image_id + species for all visibility-gated candidates.
 
-    Uses the same SQL as build_manifest's filtered query, but joining on the
-    canonical species_propagated annotation (every registered image has one
-    via auto_label_from_species). The annotation source doesn't matter — we
-    only need the (image_id, species) tuple set that passes visibility/quality
-    gates for this feature.
+    When ``full_pool`` is False (default), restricts to images of species that
+    had this feature extracted into ``features_json`` (i.e. a species_propagated
+    annotation row exists). When True, returns the full visibility-gated pool
+    regardless of species_propagated coverage — useful for teacher-labelling
+    where we want the VLM to confirm absent on species the rubric ignores.
     """
+    if full_pool:
+        query, params = build_full_pool_query(feature)
+        rows = session.execute(query, params).fetchall()
+        return pd.DataFrame(rows, columns=["image_id", "species"])
     query, params = _build_filtered_query(feature, annotation_type="species_propagated")
     rows = session.execute(query, params).fetchall()
     return pd.DataFrame(rows, columns=["image_id", "species", "_gt"]).drop(columns=["_gt"])
@@ -125,6 +129,15 @@ def main() -> None:
     )
     p.add_argument("--model", default=None, help="VLM model override")
     p.add_argument("--limit", type=int, default=None, help="Cap candidates (smoke test)")
+    p.add_argument(
+        "--full-pool",
+        action="store_true",
+        help=(
+            "Drop the species_propagated requirement; label every "
+            "visibility-gated image (broadens absent class coverage for "
+            "features only extracted on a subset of species, e.g. volva)."
+        ),
+    )
     args = p.parse_args()
 
     if args.staged and args.feature not in STAGED_REGISTRY:
@@ -133,9 +146,10 @@ def main() -> None:
             f"{sorted(STAGED_REGISTRY)}"
         )
 
-    print(f"Loading visibility-gated candidates for {args.feature}...")
+    pool_label = "full visibility-gated pool" if args.full_pool else "species_propagated pool"
+    print(f"Loading {pool_label} for {args.feature}...")
     with get_session() as session:
-        df = _candidate_image_ids(session, args.feature)
+        df = _candidate_image_ids(session, args.feature, full_pool=args.full_pool)
     print(f"  candidates: {len(df)} images / {df['species'].nunique()} species")
 
     if args.limit:

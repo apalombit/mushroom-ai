@@ -104,21 +104,12 @@ def build_manifest(
     return df
 
 
-def _build_filtered_query(
-    feature_name: str,
-    annotation_type: str = "species_propagated",
-) -> tuple[text, dict]:
-    """Build SQL with LEFT JOINs for VLM quality + visibility filtering.
-
-    Graceful degradation: LEFT JOINs with ``IS NULL OR`` ensure images
-    without any VLM grades pass through unchanged.
+def _build_gate_clauses(feature_name: str) -> tuple[str, str, dict]:
+    """Build the LEFT JOIN clauses + WHERE filters for VLM quality, visibility,
+    and manual-QA gates. Returns (joins_sql, where_sql, params).
     """
-    params: dict[str, str] = {
-        "feature_name": feature_name,
-        "annotation_type": annotation_type,
-    }
+    params: dict[str, str] = {"feature_name": feature_name}
 
-    # Global exclusions: unusable quality, no subject, absent dominance
     joins = """
         LEFT JOIN image_annotations vlm_q
             ON r.image_id = vlm_q.image_id
@@ -133,7 +124,6 @@ def _build_filtered_query(
             AND vlm_sd.annotation_type = 'vlm_graded'
             AND vlm_sd.feature_name = 'subject_dominance'
     """
-
     where_clauses = """
         AND (vlm_q.feature_value IS NULL
              OR vlm_q.feature_value NOT IN ('unusable'))
@@ -143,7 +133,6 @@ def _build_filtered_query(
              OR vlm_sd.feature_value != 'absent')
     """
 
-    # Per-feature visibility requirement
     vis_field = _VISIBILITY_REQUIREMENTS.get(feature_name)
     if vis_field:
         params["visibility_feature"] = vis_field
@@ -158,7 +147,6 @@ def _build_filtered_query(
              OR vlm_vis.feature_value = 'true')
         """
 
-    # Manual QA exclusion: reject images manually marked as 'bad'
     joins += """
         LEFT JOIN image_annotations mqa
             ON r.image_id = mqa.image_id
@@ -168,6 +156,20 @@ def _build_filtered_query(
     where_clauses += """
         AND (mqa.feature_value IS NULL OR mqa.feature_value != 'bad')
     """
+    return joins, where_clauses, params
+
+
+def _build_filtered_query(
+    feature_name: str,
+    annotation_type: str = "species_propagated",
+) -> tuple[text, dict]:
+    """Build SQL with LEFT JOINs for VLM quality + visibility filtering.
+
+    Graceful degradation: LEFT JOINs with ``IS NULL OR`` ensure images
+    without any VLM grades pass through unchanged.
+    """
+    joins, where_clauses, params = _build_gate_clauses(feature_name)
+    params["annotation_type"] = annotation_type
 
     sql = f"""
         SELECT r.image_id, r.species, a.feature_value
@@ -179,5 +181,21 @@ def _build_filtered_query(
           AND a.feature_value IS NOT NULL
         {where_clauses}
     """
+    return text(sql), params
 
+
+def build_full_pool_query(feature_name: str) -> tuple[text, dict]:
+    """Build SQL for the full visibility-gated image pool (no requirement that
+    a species_propagated annotation exists for this feature). Used by
+    teacher-labelling scripts to relabel images of species where the feature
+    was not pre-extracted into ``features_json``.
+    """
+    joins, where_clauses, params = _build_gate_clauses(feature_name)
+    sql = f"""
+        SELECT r.image_id, r.species
+        FROM image_registry r
+        {joins}
+        WHERE 1=1
+        {where_clauses}
+    """
     return text(sql), params

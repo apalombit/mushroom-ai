@@ -115,6 +115,7 @@ def train_head(
     min_species_per_class: int | None = None,
     device: str | None = None,
     quality_filter: bool = True,
+    annotation_type: str = "species_propagated",
 ) -> TrainingResult:
     """Train a single feature head end-to-end.
 
@@ -160,6 +161,7 @@ def train_head(
             embedding_dir,
             preprocess_version,
             quality_filter=quality_filter,
+            annotation_type=annotation_type,
         )
 
     # Filter rare classes (too few species for species-level split)

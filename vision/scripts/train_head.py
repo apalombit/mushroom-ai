@@ -20,6 +20,12 @@ def main():
         action="store_true",
         help="Disable VLM quality filtering (use all images)",
     )
+    parser.add_argument(
+        "--annotation-type",
+        default="species_propagated",
+        choices=["species_propagated", "vlm_labeled"],
+        help="Source of labels: species_propagated (default) or vlm_labeled",
+    )
     args = parser.parse_args()
 
     train_head(
@@ -32,6 +38,7 @@ def main():
         batch_size=args.batch_size,
         device=args.device,
         quality_filter=not args.no_quality_filter,
+        annotation_type=args.annotation_type,
     )
 
 

@@ -282,17 +282,22 @@ def extract_feature_batch(
         sidecar = feature_dir / f"{img_id}.json"
 
         if skip_existing and sidecar.exists():
-            skipped += 1
-            results.append(
-                {
-                    "image_id": img_id,
-                    "image_path": str(path),
-                    "result": None,
-                    "error": None,
-                    "skipped": True,
-                }
-            )
-            continue
+            try:
+                existing = json.loads(sidecar.read_text())
+            except Exception:
+                existing = {"error": "unreadable sidecar"}
+            if "error" not in existing:
+                skipped += 1
+                results.append(
+                    {
+                        "image_id": img_id,
+                        "image_path": str(path),
+                        "result": existing,
+                        "error": None,
+                        "skipped": True,
+                    }
+                )
+                continue
 
         try:
             if staged:
@@ -318,6 +323,25 @@ def extract_feature_batch(
             )
         except Exception as exc:  # noqa: BLE001
             err = f"{type(exc).__name__}: {exc}"
+            err_lc = err.lower()
+            if (
+                "session usage limit" in err_lc
+                or "upgrade for higher limits" in err_lc
+                or "rate limit" in err_lc
+                or "too many requests" in err_lc
+            ):
+                logger.error(
+                    "Provider quota/rate limit hit on %s after %d/%d images. "
+                    "Stopping cleanly; no error sidecar written. Resume later.",
+                    img_id, i, len(image_paths),
+                )
+                print(
+                    f"\n\nQuota/rate limit reached on image {i}/{len(image_paths)}. "
+                    f"Stopping. Re-run the same command to resume (valid sidecars "
+                    f"will be skipped, this image will be retried).",
+                    flush=True,
+                )
+                break
             logger.warning("Failed %s on %s: %s", feature_name, img_id, err)
             sidecar.write_text(json.dumps({"error": err}, indent=2))
             results.append(

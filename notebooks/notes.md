@@ -2,16 +2,17 @@
 
 
 
+1) Mushroom identificatin problem: chatbot iterating data collection as needed to refine identification asking questions on specific features and parsing descriptions or giving visual examples on what you see etc until one or few likely are identified
+2) agentic setup that collects info from text or visual and looks online for closest match or relevant sources until clear match is found
+
+
+3) Agentic AI with code and visual tools for image to html conversion
 
 
 
 
 
-
-
-## Reference notebooks (keep updated)
-
-- `vision/notebooks/03_vlm_pipeline_walkthrough.ipynb` — exact prompt walkthrough for one feature on one image. Shows visibility gate, Path A composition (system + few-shot anchors + user), Path C staged chain (stage 1 family → stage 2 leaf with min-confidence merge), and a side-by-side GT vs Path A vs Path C row. **Use this when revisiting why a feature shipped or shelved, or to reason about where prompt engineering vs visual anchors helps.** Default config walks `hymenium_type` (the only feature exercising both anchors and staging).
+detect and drop all images too similar -- see a lot of replicas around upon inspection!
 
 
 
@@ -20,17 +21,7 @@ next steps for production showcase as open tool from browser or app ?
 
 
 
-
-
-
-
-
-
 job post finding automated from local area in claude cowork
 * search also people i should write to get involved as consultant
 * search local and for spec roles
-
-
-
-
 
