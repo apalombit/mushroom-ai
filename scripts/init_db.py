@@ -137,6 +137,73 @@ def _add_image_columns() -> None:
             logger.info("Added image_urls column to %s", table)
 
 
+def _ensure_vision_tables() -> None:
+    """Create vision pipeline tables (image_registry, image_annotations, image_quality)."""
+    with engine.connect() as conn:
+        conn.execute(
+            text("""
+            CREATE TABLE IF NOT EXISTS image_registry (
+                image_id        TEXT PRIMARY KEY,
+                file_path       TEXT NOT NULL,
+                species         TEXT,
+                source          TEXT NOT NULL,
+                source_id       TEXT,
+                source_url      TEXT,
+                license         TEXT,
+                resolution_w    INTEGER,
+                resolution_h    INTEGER,
+                fetched_at      TIMESTAMP DEFAULT NOW()
+            )
+        """)
+        )
+        conn.execute(
+            text("""
+            CREATE TABLE IF NOT EXISTS image_annotations (
+                image_id        TEXT REFERENCES image_registry(image_id),
+                annotation_type TEXT NOT NULL,
+                feature_name    TEXT NOT NULL,
+                feature_value   TEXT NOT NULL,
+                confidence      REAL,
+                annotator       TEXT,
+                created_at      TIMESTAMP DEFAULT NOW(),
+                PRIMARY KEY (image_id, feature_name, annotation_type)
+            )
+        """)
+        )
+        conn.execute(
+            text("""
+            CREATE TABLE IF NOT EXISTS image_quality (
+                image_id        TEXT REFERENCES image_registry(image_id),
+                is_verified     BOOLEAN DEFAULT FALSE,
+                quality_score   REAL,
+                exclude_reason  TEXT,
+                PRIMARY KEY (image_id)
+            )
+        """)
+        )
+        conn.execute(
+            text(
+                "CREATE INDEX IF NOT EXISTS idx_annotations_feature "
+                "ON image_annotations(feature_name, feature_value)"
+            )
+        )
+        conn.execute(
+            text("CREATE INDEX IF NOT EXISTS idx_annotations_image ON image_annotations(image_id)")
+        )
+        conn.execute(
+            text("CREATE INDEX IF NOT EXISTS idx_registry_species ON image_registry(species)")
+        )
+        conn.execute(
+            text(
+                "CREATE INDEX IF NOT EXISTS idx_annotations_vlm_graded "
+                "ON image_annotations(image_id, feature_name) "
+                "WHERE annotation_type = 'vlm_graded'"
+            )
+        )
+        conn.commit()
+    logger.info("Vision tables ensured (image_registry, image_annotations, image_quality).")
+
+
 def _ensure_embedding_indexes() -> None:
     """Create IVFFlat indexes for each active embedding group."""
     with engine.connect() as conn:
@@ -181,9 +248,7 @@ def load_ground_truth_pairs(path: str = GROUND_TRUTH_PATH) -> None:
                 # Canonical ordering: alphabetical
                 a, b = sorted([species, lookalike])
                 existing = (
-                    session.query(GroundTruthPair)
-                    .filter_by(species_a=a, species_b=b)
-                    .first()
+                    session.query(GroundTruthPair).filter_by(species_a=a, species_b=b).first()
                 )
                 if existing is None:
                     session.add(
@@ -230,6 +295,9 @@ def main():
 
     # Add image_urls columns if missing
     _add_image_columns()
+
+    # Create vision pipeline tables
+    _ensure_vision_tables()
 
     # Create all tables (only creates tables that don't exist yet)
     Base.metadata.create_all(engine)

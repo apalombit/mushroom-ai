@@ -207,7 +207,8 @@ class TestComputeSoftJaccard:
         b = {"gills": {"color": "cream"}}
 
         _, breakdown = compute_soft_jaccard(a, b, vocab)
-        assert breakdown["gills.color"] == pytest.approx(0.8)
+        # cream is aliased to white, so white vs cream → white vs white = 1.0
+        assert breakdown["gills.color"] == pytest.approx(1.0)
 
     def test_color_field_list(self, vocab):
         """List color fields (cap.colors) use best-match strategy."""

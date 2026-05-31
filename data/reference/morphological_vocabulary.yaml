@@ -52,9 +52,9 @@ hymenium_type:
     "ridges-teeth": 0.2
     "ridges-pores": 0.05
     "ridges-smooth": 0.0
-    "pores-teeth": 0.1
-    "pores-smooth": 0.0
-    "teeth-smooth": 0.0
+    "pores-teeth": 0.3
+    "pores-smooth": 0.6
+    "teeth-smooth": 0.1
     "gleba-smooth": 0.1
     "alveolate-pores": 0.1
 
@@ -103,12 +103,12 @@ overall_body_form:
     "jelly-like body": "tremelloid"
     "ear fungus": "tremelloid"
   similarity_matrix:
-    "agaricoid-cantharelloid": 0.7
-    "agaricoid-boletoid": 0.6
-    "agaricoid-secotioid": 0.5
-    "boletoid-polyporoid": 0.4
-    "gasteroid-secotioid": 0.5
-    "gasteroid-hypogeous": 0.4
+    "agaricoid-cantharelloid": 0.2
+    "agaricoid-boletoid": 0.4
+    "agaricoid-secotioid": 0.2
+    "boletoid-polyporoid": 0.3
+    "gasteroid-secotioid": 0.3
+    "gasteroid-hypogeous": 0.3
     "hydnoid-cantharelloid": 0.3
     "clavarioid-corticioid": 0.2
     "corticioid-tremelloid": 0.2
@@ -199,14 +199,12 @@ color_palette:
     flesh, spore print, bruising, etc.). Compound colors from extraction
     (e.g. "orange-yellow") should be mapped to their closest base color(s).
   canonical_values:
-    white: "Pure white to off-white"
-    cream: "Pale yellowish-white, ivory, buff"
+    white: "White, off-white, ivory, cream, pale buff — any very pale color without strong tint"
     yellow: "Clear yellow, lemon, golden"
     orange: "True orange to amber"
     red: "Bright red, scarlet, vermillion"
     pink: "Light red, salmon, rose, vinaceous (dull pinkish wine-red)"
-    brown: "Medium to dark brown, chestnut, hazelnut"
-    tan: "Light brown, pale brown, sandy, ochre"
+    brown: "All shades of brown — light sandy/tan through dark chestnut, including warm earthy tones"
     grey: "Neutral grey, ash"
     olive: "Olive green, greenish-brown"
     green: "True green, verdigris"
@@ -218,11 +216,20 @@ color_palette:
     "off-white": "white"
     "whitish": "white"
     "chalky white": "white"
-    "creamy white": "cream"
-    "ivory": "cream"
-    "buff": "cream"
-    "pale": "cream"
-    "pallid": "cream"
+    "pure white": "white"
+    "snow white": "white"
+    "milky white": "white"
+    "dull white": "white"
+    "creamy white": "white"
+    "cream": "white"
+    "ivory": "white"
+    "buff": "white"
+    "pale": "white"
+    "pallid": "white"
+    "pale cream": "white"
+    "yellowish white": "white"
+    "yellowish-white": "white"
+    "pale yellowish": "white"
     # Yellow family
     "yellowish": "yellow"
     "pale yellow": "yellow"
@@ -231,102 +238,186 @@ color_palette:
     "yellow-egg": "yellow"
     "dark yellow": "yellow"
     "golden": "yellow"
+    "golden yellow": "yellow"
+    "honey yellow": "yellow"
+    "honey": "yellow"
     "lemon": "yellow"
+    "lemon yellow": "yellow"
     "straw": "yellow"
+    "straw yellow": "yellow"
     "sulphur": "yellow"
+    "sulphur yellow": "yellow"
+    "bright yellow": "yellow"
+    "vivid yellow": "yellow"
+    "egg yellow": "yellow"
+    "chrome yellow": "yellow"
     # Orange family
     "orange-yellow": "orange"
     "yellowish orange": "orange"
     "yellowish-orange": "orange"
     "yellow-orange": "orange"
     "reddish orange": "orange"
+    "reddish-orange": "orange"
     "brownish orange": "orange"
+    "brownish-orange": "orange"
+    "orangish": "orange"
+    "orangish yellow": "orange"
+    "nearly orange": "orange"
+    "deep orange": "orange"
+    "burnt orange": "orange"
     "amber": "orange"
     "apricot": "orange"
     "tawny": "orange"
+    "fulvous": "orange"
     # Red family
     "scarlet": "red"
     "scarlet red": "red"
     "vermillion": "red"
     "reddish": "red"
     "blood red": "red"
+    "bright red": "red"
+    "dark red": "red"
+    "deep red": "red"
+    "crimson": "red"
+    "cherry red": "red"
+    "wine red": "red"
     # Pink family
     "salmon": "pink"
     "pinkish": "pink"
     "rose": "pink"
+    "rosy": "pink"
     "flesh-colored": "pink"
+    "flesh colored": "pink"
     "vinaceous": "pink"
+    "pale pink": "pink"
+    "pinkish brown": "pink"
     # Brown family
     "brownish": "brown"
     "dark brown": "brown"
     "chestnut": "brown"
+    "chestnut brown": "brown"
     "hazelnut": "brown"
+    "hazelnut brown": "brown"
     "chocolate": "brown"
+    "chocolate brown": "brown"
     "umber": "brown"
     "cinnamon": "brown"
+    "cinnamon brown": "brown"
+    "cinnamon-brown": "brown"
     "russet": "brown"
     "bay": "brown"
     "reddish-brown": "brown"
     "reddish brown": "brown"
     "rusty brown": "brown"
+    "rusty": "brown"
     "yellowish-brown": "brown"
     "yellowish brown": "brown"
     "yellow-brown": "brown"
+    "golden brown": "brown"
+    "golden-brown": "brown"
     "grey-brown": "brown"
+    "greyish brown": "brown"
+    "grayish brown": "brown"
     "orangish brown": "brown"
+    "orangish-brown": "brown"
     "ferruginous": "brown"
     "rufous": "brown"
-    # Tan/pale brown family
-    "pale brown": "tan"
-    "light brown": "tan"
-    "ochre": "tan"
-    "sandy": "tan"
-    "beige": "tan"
-    "pale olive-buff": "tan"
-    "fawn": "tan"
+    "nut brown": "brown"
+    "walnut": "brown"
+    "date brown": "brown"
+    "biscuit brown": "brown"
+    "biscuit-brown": "brown"
+    "warm brown": "brown"
+    "liver brown": "brown"
+    "sepia": "brown"
+    "snuff brown": "brown"
+    "tobacco brown": "brown"
+    "cocoa": "brown"
+    "mahogany": "brown"
+    # Tan/pale brown family (merged into brown)
+    "tan": "brown"
+    "pale brown": "brown"
+    "light brown": "brown"
+    "ochre": "brown"
+    "ochraceous": "brown"
+    "sandy": "brown"
+    "beige": "brown"
+    "pale olive-buff": "brown"
+    "fawn": "brown"
+    "clay": "brown"
+    "clay brown": "brown"
+    "isabelline": "brown"
+    "chamois": "brown"
+    "khaki": "brown"
     # Grey family
     "greyish": "grey"
     "grayish": "grey"
     "gray": "grey"
     "pale grey": "grey"
+    "pale gray": "grey"
+    "dark grey": "grey"
+    "dark gray": "grey"
     "ash": "grey"
+    "ashy": "grey"
     "lead": "grey"
+    "leaden": "grey"
     "fuliginous": "grey"
+    "smoky": "grey"
+    "slate": "grey"
+    "silvery": "grey"
+    "silver": "grey"
     # Olive family
     "olivaceous": "olive"
     "olive-buff": "olive"
     "olive-brown": "olive"
     "olive green": "olive"
+    "olive-green": "olive"
+    "olive yellow": "olive"
+    "olive-yellow": "olive"
     # Green family
     "greenish": "green"
+    "bright green": "green"
+    "dark green": "green"
+    "verdigris": "green"
+    "bluish green": "green"
+    "yellowish green": "green"
     # Purple family
     "violet": "purple"
     "lilac": "purple"
     "lavender": "purple"
     "mauve": "purple"
     "deep purple": "purple"
+    "plum": "purple"
+    "wine": "purple"
+    "magenta": "purple"
     # Blue family
     "indigo": "blue"
     "bluish": "blue"
+    "pale blue": "blue"
+    "steel blue": "blue"
+    "dark blue": "blue"
     # Black family
     "blackish": "black"
+    "dark blackish": "black"
+    "jet black": "black"
+    "sooty": "black"
   similarity_matrix:
     "white-cream": 0.8
     "yellow-orange": 0.7
     "yellow-cream": 0.6
-    "orange-red": 0.6
+    "orange-red": 0.7
     "orange-brown": 0.5
-    "orange-tan": 0.6
+    "orange-tan": 0.7
     "red-pink": 0.6
     "brown-tan": 0.8
     "brown-olive": 0.4
     "grey-brown": 0.4
     "grey-white": 0.5
     "purple-pink": 0.5
-    "purple-blue": 0.6
-    "olive-green": 0.6
-    "black-brown": 0.4
-    "black-grey": 0.5
+    "purple-blue": 0.7
+    "olive-green": 0.8
+    "black-brown": 0.5
+    "black-grey": 0.6
 
 # =============================================================================
 #  BRUISING / COLOR CHANGE -- shared vocabulary for all bruising fields
@@ -382,17 +473,17 @@ bruising_color:
     "purplish": "lilac"
     "turning lilac": "lilac"
   similarity_matrix:
-    "blue-blue_green": 0.7
+    "blue-blue_green": 0.8
     "blue-black": 0.4
     "blue-green": 0.5
     "red-pink": 0.6
-    "red-orange": 0.5
+    "red-orange": 0.7
     "brown-black": 0.5
     "brown-orange": 0.4
-    "yellow-orange": 0.5
+    "yellow-orange": 0.7
     "grey-black": 0.5
-    "none-brown": 0.1
-    "lilac-pink": 0.5
+    "none-brown": 0.3
+    "lilac-pink": 0.6
     "lilac-grey": 0.3
 
 # =============================================================================

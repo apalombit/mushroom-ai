@@ -1,0 +1,32 @@
+# Training Configuration
+#
+# Default hyperparameters and paths for vision head training.
+
+device: "mps"
+
+backbone: "facebook/dinov2-base"
+clip_model: "openai/clip-vit-base-patch16"
+embedding_dim: 768
+
+# Default training hyperparameters (per-head overrides possible)
+default_lr: 5.0e-4
+default_weight_decay: 1.0e-4
+default_dropout: 0.1
+default_label_smoothing: 0.1
+default_batch_size: 64
+max_epochs: 50
+early_stopping_patience: 10
+min_species_per_class: 3
+
+# Data split ratios (by species, not by image)
+split_train: 0.70
+split_val: 0.15
+split_test: 0.15
+
+paths:
+  raw_images: "data/images/raw"
+  processed_images: "data/images/processed"
+  embeddings: "data/embeddings"
+  manifests: "data/manifests"
+  pipeline_configs: "vision/config/pipeline_configs"
+  checkpoints: "data/checkpoints"
