@@ -66,6 +66,18 @@ Should show ✓ for PostgreSQL, Ollama, Instructor, and MLflow.
 make db-init       # or: python -m scripts.init_db
 ```
 
+## Step 7: Load Species Data
+
+Each ingestion stage is a separate flag and never triggers the next one:
+
+```bash
+source .venv/bin/activate
+python -m scripts.ingest --fetch-only   # fetch raw text from sources
+python -m scripts.ingest --extract      # LLM feature extraction → Layer 1
+python -m scripts.ingest --reconcile    # merge sources → Layer 2
+python -m scripts.ingest --embed        # per-group embeddings → Layer 3
+```
+
 ## Development Workflow
 
 ```bash

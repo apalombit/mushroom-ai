@@ -1,5 +1,10 @@
 # Project 1: Lookalikes Finder — Implementation Plan
 
+> **Historical document.** This is the original v1 plan (3 embedding groups, 384-dim
+> MiniLM, 60/25/15 weights). The system has since moved to fine-grained groups,
+> soft-Jaccard blending and a learned ranker — see the [README](../README.md) for the
+> current architecture.
+
 ## Context
 
 This is a mushroom lookalike finder. Given a species name, it finds similar-looking species

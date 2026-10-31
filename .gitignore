@@ -42,6 +42,8 @@ data/vlm_full/
 data/vlm_pilot/
 data/vlm_eval/
 data/vlm_features/
+data/vlm_labels/
+data/duplicates_report.csv
 data/manual_qa/
 data/image_qa_viewer.html
 !data/seed/

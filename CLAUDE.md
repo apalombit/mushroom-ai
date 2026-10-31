@@ -106,7 +106,7 @@ Gating columns on Layer 2: `overall_body_form`, `hymenium_type`, `overall_size_c
 
 **Soft-Jaccard similarity** (`similarity/jaccard.py`) — Compares discrete feature values using similarity matrices from `data/reference/morphological_vocabulary.yaml`. Three field types: vocabulary scalars (via matrices), color fields (bidirectional best-match), boolean fields (exact match). Per-field weights optimizable via `scripts/optimize_jaccard.py`. `DEFAULT_JACCARD_WEIGHTS` in jaccard.py stores optimized weights.
 
-**Blending** — `alpha` parameter (0.0–1.0) controls embedding vs Jaccard mix. `alpha=1.0` = pure embedding, `alpha=0.0` = pure Jaccard. Default: 0.5. Tunable via `.env` or request params.
+**Blending** — `alpha` parameter (0.0–1.0) controls embedding vs Jaccard mix. `alpha=1.0` = pure embedding, `alpha=0.0` = pure Jaccard. Default: 0.5. Set per request (API `alpha` param, UI slider).
 
 **Numeric similarity** (`similarity/numeric.py`) — Range fields → size category (small/medium/large), single fields → proximity scoring, month fields → Jaccard of month sets.
 
@@ -128,7 +128,7 @@ Provider-agnostic via LiteLLM + Instructor. Switch provider/model with `LLM_PROV
 
 ### Config
 
-`config.py` exposes a singleton `settings` object (pydantic-settings, reads `.env`). Import it as `from config import settings`. Key settings: `GROUPING_PROFILE` (embedding group layout), `weight_*` (per-group weights, filter flags, alpha), `LLM_*` (provider config), database connection params.
+`config.py` exposes a singleton `settings` object (pydantic-settings, reads `.env`). Import it as `from config import settings`. Key settings: `GROUPING_PROFILE` (embedding group layout), `weight_*` (per-group weights, filter flags), `LLM_*` (provider config), database connection params.
 
 ## Code Style
 
